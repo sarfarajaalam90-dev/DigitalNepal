@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Digital Nepal — Lok Sewa Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1a6b3c;--primary-light:#e8f5ee;--primary-dark:#145530;
+  --accent:#f59e0b;--accent-light:#fffbeb;
+  --green:#16a34a;--green-light:#f0fdf4;
+  --red:#dc2626;--red-light:#fef2f2;
+  --purple:#7c3aed;--purple-light:#f5f3ff;
+  --bg:#f8fafc;--white:#ffffff;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--border2:#f1f5f9;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --radius:14px;--radius-sm:9px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.12);position:relative}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;background:var(--white);border-bottom:1px solid var(--border2);position:relative;z-index:10}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.brand-logo svg{width:38px;height:38px;border-radius:11px;display:block}
+.brand-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.15}
+.brand-name span{color:var(--primary)}
+.brand-tagline{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.topbar-icons{display:flex;gap:8px;align-items:center}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative}
+.badge{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--white)}
+
+/* ── SCROLL AREA ── */
+.page{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:80px}
+.page::-webkit-scrollbar{width:0}
+.section{display:none}
+.section.active{display:block}
+
+/* ── HERO BANNER ── */
+.hero{margin:14px 16px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20 0%,#1a6b3c 55%,#22c55e 100%);padding:22px 20px;min-height:130px}
+.hero::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero::after{content:'';position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)}
+.hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:99px;text-transform:uppercase;margin-bottom:8px}
+.hero h2{font-size:18px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px}
+.hero p{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5}
+.hero-btn{margin-top:12px;display:inline-block;background:#fff;color:var(--primary);font-size:11px;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;cursor:pointer;border:none}
+
+/* ── QUICK TABS ── */
+.quick-tabs{display:flex;gap:8px;padding:14px 16px 2px;overflow-x:auto}
+.quick-tabs::-webkit-scrollbar{height:0}
+.qtab{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.qtab.active,.qtab:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ── SECTION TITLE ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+.sec-head h3{font-size:15px;font-weight:800;color:var(--text)}
+.view-all{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;background:none;border:none}
+
+/* ── LIVE CLASS CARD ── */
+.live-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;position:relative}
+.live-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
+.live-avatar{width:46px;height:46px;border-radius:12px;object-fit:cover;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.live-info{flex:1;min-width:0}
+.live-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:3px}
+.live-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.live-time{font-size:11px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:4px}
+.live-badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;flex-shrink:0}
+.badge-live{background:#fef2f2;color:var(--red);border:1px solid #fecaca;animation:pulse 1.5s infinite}
+.badge-soon{background:var(--accent-light);color:var(--accent);border:1px solid #fde68a}
+.badge-zoom{background:#e8f5ee;color:var(--primary);border:1px solid #a7f3d0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── ICON GRID ── */
+.icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 16px 8px}
+.icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:14px 8px;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border2);transition:all .2s}
+.icon-item:hover{background:var(--primary-light);border-color:var(--primary)}
+.icon-item .ii{font-size:22px}
+.icon-item span{font-size:11px;font-weight:600;color:var(--text2);text-align:center}
+
+/* ── NOTICE CARD ── */
+.notice-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
+.notice-card:hover{border-color:var(--primary)}
+.notice-date{font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px}
+.notice-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
+.notice-sub{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ── MAT LIST ── */
+.mat-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
+.mat-card:hover{border-color:var(--primary);background:var(--primary-light)}
+.mat-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.mat-sub{font-size:11px;color:var(--text2);margin-bottom:8px}
+.mat-links{display:flex;flex-wrap:wrap;gap:6px}
+.mat-link{font-size:11px;color:var(--primary);font-weight:600;display:flex;align-items:center;gap:3px;text-decoration:none;background:var(--primary-light);padding:4px 10px;border-radius:99px;border:1px solid #a7f3d0}
+.mat-link:hover{background:var(--primary);color:#fff}
+
+/* ── SEARCH BAR ── */
+.search-bar{margin:14px 16px 8px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
+.search-bar input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text);outline:none}
+.search-bar input::placeholder{color:var(--text3)}
+
+/* ── EXAM CARD ── */
+.exam-card{margin:0 16px 12px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow)}
+.exam-card-head{padding:14px;display:flex;align-items:center;gap:10px}
+.exam-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.exam-card-title{font-size:14px;font-weight:700;color:var(--text)}
+.exam-card-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.exam-sets{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px}
+.set-btn{font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.set-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ── STUDY PAGE ── */
+.study-cat{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.study-cat:hover{border-color:var(--primary);transform:translateX(3px)}
+.study-cat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.study-cat-info h4{font-size:14px;font-weight:700;color:var(--text)}
+.study-cat-info p{font-size:11px;color:var(--text2);margin-top:2px}
+.study-cat-arrow{margin-left:auto;font-size:16px;color:var(--text3)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 20px}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:4px}
+.modal-info-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:var(--text2)}
+.modal-info-row strong{color:var(--text)}
+.modal-divider{height:1px;background:var(--border);margin:16px 0}
+.modal-zoom-section{background:linear-gradient(135deg,#e8f5ee,#dcfce7);border:1.5px solid #a7f3d0;border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.modal-zoom-title{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px}
+.zoom-id-row{display:flex;gap:8px;margin-bottom:8px}
+.zoom-id-box{flex:1;padding:9px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text);font-family:monospace;font-weight:600}
+.copy-btn{padding:9px 12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:700;cursor:pointer}
+.join-zoom-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-bottom:10px}
+.join-zoom-btn:hover{background:var(--primary-dark);transform:scale(1.01)}
+.cancel-btn{width:100%;padding:12px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
+
+/* ── NAV ── */
+nav{position:absolute;bottom:0;left:0;right:0;background:var(--white);border-top:1.5px solid var(--border);display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:20}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:5px 0;color:var(--text3);font-family:inherit;transition:color .2s}
+.nav-btn.active{color:var(--primary)}
+.nav-btn .ni{font-size:20px}
+.nav-btn .nl{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--primary);margin-top:1px;opacity:0;transition:opacity .2s}
+.nav-btn.active .nav-dot{opacity:1}
+
+/* ── TABS BAR ── */
+.tab-bar{display:flex;border-bottom:1.5px solid var(--border);padding:0 16px;background:var(--white);position:sticky;top:0;z-index:5;overflow-x:auto}
+.tab-bar::-webkit-scrollbar{height:0}
+.tbar-btn{flex-shrink:0;padding:12px 10px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap}
+.tbar-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+/* ── FEED ── */
+.feed-card{margin:0 16px 12px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.feed-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.feed-avatar{width:36px;height:36px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;flex-shrink:0}
+.feed-meta h4{font-size:12px;font-weight:700;color:var(--text)}
+.feed-meta span{font-size:10px;color:var(--text3)}
+.feed-body{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px}
+.feed-actions{display:flex;gap:14px}
+.feed-act{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;cursor:pointer;background:none;border:none;font-family:inherit}
+.feed-act:hover{color:var(--primary)}
+
+/* ── OTHER PAGE ── */
+.other-card{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);text-decoration:none}
+.other-card:hover{border-color:var(--primary);background:var(--primary-light);transform:translateX(3px)}
+.other-icon{width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.other-info{flex:1;min-width:0}
+.other-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.other-sub{font-size:11px;color:var(--text2)}
+.other-arrow{font-size:16px;color:var(--text3)}
+
+/* ── LOADING ── */
+.loading-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px;font-weight:600}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.live-card,.mat-card,.study-cat,.exam-card,.feed-card,.other-card{animation:fadeIn .3s ease both}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <!-- Custom Digital Nepal Logo -->
+      <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px">
+        <defs>
+          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#0a3d20"/>
+            <stop offset="100%" style="stop-color:#1a6b3c"/>
+          </linearGradient>
+        </defs>
+        <rect width="38" height="38" rx="11" fill="url(#bgGrad)"/>
+        <!-- Mount Everest silhouette -->
+        <polygon points="5,28 13,14 17,18 19,11 21,18 25,14 33,28" fill="rgba(255,255,255,0.15)" stroke="none"/>
+        <!-- Main peak -->
+        <polyline points="12,26 19,10 26,26" fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <!-- Side peaks -->
+        <polyline points="5,26 12,18 15,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <polyline points="33,26 26,18 23,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <!-- Base line -->
+        <line x1="4" y1="28" x2="34" y2="28" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Snow cap dot -->
+        <circle cx="19" cy="10" r="1.5" fill="white"/>
+      </svg>
+      <div>
+        <div class="brand-name">Digital <span>Nepal</span></div>
+        <div class="brand-tagline">Lok Sewa Preparation</div>
+      </div>
+    </div>
+    <div class="topbar-icons">
+      <button class="icon-btn" onclick="refreshAll()">🔄</button>
+      <button class="icon-btn" onclick="showNotif()">🔔<span class="badge"></span></button>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="page">
+
+    <!-- ══ HOME ══ -->
+    <div class="section active" id="pg-home">
+
+      <div class="hero">
+        <div class="hero-tag">FREE</div>
+        <h2>Live Class · Materials<br>Model Test · Lok Sewa Prep</h2>
+        <p>Digital Nepal — Your Smart Study Partner</p>
+        <button class="hero-btn" onclick="switchNav('materials')">Explore Materials →</button>
+      </div>
+
+      <div class="quick-tabs">
+        <div class="qtab active">Live Classes</div>
+        <div class="qtab" onclick="switchNav('materials')">Materials</div>
+        <div class="qtab" onclick="switchNav('exam')">Exams</div>
+        <div class="qtab" onclick="switchNav('other')">Other Links</div>
+      </div>
+
+      <div class="icon-grid">
+        <div class="icon-item" onclick="switchNav('home')">
+          <span class="ii">▶️</span><span>Live Class</span>
+        </div>
+        <div class="icon-item" onclick="switchNav('materials')">
+          <span class="ii">📄</span><span>Materials</span>
+        </div>
+        <div class="icon-item" onclick="switchNav('exam')">
+          <span class="ii">✏️</span><span>Exam</span>
+        </div>
+        <div class="icon-item" onclick="switchNav('other')">
+          <span class="ii">🔗</span><span>Other Links</span>
+        </div>
+        <div class="icon-item" onclick="refreshAll()">
+          <span class="ii">🔄</span><span>Refresh</span>
+        </div>
+        <div class="icon-item" onclick="showToast('Coming soon!')">
+          <span class="ii">🏆</span><span>Rankings</span>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <h3>🔴 Live & Upcoming Classes</h3>
+        <button class="view-all" onclick="switchNav('exam')">View All →</button>
+      </div>
+      <div id="home-live-list">
+        <div class="loading-box"><div class="spinner"></div>Loading classes…</div>
+      </div>
+
+
+
+    </div><!-- /home -->
+
+    <!-- ══ STUDY (Materials) ══ -->
+    <div class="section" id="pg-study">
+      <div class="sec-head" style="padding-top:18px"><h3>📚 My Courses</h3></div>
+      <div class="study-cat" onclick="switchNav('materials')">
+        <div class="study-cat-icon" style="background:#eff6ff">📘</div>
+        <div class="study-cat-info"><h4>Study Materials</h4><p>Notes · PDFs · Study Links</p></div>
+        <span class="study-cat-arrow">›</span>
+      </div>
+      <div class="study-cat" onclick="switchNav('exam')">
+        <div class="study-cat-icon" style="background:var(--purple-light)">✏️</div>
+        <div class="study-cat-info"><h4>Model Tests & Exams</h4><p>Practice sets · Exam links</p></div>
+        <span class="study-cat-arrow">›</span>
+      </div>
+      <div class="study-cat" onclick="switchNav('home')">
+        <div class="study-cat-icon" style="background:var(--green-light)">📹</div>
+        <div class="study-cat-info"><h4>Live Zoom Classes</h4><p>Join live sessions</p></div>
+        <span class="study-cat-arrow">›</span>
+      </div>
+      <div class="study-cat" onclick="switchNav('other')">
+        <div class="study-cat-icon" style="background:#fff7ed">🔗</div>
+        <div class="study-cat-info"><h4>Other Links & Resources</h4><p>Extra resources & tools</p></div>
+        <span class="study-cat-arrow">›</span>
+      </div>
+
+      <div class="sec-head"><h3>🔴 Live Classes Today</h3></div>
+      <div id="study-live-list">
+        <div class="loading-box"><div class="spinner"></div>Loading…</div>
+      </div>
+    </div><!-- /study -->
+
+    <!-- ══ MATERIALS ══ -->
+    <div class="section" id="pg-materials">
+      <div class="tab-bar" id="matTabs">
+        <button class="tbar-btn active" onclick="filterMaterials('All',this)">All</button>
+        <button class="tbar-btn" onclick="filterMaterials('Material',this)">Materials</button>
+        <button class="tbar-btn" onclick="filterMaterials('Live',this)">Live</button>
+        <button class="tbar-btn" onclick="filterMaterials('Exam',this)">Exam</button>
+        <button class="tbar-btn" onclick="filterMaterials('Other',this)">Other</button>
+      </div>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="mat-search" placeholder="Search materials..." oninput="searchMaterials()">
+      </div>
+      <div id="mat-list">
+        <div class="loading-box"><div class="spinner"></div>Loading materials…</div>
+      </div>
+    </div><!-- /materials -->
+
+    <!-- ══ EXAM ══ -->
+    <div class="section" id="pg-exam">
+      <div class="sec-head" style="padding-top:18px"><h3>📝 Model Tests & Exams</h3></div>
+      <div id="exam-list">
+        <div class="loading-box"><div class="spinner"></div>Loading exams…</div>
+      </div>
+    </div><!-- /exam -->
+
+    <!-- ══ OTHER ══ -->
+    <div class="section" id="pg-other">
+      <div class="sec-head" style="padding-top:18px"><h3>🔗 Other Links & Resources</h3></div>
+      <div id="other-list">
+        <div class="loading-box"><div class="spinner"></div>Loading…</div>
+      </div>
+    </div><!-- /other -->
+
+  </div><!-- /page -->
+
+  <!-- BOTTOM NAV -->
+  <nav>
+    <button class="nav-btn active" id="nav-home" onclick="switchNav('home')">
+      <span class="ni">🏠</span><span class="nl">Home</span><span class="nav-dot"></span>
+    </button>
+    <button class="nav-btn" id="nav-study" onclick="switchNav('study')">
+      <span class="ni">📖</span><span class="nl">Study</span><span class="nav-dot"></span>
+    </button>
+    <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')">
+      <span class="ni">📄</span><span class="nl">Materials</span><span class="nav-dot"></span>
+    </button>
+    <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')">
+      <span class="ni">✏️</span><span class="nl">Exam</span><span class="nav-dot"></span>
+    </button>
+    <button class="nav-btn" id="nav-other" onclick="switchNav('other')">
+      <span class="ni">🔗</span><span class="nl">Other</span><span class="nav-dot"></span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- LIVE CLASS MODAL -->
+<div class="modal-overlay" id="liveModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <div id="m-icon" style="font-size:28px">📹</div>
+      <div>
+        <div class="modal-title" id="m-title"></div>
+        <div style="font-size:12px;color:var(--text2)" id="m-info"></div>
+      </div>
+    </div>
+    <div style="margin:12px 0 16px;display:flex;gap:8px;flex-wrap:wrap" id="m-badges"></div>
+    <div class="modal-info-row">⏰ Time: <strong id="m-time"></strong></div>
+    <div class="modal-info-row">📱 Platform: <strong>Zoom Meeting</strong></div>
+    <div class="modal-divider"></div>
+    <div class="modal-zoom-section">
+      <div class="modal-zoom-title">📹 Join Details</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Tap the button below to open Zoom class directly.</div>
+    </div>
+    <button class="join-zoom-btn" id="m-joinbtn" onclick="joinZoom()">
+      📹 Join Live Class on Zoom
+    </button>
+    <button class="cancel-btn" onclick="document.getElementById('liveModal').classList.remove('open')">
+      Close
+    </button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
+
+let allRows = [];
+let currentZoomLink = '';
+let currentMatFilter = 'All';
+let matSearchTerm = '';
+
+// ── NAVIGATION ──
+function switchNav(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('nav-'+id);
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  document.querySelector('.page').scrollTop=0;
+}
+
+// ── CSV PARSER ──
+function parseCSV(text){
+  const lines = text.trim().split('\n');
+  if(lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).map(line=>{
+    // Handle quoted commas
+    const cols = [];
+    let inQuote = false, cur = '';
+    for(let i=0;i<line.length;i++){
+      if(line[i]==='"'){ inQuote=!inQuote; }
+      else if(line[i]===',' && !inQuote){ cols.push(cur.trim()); cur=''; }
+      else { cur+=line[i]; }
+    }
+    cols.push(cur.trim());
+    const obj = {};
+    headers.forEach((h,i)=>{ obj[h] = (cols[i]||'').replace(/^"|"$/g,'').trim(); });
+    return obj;
+  }).filter(r=>r.Title && r.Title.length>0);
+}
+
+// ── FETCH DATA ──
+async function fetchData(){
+  try{
+    const res = await fetch(APPS_SCRIPT_URL);
+    const json = await res.json();
+    allRows = json.map(r=>({
+      Title: String(r.Title||'').trim(),
+      Link:  String(r.Link||'').trim(),
+      Type:  String(r.Type||'').trim(),
+      Info:  String(r.Info||'').trim()
+    })).filter(r=>r.Title.length>0);
+    renderAll();
+  } catch(e){
+    showToast('Could not load data. Check connection.');
+    ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML='<div class="empty-box">⚠️ Failed to load. Tap 🔄 to retry.</div>';
+    });
+  }
+}
+
+function refreshAll(){
+  ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML='<div class="loading-box"><div class="spinner"></div>Refreshing…</div>';
+  });
+  showToast('Refreshing data…');
+  fetchData();
+}
+
+// ── RENDER ALL ──
+function renderAll(){
+  renderLiveClasses();
+  renderMaterials('All');
+  renderExams();
+  renderOther();
+}
+
+// ── LIVE CLASSES (Type = Live) ──
+function renderLiveClasses(){
+  const lives = allRows.filter(r=>r.Type==='Live');
+  const html = lives.length ? lives.map(r=>liveCardHTML(r)).join('') 
+    : '<div class="empty-box">📭 No live classes scheduled yet.</div>';
+  document.getElementById('home-live-list').innerHTML = html;
+  document.getElementById('study-live-list').innerHTML = html;
+}
+
+function liveCardHTML(r){
+  const info = r.Info || '';
+  // Determine badge
+  let badgeHTML = `<span class="live-badge badge-zoom">ZOOM</span>`;
+  const infoLow = info.toLowerCase();
+  if(infoLow.includes('live') || infoLow.includes('now')) badgeHTML = `<span class="live-badge badge-live">● LIVE</span>`;
+  else if(infoLow.includes('soon') || infoLow.includes('upcoming')) badgeHTML = `<span class="live-badge badge-soon">SOON</span>`;
+  
+  const link = r.Link || '#';
+  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(link)}')">
+    <div class="live-avatar">📹</div>
+    <div class="live-info">
+      <div class="live-title">${r.Title}</div>
+      <div class="live-meta">🕐 ${info||'Live Class'}</div>
+    </div>
+    ${badgeHTML}
+  </div>`;
+}
+
+// ── MATERIALS (Type = Material) ──
+
+function renderMaterials(filter){
+  currentMatFilter = filter;
+  const term = matSearchTerm.toLowerCase();
+  let rows = allRows.filter(r=>{
+    if(filter==='All') return true;
+    return r.Type === filter;
+  }).filter(r=>{
+    if(!term) return true;
+    return r.Title.toLowerCase().includes(term) || (r.Info||'').toLowerCase().includes(term);
+  });
+
+  const el = document.getElementById('mat-list');
+  if(!rows.length){
+    el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';
+    return;
+  }
+  el.innerHTML = rows.map(r=>matCardHTML(r)).join('');
+}
+
+function filterMaterials(filter, btn){
+  document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMaterials(filter);
+}
+
+function searchMaterials(){
+  matSearchTerm = document.getElementById('mat-search').value;
+  renderMaterials(currentMatFilter);
+}
+
+function matCardHTML(r){
+  const link = r.Link && r.Link.startsWith('http') ? r.Link : null;
+  const info = r.Info || '';
+  const typeLabel = r.Type || 'Material';
+  const colors = {Live:'#e8f5ee;color:#1a6b3c', Material:'#eff6ff;color:#2563eb', Exam:'#fffbeb;color:#b45309', Other:'#f5f3ff;color:#7c3aed'};
+  const tagStyle = colors[typeLabel] || colors['Material'];
+  const btnHTML = link 
+    ? `<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`
+    : `<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
+  return `<div class="mat-card">
+    <div class="mat-title">${r.Title}</div>
+    ${info ? `<div class="mat-sub">${info}</div>` : ''}
+    <span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span>
+    <div class="mat-links">${btnHTML}</div>
+  </div>`;
+}
+
+// ── EXAMS (Type = Exam) ──
+function renderExams(){
+  const exams = allRows.filter(r=>r.Type==='Exam');
+  const el = document.getElementById('exam-list');
+  if(!exams.length){
+    el.innerHTML='<div class="empty-box">📭 No exam links added yet.<br><small>Add rows with Type = Exam in your Google Sheet.</small></div>';
+    return;
+  }
+  // Group by Info field (acts as category), or show individually
+  const grouped = {};
+  exams.forEach(r=>{
+    const cat = r.Info || 'General';
+    if(!grouped[cat]) grouped[cat]=[];
+    grouped[cat].push(r);
+  });
+
+  let html = '';
+  Object.entries(grouped).forEach(([cat,rows])=>{
+    html += `<div class="exam-card">
+      <div class="exam-card-head">
+        <div class="exam-icon" style="background:var(--primary-light)">✏️</div>
+        <div><div class="exam-card-title">${cat}</div><div class="exam-card-sub">${rows.length} link${rows.length>1?'s':''} available</div></div>
+      </div>
+      <div class="exam-sets">`;
+    rows.forEach(r=>{
+      const link = r.Link && r.Link.startsWith('http') ? r.Link : '#';
+      html += `<a class="set-btn" href="${link}" target="_blank" rel="noopener">${r.Title}</a>`;
+    });
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ── OTHER (Type = Other) ──
+function renderOther(){
+  const others = allRows.filter(r=>r.Type==='Other');
+  const el = document.getElementById('other-list');
+  if(!others.length){
+    el.innerHTML='<div class="empty-box">📭 No links added yet.<br><small>Add rows with Type = Other in your Google Sheet.</small></div>';
+    return;
+  }
+  el.innerHTML = others.map(r=>{
+    const link = r.Link && r.Link.startsWith('http') ? r.Link : '#';
+    const info = r.Info || 'External link';
+    return `<a class="other-card" href="${link}" target="_blank" rel="noopener">
+      <div class="other-icon">🔗</div>
+      <div class="other-info">
+        <div class="other-title">${r.Title}</div>
+        <div class="other-sub">${info}</div>
+      </div>
+      <span class="other-arrow">›</span>
+    </a>`;
+  }).join('');
+}
+
+// ── MODAL ──
+function openLiveModal(title, info, link){
+  currentZoomLink = link;
+  document.getElementById('m-title').textContent = title;
+  document.getElementById('m-info').textContent = info;
+  document.getElementById('m-time').textContent = info || 'See link for schedule';
+  const badges = document.getElementById('m-badges');
+  const infoLow = info.toLowerCase();
+  if(infoLow.includes('live')||infoLow.includes('now')){
+    badges.innerHTML='<span class="live-badge badge-live" style="font-size:11px">● LIVE NOW</span>';
+  } else {
+    badges.innerHTML='<span class="live-badge badge-soon" style="font-size:11px">🕐 Upcoming</span>';
+  }
+  badges.innerHTML+='<span class="live-badge badge-zoom" style="font-size:11px">📹 Zoom</span>';
+  document.getElementById('liveModal').classList.add('open');
+}
+
+function closeModal(e){
+  if(e.target===document.getElementById('liveModal'))
+    document.getElementById('liveModal').classList.remove('open');
+}
+
+function joinZoom(){
+  if(currentZoomLink && currentZoomLink!=='#'){
+    window.open(currentZoomLink,'_blank');
+  } else {
+    showToast('No link available for this class.');
+  }
+}
+
+// ── UTILS ──
+function esc(str){
+  return (str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+function showNotif(){ showToast('Refreshing for new notices!'); refreshAll(); }
+
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t)}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
+}
+
+// ── INIT ──
+fetchData();
+</script>
+</body>
+</html>
