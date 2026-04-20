@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Digital Nepal — Lok Sewa Prep</title>
+<meta name="theme-color" content="#1a6b3c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Digital Nepal">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -34,6 +38,35 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;transition:background .3s,color .3s}
 .app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.12);position:relative;transition:background .3s}
+
+/* ── SPLASH SCREEN ── */
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a3d20,#1a6b3c,#22c55e);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease}
+#splash.hide{opacity:0;pointer-events:none}
+.splash-logo{width:90px;height:90px;background:rgba(255,255,255,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:splashPop .5s ease both;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.splash-name{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px;animation:splashFade .5s .2s ease both}
+.splash-name span{color:#86efac}
+.splash-tagline{font-size:12px;color:rgba(255,255,255,.65);font-weight:600;margin-top:6px;letter-spacing:.5px;animation:splashFade .5s .3s ease both}
+.splash-bar{width:120px;height:3px;background:rgba(255,255,255,.2);border-radius:99px;margin-top:40px;overflow:hidden;animation:splashFade .5s .4s ease both}
+.splash-bar-fill{height:100%;background:#fff;border-radius:99px;animation:splashLoad 1.5s ease forwards}
+@keyframes splashPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes splashFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splashLoad{from{width:0}to{width:100%}}
+
+/* ── PWA INSTALL BANNER ── */
+#install-banner{display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:var(--white);border:1.5px solid var(--primary);border-radius:var(--radius);padding:14px 16px;z-index:50;box-shadow:var(--shadow-md);animation:slideUp .3s ease}
+#install-banner.show{display:flex;align-items:center;gap:12px}
+.install-icon{font-size:26px;flex-shrink:0}
+.install-text{flex:1}
+.install-text h4{font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px}
+.install-text p{font-size:11px;color:var(--text2)}
+.install-btns{display:flex;gap:8px;flex-shrink:0}
+.install-yes{background:var(--primary);color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
+.install-no{background:var(--bg);color:var(--text2);border:1.5px solid var(--border);padding:7px 10px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
+
+/* ── AUTO REFRESH BAR ── */
+#refresh-bar{height:2px;background:transparent;position:relative;overflow:hidden}
+#refresh-bar.active{background:var(--border)}
+#refresh-fill{height:100%;width:0%;background:var(--primary);transition:width linear}
 
 /* TOP BAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;background:var(--white);border-bottom:1px solid var(--border2);position:relative;z-index:10;transition:background .3s,border-color .3s}
@@ -84,7 +117,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .notice-item:hover{background:var(--bg)}
 .notice-item-date{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
 .notice-item-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.4}
-.notice-item-sub{font-size:11px;color:var(--text2);margin-top:2px}
 
 /* QUICK TABS */
 .quick-tabs{display:flex;gap:8px;padding:12px 16px 2px;overflow-x:auto}
@@ -118,13 +150,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .icon-item span{font-size:11px;font-weight:600;color:var(--text2);text-align:center}
 
 /* MAT */
-.mat-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
+.mat-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);transition:all .2s}
 .mat-card:hover{border-color:var(--primary);background:var(--primary-light)}
 .mat-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .mat-sub{font-size:11px;color:var(--text2);margin-bottom:8px}
-.mat-links{display:flex;flex-wrap:wrap;gap:6px}
+.mat-links{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mat-link{font-size:11px;color:var(--primary);font-weight:600;text-decoration:none;background:var(--primary-light);padding:4px 10px;border-radius:99px;border:1px solid #a7f3d0}
 .mat-link:hover{background:var(--primary);color:#fff}
+.share-btn{font-size:11px;color:var(--text2);font-weight:600;background:var(--bg);padding:4px 10px;border-radius:99px;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:4px}
+.share-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* SEARCH */
 .search-bar{margin:14px 16px 8px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
@@ -200,9 +234,39 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </style>
 </head>
 <body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo">
+    <svg width="52" height="52" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="12,26 19,10 26,26" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="5,26 12,18 15,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="33,26 26,18 23,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="19" cy="10" r="1.8" fill="white"/>
+    </svg>
+  </div>
+  <div class="splash-name">Digital <span>Nepal</span></div>
+  <div class="splash-tagline">LOK SEWA PREPARATION</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner">
+  <div class="install-icon">📲</div>
+  <div class="install-text">
+    <h4>Install Digital Nepal App</h4>
+    <p>Add to home screen for quick access!</p>
+  </div>
+  <div class="install-btns">
+    <button class="install-yes" onclick="installApp()">Install</button>
+    <button class="install-no" onclick="dismissInstall()">✕</button>
+  </div>
+</div>
+
 <div class="app" id="app">
 
   <!-- TOP BAR -->
+  <div id="refresh-bar"><div id="refresh-fill"></div></div>
   <div class="topbar">
     <div class="topbar-brand">
       <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px;flex-shrink:0">
@@ -231,8 +295,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
     <!-- HOME -->
     <div class="section active" id="pg-home">
-
-      <!-- HERO -->
       <div class="hero">
         <div class="hero-c1"></div><div class="hero-c2"></div><div class="hero-c3"></div>
         <div class="hero-top">
@@ -250,13 +312,11 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         </div>
       </div>
 
-      <!-- DAILY QUOTE -->
       <div class="quote-card">
         <div class="quote-text" id="daily-quote">लोड हुँदैछ…</div>
         <div class="quote-author">— प्रेरणा · Digital Nepal</div>
       </div>
 
-      <!-- NOTICE -->
       <div class="notice-strip">
         <div class="notice-head" onclick="toggleNotice()">
           <h4>📢 सूचना / Notice</h4>
@@ -267,7 +327,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         </div>
       </div>
 
-      <!-- QUICK TABS -->
       <div class="quick-tabs">
         <div class="qtab active">Live Classes</div>
         <div class="qtab" onclick="switchNav('materials')">Materials</div>
@@ -275,14 +334,13 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div class="qtab" onclick="switchNav('other')">Other</div>
       </div>
 
-      <!-- ICON GRID -->
       <div class="icon-grid">
         <div class="icon-item" onclick="switchNav('home')"><span class="ii">▶️</span><span>Live Class</span></div>
         <div class="icon-item" onclick="switchNav('materials')"><span class="ii">📄</span><span>Materials</span></div>
         <div class="icon-item" onclick="switchNav('exam')"><span class="ii">✏️</span><span>Exam</span></div>
         <div class="icon-item" onclick="switchNav('other')"><span class="ii">🔗</span><span>Other Links</span></div>
         <div class="icon-item" onclick="refreshAll()"><span class="ii">🔄</span><span>Refresh</span></div>
-        <div class="icon-item" onclick="showToast('Coming soon!')"><span class="ii">🏆</span><span>Rankings</span></div>
+        <div class="icon-item" onclick="shareApp()"><span class="ii">📤</span><span>Share App</span></div>
       </div>
 
       <div class="sec-head">
@@ -290,7 +348,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <button class="view-all" onclick="switchNav('study')">View All →</button>
       </div>
       <div id="home-live-list"><div class="loading-box"><div class="spinner"></div>Loading classes…</div></div>
-
     </div><!-- /home -->
 
     <!-- STUDY -->
@@ -351,7 +408,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
   </div><!-- /page -->
 
-  <!-- NAV -->
   <nav>
     <button class="nav-btn active" id="nav-home" onclick="switchNav('home')"><span class="ni">🏠</span><span class="nl">Home</span><span class="nav-dot"></span></button>
     <button class="nav-btn" id="nav-study" onclick="switchNav('study')"><span class="ni">📖</span><span class="nl">Study</span><span class="nav-dot"></span></button>
@@ -359,7 +415,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')"><span class="ni">✏️</span><span class="nl">Exam</span><span class="nav-dot"></span></button>
     <button class="nav-btn" id="nav-other" onclick="switchNav('other')"><span class="ni">🔗</span><span class="nl">Other</span><span class="nav-dot"></span></button>
   </nav>
-
 </div><!-- /app -->
 
 <!-- MODAL -->
@@ -387,19 +442,78 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
-let allRows=[], currentZoomLink='', currentMatFilter='All', matSearchTerm='';
-let darkMode = localStorage.getItem('dn-dark')==='true';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
+const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
+let allRows=[],currentZoomLink='',currentMatFilter='All',matSearchTerm='';
+let darkMode=localStorage.getItem('dn-dark')==='true';
+let deferredPrompt=null;
+const AUTO_REFRESH_MS=5*60*1000; // 5 minutes
 
-// DARK MODE
-function toggleDark(){ darkMode=!darkMode; localStorage.setItem('dn-dark',darkMode); applyDark(); }
+// ── SPLASH ──
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(()=>document.getElementById('splash').remove(),600);
+  },1800);
+});
+
+// ── PWA INSTALL ──
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  if(!localStorage.getItem('dn-install-dismissed')){
+    setTimeout(()=>document.getElementById('install-banner').classList.add('show'),3000);
+  }
+});
+function installApp(){
+  document.getElementById('install-banner').classList.remove('show');
+  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>deferredPrompt=null); }
+}
+function dismissInstall(){
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem('dn-install-dismissed','true');
+}
+
+// ── AUTO REFRESH (every 5 min) ──
+function startAutoRefresh(){
+  const bar=document.getElementById('refresh-bar');
+  const fill=document.getElementById('refresh-fill');
+  bar.classList.add('active');
+  fill.style.transition=`width ${AUTO_REFRESH_MS}ms linear`;
+  fill.style.width='100%';
+  setTimeout(()=>{
+    fetchData();
+    fill.style.transition='none';
+    fill.style.width='0%';
+    setTimeout(startAutoRefresh,100);
+  },AUTO_REFRESH_MS);
+}
+
+// ── DARK MODE ──
+function toggleDark(){darkMode=!darkMode;localStorage.setItem('dn-dark',darkMode);applyDark();}
 function applyDark(){
   document.getElementById('app').classList.toggle('dark',darkMode);
-  document.getElementById('darkBtn').textContent = darkMode?'☀️':'🌙';
+  document.getElementById('darkBtn').textContent=darkMode?'☀️':'🌙';
 }
 applyDark();
 
-// DAILY QUOTE
+// ── SHARE APP ──
+function shareApp(){
+  if(navigator.share){
+    navigator.share({title:'Digital Nepal — Lok Sewa Prep',text:'Free Lok Sewa preparation app — Live classes, materials, model tests!',url:APP_URL});
+  } else {
+    navigator.clipboard.writeText(APP_URL).then(()=>showToast('App link copied! Share it 📤'));
+  }
+}
+
+// ── SHARE MATERIAL ──
+function shareMaterial(title,link){
+  const text=`${title}\n${link}\n\nDigital Nepal App: ${APP_URL}`;
+  if(navigator.share){navigator.share({title,text,url:link});}
+  else{navigator.clipboard.writeText(text).then(()=>showToast('Link copied! Share it 📤'));}
+}
+
+// ── DAILY QUOTE ──
 const quotes=[
   'सफलता एक दिनमा आउँदैन, तर हरेक दिनको मेहनतले एक दिन अवश्य आउँछ।',
   'आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस् — भोलि धेरै ढिलो हुनसक्छ।',
@@ -416,9 +530,9 @@ const quotes=[
   'कठिनाइ देखेर भाग्नु होइन, सामना गर्नु नै वीरता हो।',
   'तपाईँको मेहनत कहिल्यै खेर जाँदैन — सही समयमा फल अवश्य मिल्छ।',
 ];
-function setDailyQuote(){ document.getElementById('daily-quote').textContent = quotes[new Date().getDate()%quotes.length]; }
+function setDailyQuote(){document.getElementById('daily-quote').textContent=quotes[new Date().getDate()%quotes.length];}
 
-// HERO DATE
+// ── HERO DATE ──
 function setHeroDate(){
   const days=['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'];
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -426,36 +540,30 @@ function setHeroDate(){
   document.getElementById('hero-date').textContent=`${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
 }
 
-// NOTICE TOGGLE
+// ── NOTICE ──
 let noticeOpen=false;
 function toggleNotice(){
   noticeOpen=!noticeOpen;
   document.getElementById('notice-body').style.display=noticeOpen?'block':'none';
   document.getElementById('notice-toggle-icon').textContent=noticeOpen?'▲ Hide':'▼ Show';
 }
-
-// NOTICES
 function renderNotices(){
   const notices=allRows.filter(r=>r.Type==='Notice');
   const el=document.getElementById('notice-list');
-  if(!notices.length){ el.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">📭 No notices yet.<br><small>Add rows with Type = Notice in your sheet.</small></div>'; return; }
-  el.innerHTML=notices.map(r=>`
-    <div class="notice-item" onclick="${r.Link&&r.Link.startsWith('http')?`window.open('${esc(r.Link)}','_blank')`:'void(0)'}">
-      <div class="notice-item-date">${r.Info||'Notice'}</div>
-      <div class="notice-item-title">${r.Title}</div>
-    </div>`).join('');
+  if(!notices.length){el.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">📭 No notices yet.<br><small>Add Type = Notice in your sheet.</small></div>';return;}
+  el.innerHTML=notices.map(r=>`<div class="notice-item" onclick="${r.Link&&r.Link.startsWith('http')?`window.open('${esc(r.Link)}','_blank')`:'void(0)'}"><div class="notice-item-date">${r.Info||'Notice'}</div><div class="notice-item-title">${r.Title}</div></div>`).join('');
 }
 
-// NAV
+// ── NAV ──
 function switchNav(id){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const btn=document.getElementById('nav-'+id); if(btn) btn.classList.add('active');
+  const btn=document.getElementById('nav-'+id);if(btn)btn.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelector('.page').scrollTop=0;
 }
 
-// FETCH
+// ── FETCH ──
 async function fetchData(){
   try{
     const res=await fetch(APPS_SCRIPT_URL);
@@ -465,18 +573,16 @@ async function fetchData(){
   }catch(e){
     showToast('Could not load data. Check connection.');
     ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty-box">⚠️ Failed to load. Tap 🔄 to retry.</div>';});
-    document.getElementById('notice-list').innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">⚠️ Failed to load.</div>';
+    document.getElementById('notice-list').innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">⚠️ Failed.</div>';
   }
 }
-
 function refreshAll(){
   ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading-box"><div class="spinner"></div>Refreshing…</div>';});
-  showToast('Refreshing data…'); fetchData();
+  showToast('Refreshing data…');fetchData();
 }
+function renderAll(){renderLiveClasses();renderMaterials('All');renderExams();renderOther();renderNotices();}
 
-function renderAll(){ renderLiveClasses(); renderMaterials('All'); renderExams(); renderOther(); renderNotices(); }
-
-// LIVE
+// ── LIVE ──
 function renderLiveClasses(){
   const lives=allRows.filter(r=>r.Type==='Live');
   const html=lives.length?lives.map(r=>liveCardHTML(r)).join(''):'<div class="empty-box">📭 No live classes yet.</div>';
@@ -487,15 +593,12 @@ function liveCardHTML(r){
   const info=r.Info||'';
   let b=`<span class="live-badge badge-zoom">ZOOM</span>`;
   const il=info.toLowerCase();
-  if(il.includes('live')||il.includes('now')) b=`<span class="live-badge badge-live">● LIVE</span>`;
-  else if(il.includes('soon')||il.includes('upcoming')) b=`<span class="live-badge badge-soon">SOON</span>`;
-  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(r.Link||'#')}')">
-    <div class="live-avatar">📹</div>
-    <div class="live-info"><div class="live-title">${r.Title}</div><div class="live-meta">🕐 ${info||'Live Class'}</div></div>
-    ${b}</div>`;
+  if(il.includes('live')||il.includes('now'))b=`<span class="live-badge badge-live">● LIVE</span>`;
+  else if(il.includes('soon')||il.includes('upcoming'))b=`<span class="live-badge badge-soon">SOON</span>`;
+  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(r.Link||'#')}')"><div class="live-avatar">📹</div><div class="live-info"><div class="live-title">${r.Title}</div><div class="live-meta">🕐 ${info||'Live Class'}</div></div>${b}</div>`;
 }
 
-// MATERIALS
+// ── MATERIALS ──
 function renderMaterials(filter){
   currentMatFilter=filter;
   const term=matSearchTerm.toLowerCase();
@@ -504,18 +607,19 @@ function renderMaterials(filter){
   if(!rows.length){el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';return;}
   el.innerHTML=rows.map(r=>matCardHTML(r)).join('');
 }
-function filterMaterials(filter,btn){ document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderMaterials(filter); }
-function searchMaterials(){ matSearchTerm=document.getElementById('mat-search').value; renderMaterials(currentMatFilter); }
+function filterMaterials(filter,btn){document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMaterials(filter);}
+function searchMaterials(){matSearchTerm=document.getElementById('mat-search').value;renderMaterials(currentMatFilter);}
 function matCardHTML(r){
   const link=r.Link&&r.Link.startsWith('http')?r.Link:null;
   const typeLabel=r.Type||'Material';
   const colors={Live:'#e8f5ee;color:#1a6b3c',Material:'#eff6ff;color:#2563eb',Exam:'#fffbeb;color:#b45309',Other:'#f5f3ff;color:#7c3aed',Notice:'#fef2f2;color:#dc2626'};
   const tagStyle=colors[typeLabel]||colors['Material'];
-  const btnHTML=link?`<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`:`<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
-  return `<div class="mat-card"><div class="mat-title">${r.Title}</div>${r.Info?`<div class="mat-sub">${r.Info}</div>`:''}<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span><div class="mat-links">${btnHTML}</div></div>`;
+  const openBtn=link?`<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`:`<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
+  const shareBtn=link?`<button class="share-btn" onclick="shareMaterial('${esc(r.Title)}','${link}')">📤 Share</button>`:'';
+  return `<div class="mat-card"><div class="mat-title">${r.Title}</div>${r.Info?`<div class="mat-sub">${r.Info}</div>`:''}<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span><div class="mat-links">${openBtn}${shareBtn}</div></div>`;
 }
 
-// EXAMS
+// ── EXAMS ──
 function renderExams(){
   const exams=allRows.filter(r=>r.Type==='Exam');
   const el=document.getElementById('exam-list');
@@ -531,7 +635,7 @@ function renderExams(){
   el.innerHTML=html;
 }
 
-// OTHER
+// ── OTHER ──
 function renderOther(){
   const others=allRows.filter(r=>r.Type==='Other');
   const el=document.getElementById('other-list');
@@ -539,7 +643,7 @@ function renderOther(){
   el.innerHTML=others.map(r=>`<a class="other-card" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener"><div class="other-icon">🔗</div><div class="other-info"><div class="other-title">${r.Title}</div><div class="other-sub">${r.Info||'External link'}</div></div><span class="other-arrow">›</span></a>`).join('');
 }
 
-// MODAL
+// ── MODAL ──
 function openLiveModal(title,info,link){
   currentZoomLink=link;
   document.getElementById('m-title').textContent=title;
@@ -565,6 +669,7 @@ function showToast(msg){
 setDailyQuote();
 setHeroDate();
 fetchData();
+setTimeout(startAutoRefresh, AUTO_REFRESH_MS);
 </script>
 </body>
 </html>
