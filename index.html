@@ -19,102 +19,129 @@
   --shadow-md:0 4px 16px rgba(0,0,0,.10);
   --radius:14px;--radius-sm:9px;
 }
+.dark{
+  --primary:#22c55e;--primary-light:#052e16;--primary-dark:#16a34a;
+  --accent:#f59e0b;--accent-light:#1c1400;
+  --green:#4ade80;--green-light:#052e16;
+  --red:#f87171;--red-light:#1c0000;
+  --purple:#a78bfa;--purple-light:#1e1030;
+  --bg:#0f172a;--white:#1e293b;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:#334155;--border2:#1e293b;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 16px rgba(0,0,0,.4);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;transition:background .3s,color .3s}
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.12);position:relative;transition:background .3s}
 
-/* ── LAYOUT ── */
-.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.12);position:relative}
-
-/* ── TOP BAR ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;background:var(--white);border-bottom:1px solid var(--border2);position:relative;z-index:10}
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;background:var(--white);border-bottom:1px solid var(--border2);position:relative;z-index:10;transition:background .3s,border-color .3s}
 .topbar-brand{display:flex;align-items:center;gap:10px}
-.brand-logo svg{width:38px;height:38px;border-radius:11px;display:block}
 .brand-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.15}
 .brand-name span{color:var(--primary)}
 .brand-tagline{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.3px}
 .topbar-icons{display:flex;gap:8px;align-items:center}
-.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative;transition:background .3s}
 .badge{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--white)}
 
-/* ── SCROLL AREA ── */
+/* SCROLL */
 .page{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:90px}
 .page::-webkit-scrollbar{width:0}
 .section{display:none}
 .section.active{display:block}
 
-/* ── HERO BANNER ── */
-.hero{margin:14px 16px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20 0%,#1a6b3c 55%,#22c55e 100%);padding:22px 20px;min-height:130px}
-.hero::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
-.hero::after{content:'';position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)}
-.hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:99px;text-transform:uppercase;margin-bottom:8px}
-.hero h2{font-size:18px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px}
-.hero p{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5}
-.hero-btn{margin-top:12px;display:inline-block;background:#fff;color:var(--primary);font-size:11px;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;cursor:pointer;border:none}
+/* HERO */
+.hero{margin:14px 16px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20 0%,#1a6b3c 55%,#22c55e 100%);padding:22px 20px 18px;min-height:155px}
+.hero-c1{position:absolute;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.06);top:-30px;right:-30px}
+.hero-c2{position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-20px;right:40px}
+.hero-c3{position:absolute;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.05);top:30px;left:-10px}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative}
+.hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:99px;text-transform:uppercase}
+.hero-date{font-size:10px;color:rgba(255,255,255,.65);font-weight:600}
+.hero h2{font-size:18px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:5px;position:relative}
+.hero p{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5;position:relative}
+.hero-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;position:relative}
+.hero-btn{display:inline-block;background:#fff;color:var(--primary);font-size:11px;font-weight:700;padding:7px 16px;border-radius:99px;cursor:pointer;border:none}
+.hero-stats-row{display:flex;gap:12px}
+.hero-stat-num{font-size:14px;font-weight:800;color:#fff;line-height:1;text-align:center}
+.hero-stat-label{font-size:8px;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px;text-align:center}
 
-/* ── QUICK TABS ── */
-.quick-tabs{display:flex;gap:8px;padding:14px 16px 2px;overflow-x:auto}
+/* DAILY QUOTE */
+.quote-card{margin:10px 16px 0;padding:13px 15px;background:linear-gradient(135deg,#052e16,#0a3d20);border-radius:var(--radius);position:relative;overflow:hidden;border:1px solid rgba(34,197,94,.2)}
+.quote-card::before{content:'❝';position:absolute;top:-8px;left:8px;font-size:44px;color:rgba(34,197,94,.12);font-family:serif;line-height:1}
+.quote-text{font-size:12px;color:rgba(255,255,255,.9);line-height:1.7;font-style:italic;position:relative}
+.quote-author{font-size:10px;color:rgba(255,255,255,.45);font-weight:600;margin-top:5px;position:relative}
+
+/* NOTICE */
+.notice-strip{margin:10px 16px 0;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border)}
+.notice-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent);cursor:pointer}
+.notice-head h4{font-size:12px;font-weight:800;color:#fff}
+.notice-toggle{font-size:11px;color:rgba(255,255,255,.8);font-weight:600}
+.notice-body{background:var(--white);transition:background .3s}
+.notice-item{padding:11px 14px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .2s}
+.notice-item:last-child{border-bottom:none}
+.notice-item:hover{background:var(--bg)}
+.notice-item-date{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.notice-item-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.4}
+.notice-item-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* QUICK TABS */
+.quick-tabs{display:flex;gap:8px;padding:12px 16px 2px;overflow-x:auto}
 .quick-tabs::-webkit-scrollbar{height:0}
 .qtab{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
 .qtab.active,.qtab:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-/* ── SECTION TITLE ── */
-.sec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+/* SEC HEAD */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
 .sec-head h3{font-size:15px;font-weight:800;color:var(--text)}
 .view-all{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;background:none;border:none}
 
-/* ── LIVE CLASS CARD ── */
-.live-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;position:relative}
+/* LIVE CARD */
+.live-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:all .2s}
 .live-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
-.live-avatar{width:46px;height:46px;border-radius:12px;object-fit:cover;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.live-avatar{width:46px;height:46px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .live-info{flex:1;min-width:0}
 .live-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:3px}
-.live-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px}
-.live-time{font-size:11px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:4px}
+.live-meta{font-size:11px;color:var(--text2)}
 .live-badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;flex-shrink:0}
 .badge-live{background:#fef2f2;color:var(--red);border:1px solid #fecaca;animation:pulse 1.5s infinite}
 .badge-soon{background:var(--accent-light);color:var(--accent);border:1px solid #fde68a}
 .badge-zoom{background:#e8f5ee;color:var(--primary);border:1px solid #a7f3d0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
-/* ── ICON GRID ── */
+/* ICON GRID */
 .icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 16px 8px}
 .icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:14px 8px;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border2);transition:all .2s}
 .icon-item:hover{background:var(--primary-light);border-color:var(--primary)}
 .icon-item .ii{font-size:22px}
 .icon-item span{font-size:11px;font-weight:600;color:var(--text2);text-align:center}
 
-/* ── NOTICE CARD ── */
-.notice-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
-.notice-card:hover{border-color:var(--primary)}
-.notice-date{font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px}
-.notice-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
-.notice-sub{font-size:12px;color:var(--text2);line-height:1.5}
-
-/* ── MAT LIST ── */
+/* MAT */
 .mat-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
 .mat-card:hover{border-color:var(--primary);background:var(--primary-light)}
 .mat-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .mat-sub{font-size:11px;color:var(--text2);margin-bottom:8px}
 .mat-links{display:flex;flex-wrap:wrap;gap:6px}
-.mat-link{font-size:11px;color:var(--primary);font-weight:600;display:flex;align-items:center;gap:3px;text-decoration:none;background:var(--primary-light);padding:4px 10px;border-radius:99px;border:1px solid #a7f3d0}
+.mat-link{font-size:11px;color:var(--primary);font-weight:600;text-decoration:none;background:var(--primary-light);padding:4px 10px;border-radius:99px;border:1px solid #a7f3d0}
 .mat-link:hover{background:var(--primary);color:#fff}
 
-/* ── SEARCH BAR ── */
+/* SEARCH */
 .search-bar{margin:14px 16px 8px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
 .search-bar input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text);outline:none}
 .search-bar input::placeholder{color:var(--text3)}
 
-/* ── EXAM CARD ── */
+/* EXAM */
 .exam-card{margin:0 16px 12px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow)}
-.exam-card-head{padding:14px;display:flex;align-items:center;gap:10px}
+.exam-card-head{padding:14px;display:flex;align-items:center;gap:10px;background:var(--white)}
 .exam-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .exam-card-title{font-size:14px;font-weight:700;color:var(--text)}
 .exam-card-sub{font-size:11px;color:var(--text2);margin-top:2px}
-.exam-sets{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px}
+.exam-sets{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px;background:var(--white)}
 .set-btn{font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
 .set-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-/* ── STUDY PAGE ── */
+/* STUDY */
 .study-cat{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
 .study-cat:hover{border-color:var(--primary);transform:translateX(3px)}
 .study-cat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
@@ -122,27 +149,24 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .study-cat-info p{font-size:11px;color:var(--text2);margin-top:2px}
 .study-cat-arrow{margin-left:auto;font-size:16px;color:var(--text3)}
 
-/* ── MODAL ── */
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
 .modal{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 20px}
-.modal-title{font-size:17px;font-weight:800;margin-bottom:4px}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text)}
 .modal-info-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:var(--text2)}
 .modal-info-row strong{color:var(--text)}
 .modal-divider{height:1px;background:var(--border);margin:16px 0}
 .modal-zoom-section{background:linear-gradient(135deg,#e8f5ee,#dcfce7);border:1.5px solid #a7f3d0;border-radius:var(--radius);padding:16px;margin-bottom:16px}
-.modal-zoom-title{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px}
-.zoom-id-row{display:flex;gap:8px;margin-bottom:8px}
-.zoom-id-box{flex:1;padding:9px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text);font-family:monospace;font-weight:600}
-.copy-btn{padding:9px 12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:700;cursor:pointer}
+.modal-zoom-title{font-size:12px;font-weight:700;color:#1a6b3c;margin-bottom:6px}
 .join-zoom-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-bottom:10px}
-.join-zoom-btn:hover{background:var(--primary-dark);transform:scale(1.01)}
+.join-zoom-btn:hover{background:var(--primary-dark)}
 .cancel-btn{width:100%;padding:12px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
 
-/* ── NAV ── */
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1.5px solid var(--border);display:flex;padding:6px 0 max(10px,env(safe-area-inset-bottom));z-index:20}
+/* NAV */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1.5px solid var(--border);display:flex;padding:6px 0 max(10px,env(safe-area-inset-bottom));z-index:20;transition:background .3s,border-color .3s}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:4px 2px;color:var(--text3);font-family:inherit;transition:color .2s;min-width:0}
 .nav-btn.active{color:var(--primary)}
 .nav-btn .ni{font-size:18px;line-height:1}
@@ -150,24 +174,13 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--primary);margin-top:1px;opacity:0;transition:opacity .2s}
 .nav-btn.active .nav-dot{opacity:1}
 
-/* ── TABS BAR ── */
-.tab-bar{display:flex;border-bottom:1.5px solid var(--border);padding:0 16px;background:var(--white);position:sticky;top:0;z-index:5;overflow-x:auto}
+/* TABS */
+.tab-bar{display:flex;border-bottom:1.5px solid var(--border);padding:0 16px;background:var(--white);position:sticky;top:0;z-index:5;overflow-x:auto;transition:background .3s}
 .tab-bar::-webkit-scrollbar{height:0}
 .tbar-btn{flex-shrink:0;padding:12px 10px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap}
 .tbar-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
 
-/* ── FEED ── */
-.feed-card{margin:0 16px 12px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-.feed-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.feed-avatar{width:36px;height:36px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;flex-shrink:0}
-.feed-meta h4{font-size:12px;font-weight:700;color:var(--text)}
-.feed-meta span{font-size:10px;color:var(--text3)}
-.feed-body{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px}
-.feed-actions{display:flex;gap:14px}
-.feed-act{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;cursor:pointer;background:none;border:none;font-family:inherit}
-.feed-act:hover{color:var(--primary)}
-
-/* ── OTHER PAGE ── */
+/* OTHER */
 .other-card{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);text-decoration:none}
 .other-card:hover{border-color:var(--primary);background:var(--primary-light);transform:translateX(3px)}
 .other-icon{width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -176,42 +189,30 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .other-sub{font-size:11px;color:var(--text2)}
 .other-arrow{font-size:16px;color:var(--text3)}
 
-/* ── LOADING ── */
+/* LOADING */
 .loading-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px;font-weight:600}
 .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px}
 
-/* ── ANIMATIONS ── */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.live-card,.mat-card,.study-cat,.exam-card,.feed-card,.other-card{animation:fadeIn .3s ease both}
+.live-card,.mat-card,.study-cat,.exam-card,.other-card,.notice-strip,.quote-card{animation:fadeIn .3s ease both}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
 
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-brand">
-      <!-- Custom Digital Nepal Logo -->
-      <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px">
-        <defs>
-          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#0a3d20"/>
-            <stop offset="100%" style="stop-color:#1a6b3c"/>
-          </linearGradient>
-        </defs>
+      <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px;flex-shrink:0">
+        <defs><linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0a3d20"/><stop offset="100%" style="stop-color:#1a6b3c"/></linearGradient></defs>
         <rect width="38" height="38" rx="11" fill="url(#bgGrad)"/>
-        <!-- Mount Everest silhouette -->
-        <polygon points="5,28 13,14 17,18 19,11 21,18 25,14 33,28" fill="rgba(255,255,255,0.15)" stroke="none"/>
-        <!-- Main peak -->
+        <polygon points="5,28 13,14 17,18 19,11 21,18 25,14 33,28" fill="rgba(255,255,255,0.15)"/>
         <polyline points="12,26 19,10 26,26" fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-        <!-- Side peaks -->
         <polyline points="5,26 12,18 15,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
         <polyline points="33,26 26,18 23,22" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-        <!-- Base line -->
         <line x1="4" y1="28" x2="34" y2="28" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round"/>
-        <!-- Snow cap dot -->
         <circle cx="19" cy="10" r="1.5" fill="white"/>
       </svg>
       <div>
@@ -220,65 +221,79 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       </div>
     </div>
     <div class="topbar-icons">
+      <button class="icon-btn" onclick="toggleDark()" id="darkBtn">🌙</button>
       <button class="icon-btn" onclick="refreshAll()">🔄</button>
       <button class="icon-btn" onclick="showNotif()">🔔<span class="badge"></span></button>
     </div>
   </div>
 
-  <!-- PAGES -->
   <div class="page">
 
-    <!-- ══ HOME ══ -->
+    <!-- HOME -->
     <div class="section active" id="pg-home">
 
+      <!-- HERO -->
       <div class="hero">
-        <div class="hero-tag">FREE</div>
+        <div class="hero-c1"></div><div class="hero-c2"></div><div class="hero-c3"></div>
+        <div class="hero-top">
+          <div class="hero-tag">🇳🇵 FREE</div>
+          <div class="hero-date" id="hero-date"></div>
+        </div>
         <h2>Live Class · Materials<br>Model Test · Lok Sewa Prep</h2>
-        <p>Digital Nepal — Your Smart Study Partner</p>
-        <button class="hero-btn" onclick="switchNav('materials')">Explore Materials →</button>
+        <p>Digital Nepal — Your Smart Study Partner 🏔</p>
+        <div class="hero-bottom">
+          <button class="hero-btn" onclick="switchNav('materials')">Explore →</button>
+          <div class="hero-stats-row">
+            <div><div class="hero-stat-num">FREE</div><div class="hero-stat-label">Always</div></div>
+            <div><div class="hero-stat-num">📹</div><div class="hero-stat-label">Live</div></div>
+          </div>
+        </div>
       </div>
 
+      <!-- DAILY QUOTE -->
+      <div class="quote-card">
+        <div class="quote-text" id="daily-quote">लोड हुँदैछ…</div>
+        <div class="quote-author">— प्रेरणा · Digital Nepal</div>
+      </div>
+
+      <!-- NOTICE -->
+      <div class="notice-strip">
+        <div class="notice-head" onclick="toggleNotice()">
+          <h4>📢 सूचना / Notice</h4>
+          <span class="notice-toggle" id="notice-toggle-icon">▼ Show</span>
+        </div>
+        <div class="notice-body" id="notice-body" style="display:none">
+          <div id="notice-list"><div class="loading-box" style="padding:14px"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- QUICK TABS -->
       <div class="quick-tabs">
         <div class="qtab active">Live Classes</div>
         <div class="qtab" onclick="switchNav('materials')">Materials</div>
         <div class="qtab" onclick="switchNav('exam')">Exams</div>
-        <div class="qtab" onclick="switchNav('other')">Other Links</div>
+        <div class="qtab" onclick="switchNav('other')">Other</div>
       </div>
 
+      <!-- ICON GRID -->
       <div class="icon-grid">
-        <div class="icon-item" onclick="switchNav('home')">
-          <span class="ii">▶️</span><span>Live Class</span>
-        </div>
-        <div class="icon-item" onclick="switchNav('materials')">
-          <span class="ii">📄</span><span>Materials</span>
-        </div>
-        <div class="icon-item" onclick="switchNav('exam')">
-          <span class="ii">✏️</span><span>Exam</span>
-        </div>
-        <div class="icon-item" onclick="switchNav('other')">
-          <span class="ii">🔗</span><span>Other Links</span>
-        </div>
-        <div class="icon-item" onclick="refreshAll()">
-          <span class="ii">🔄</span><span>Refresh</span>
-        </div>
-        <div class="icon-item" onclick="showToast('Coming soon!')">
-          <span class="ii">🏆</span><span>Rankings</span>
-        </div>
+        <div class="icon-item" onclick="switchNav('home')"><span class="ii">▶️</span><span>Live Class</span></div>
+        <div class="icon-item" onclick="switchNav('materials')"><span class="ii">📄</span><span>Materials</span></div>
+        <div class="icon-item" onclick="switchNav('exam')"><span class="ii">✏️</span><span>Exam</span></div>
+        <div class="icon-item" onclick="switchNav('other')"><span class="ii">🔗</span><span>Other Links</span></div>
+        <div class="icon-item" onclick="refreshAll()"><span class="ii">🔄</span><span>Refresh</span></div>
+        <div class="icon-item" onclick="showToast('Coming soon!')"><span class="ii">🏆</span><span>Rankings</span></div>
       </div>
 
       <div class="sec-head">
         <h3>🔴 Live & Upcoming Classes</h3>
-        <button class="view-all" onclick="switchNav('exam')">View All →</button>
+        <button class="view-all" onclick="switchNav('study')">View All →</button>
       </div>
-      <div id="home-live-list">
-        <div class="loading-box"><div class="spinner"></div>Loading classes…</div>
-      </div>
-
-
+      <div id="home-live-list"><div class="loading-box"><div class="spinner"></div>Loading classes…</div></div>
 
     </div><!-- /home -->
 
-    <!-- ══ STUDY (Materials) ══ -->
+    <!-- STUDY -->
     <div class="section" id="pg-study">
       <div class="sec-head" style="padding-top:18px"><h3>📚 My Courses</h3></div>
       <div class="study-cat" onclick="switchNav('materials')">
@@ -301,76 +316,58 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div class="study-cat-info"><h4>Other Links & Resources</h4><p>Extra resources & tools</p></div>
         <span class="study-cat-arrow">›</span>
       </div>
-
       <div class="sec-head"><h3>🔴 Live Classes Today</h3></div>
-      <div id="study-live-list">
-        <div class="loading-box"><div class="spinner"></div>Loading…</div>
-      </div>
+      <div id="study-live-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
     </div><!-- /study -->
 
-    <!-- ══ MATERIALS ══ -->
+    <!-- MATERIALS -->
     <div class="section" id="pg-materials">
-      <div class="tab-bar" id="matTabs">
+      <div class="tab-bar">
         <button class="tbar-btn active" onclick="filterMaterials('All',this)">All</button>
         <button class="tbar-btn" onclick="filterMaterials('Material',this)">Materials</button>
         <button class="tbar-btn" onclick="filterMaterials('Live',this)">Live</button>
         <button class="tbar-btn" onclick="filterMaterials('Exam',this)">Exam</button>
+        <button class="tbar-btn" onclick="filterMaterials('Notice',this)">Notice</button>
         <button class="tbar-btn" onclick="filterMaterials('Other',this)">Other</button>
       </div>
       <div class="search-bar">
         <span>🔍</span>
         <input type="text" id="mat-search" placeholder="Search materials..." oninput="searchMaterials()">
       </div>
-      <div id="mat-list">
-        <div class="loading-box"><div class="spinner"></div>Loading materials…</div>
-      </div>
+      <div id="mat-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
     </div><!-- /materials -->
 
-    <!-- ══ EXAM ══ -->
+    <!-- EXAM -->
     <div class="section" id="pg-exam">
       <div class="sec-head" style="padding-top:18px"><h3>📝 Model Tests & Exams</h3></div>
-      <div id="exam-list">
-        <div class="loading-box"><div class="spinner"></div>Loading exams…</div>
-      </div>
+      <div id="exam-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
     </div><!-- /exam -->
 
-    <!-- ══ OTHER ══ -->
+    <!-- OTHER -->
     <div class="section" id="pg-other">
       <div class="sec-head" style="padding-top:18px"><h3>🔗 Other Links & Resources</h3></div>
-      <div id="other-list">
-        <div class="loading-box"><div class="spinner"></div>Loading…</div>
-      </div>
+      <div id="other-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
     </div><!-- /other -->
 
   </div><!-- /page -->
 
-  <!-- BOTTOM NAV -->
+  <!-- NAV -->
   <nav>
-    <button class="nav-btn active" id="nav-home" onclick="switchNav('home')">
-      <span class="ni">🏠</span><span class="nl">Home</span><span class="nav-dot"></span>
-    </button>
-    <button class="nav-btn" id="nav-study" onclick="switchNav('study')">
-      <span class="ni">📖</span><span class="nl">Study</span><span class="nav-dot"></span>
-    </button>
-    <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')">
-      <span class="ni">📄</span><span class="nl">Materials</span><span class="nav-dot"></span>
-    </button>
-    <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')">
-      <span class="ni">✏️</span><span class="nl">Exam</span><span class="nav-dot"></span>
-    </button>
-    <button class="nav-btn" id="nav-other" onclick="switchNav('other')">
-      <span class="ni">🔗</span><span class="nl">Other</span><span class="nav-dot"></span>
-    </button>
+    <button class="nav-btn active" id="nav-home" onclick="switchNav('home')"><span class="ni">🏠</span><span class="nl">Home</span><span class="nav-dot"></span></button>
+    <button class="nav-btn" id="nav-study" onclick="switchNav('study')"><span class="ni">📖</span><span class="nl">Study</span><span class="nav-dot"></span></button>
+    <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')"><span class="ni">📄</span><span class="nl">Materials</span><span class="nav-dot"></span></button>
+    <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')"><span class="ni">✏️</span><span class="nl">Exam</span><span class="nav-dot"></span></button>
+    <button class="nav-btn" id="nav-other" onclick="switchNav('other')"><span class="ni">🔗</span><span class="nl">Other</span><span class="nav-dot"></span></button>
   </nav>
 
 </div><!-- /app -->
 
-<!-- LIVE CLASS MODAL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="liveModal" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <div id="m-icon" style="font-size:28px">📹</div>
+      <div style="font-size:28px">📹</div>
       <div>
         <div class="modal-title" id="m-title"></div>
         <div style="font-size:12px;color:var(--text2)" id="m-info"></div>
@@ -382,272 +379,191 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <div class="modal-divider"></div>
     <div class="modal-zoom-section">
       <div class="modal-zoom-title">📹 Join Details</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Tap the button below to open Zoom class directly.</div>
+      <div style="font-size:12px;color:#374151;margin-bottom:10px">Tap the button below to open Zoom class directly.</div>
     </div>
-    <button class="join-zoom-btn" id="m-joinbtn" onclick="joinZoom()">
-      📹 Join Live Class on Zoom
-    </button>
-    <button class="cancel-btn" onclick="document.getElementById('liveModal').classList.remove('open')">
-      Close
-    </button>
+    <button class="join-zoom-btn" onclick="joinZoom()">📹 Join Live Class on Zoom</button>
+    <button class="cancel-btn" onclick="document.getElementById('liveModal').classList.remove('open')">Close</button>
   </div>
 </div>
 
 <script>
-// ── CONFIG ──
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
+let allRows=[], currentZoomLink='', currentMatFilter='All', matSearchTerm='';
+let darkMode = localStorage.getItem('dn-dark')==='true';
 
-let allRows = [];
-let currentZoomLink = '';
-let currentMatFilter = 'All';
-let matSearchTerm = '';
+// DARK MODE
+function toggleDark(){ darkMode=!darkMode; localStorage.setItem('dn-dark',darkMode); applyDark(); }
+function applyDark(){
+  document.getElementById('app').classList.toggle('dark',darkMode);
+  document.getElementById('darkBtn').textContent = darkMode?'☀️':'🌙';
+}
+applyDark();
 
-// ── NAVIGATION ──
+// DAILY QUOTE
+const quotes=[
+  'सफलता एक दिनमा आउँदैन, तर हरेक दिनको मेहनतले एक दिन अवश्य आउँछ।',
+  'आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस् — भोलि धेरै ढिलो हुनसक्छ।',
+  'पढ्नु भनेको भविष्यको ढोका खोल्नु हो — हरेक पाना एक कदम अगाडि।',
+  'लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन — हिम्मत राख्नुहोस्।',
+  'हरेक दिनको १% सुधारले तपाईँलाई एक वर्षमा ३७ गुणा शक्तिशाली बनाउँछ।',
+  'ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।',
+  'अरूको सफलता देखेर निराश नहोनुस् — तपाईँको पालो पनि आउँछ।',
+  'आज गरेको मेहनत भोलिको सफलताको जग हो।',
+  'परीक्षामा सफल हुन चाहनुहुन्छ भने आजबाटै कठोर परिश्रम गर्नुहोस्।',
+  'सानो सानो प्रयासले ठूलो लक्ष्य प्राप्त हुन्छ — हार नमान्नुहोस्।',
+  'नेपालको सेवा गर्ने मौका पाउनु ठूलो सौभाग्य हो — यसको लागि तयार हुनुहोस्।',
+  'विद्यार्थी जीवन एकपटक मात्र आउँछ — यसलाई सार्थक बनाउनुहोस्।',
+  'कठिनाइ देखेर भाग्नु होइन, सामना गर्नु नै वीरता हो।',
+  'तपाईँको मेहनत कहिल्यै खेर जाँदैन — सही समयमा फल अवश्य मिल्छ।',
+];
+function setDailyQuote(){ document.getElementById('daily-quote').textContent = quotes[new Date().getDate()%quotes.length]; }
+
+// HERO DATE
+function setHeroDate(){
+  const days=['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const n=new Date();
+  document.getElementById('hero-date').textContent=`${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
+}
+
+// NOTICE TOGGLE
+let noticeOpen=false;
+function toggleNotice(){
+  noticeOpen=!noticeOpen;
+  document.getElementById('notice-body').style.display=noticeOpen?'block':'none';
+  document.getElementById('notice-toggle-icon').textContent=noticeOpen?'▲ Hide':'▼ Show';
+}
+
+// NOTICES
+function renderNotices(){
+  const notices=allRows.filter(r=>r.Type==='Notice');
+  const el=document.getElementById('notice-list');
+  if(!notices.length){ el.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">📭 No notices yet.<br><small>Add rows with Type = Notice in your sheet.</small></div>'; return; }
+  el.innerHTML=notices.map(r=>`
+    <div class="notice-item" onclick="${r.Link&&r.Link.startsWith('http')?`window.open('${esc(r.Link)}','_blank')`:'void(0)'}">
+      <div class="notice-item-date">${r.Info||'Notice'}</div>
+      <div class="notice-item-title">${r.Title}</div>
+    </div>`).join('');
+}
+
+// NAV
 function switchNav(id){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const btn = document.getElementById('nav-'+id);
-  if(btn) btn.classList.add('active');
+  const btn=document.getElementById('nav-'+id); if(btn) btn.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelector('.page').scrollTop=0;
 }
 
-// ── CSV PARSER ──
-function parseCSV(text){
-  const lines = text.trim().split('\n');
-  if(lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
-  return lines.slice(1).map(line=>{
-    // Handle quoted commas
-    const cols = [];
-    let inQuote = false, cur = '';
-    for(let i=0;i<line.length;i++){
-      if(line[i]==='"'){ inQuote=!inQuote; }
-      else if(line[i]===',' && !inQuote){ cols.push(cur.trim()); cur=''; }
-      else { cur+=line[i]; }
-    }
-    cols.push(cur.trim());
-    const obj = {};
-    headers.forEach((h,i)=>{ obj[h] = (cols[i]||'').replace(/^"|"$/g,'').trim(); });
-    return obj;
-  }).filter(r=>r.Title && r.Title.length>0);
-}
-
-// ── FETCH DATA ──
+// FETCH
 async function fetchData(){
   try{
-    const res = await fetch(APPS_SCRIPT_URL);
-    const json = await res.json();
-    allRows = json.map(r=>({
-      Title: String(r.Title||'').trim(),
-      Link:  String(r.Link||'').trim(),
-      Type:  String(r.Type||'').trim(),
-      Info:  String(r.Info||'').trim()
-    })).filter(r=>r.Title.length>0);
+    const res=await fetch(APPS_SCRIPT_URL);
+    const json=await res.json();
+    allRows=json.map(r=>({Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim()})).filter(r=>r.Title.length>0);
     renderAll();
-  } catch(e){
+  }catch(e){
     showToast('Could not load data. Check connection.');
-    ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.innerHTML='<div class="empty-box">⚠️ Failed to load. Tap 🔄 to retry.</div>';
-    });
+    ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty-box">⚠️ Failed to load. Tap 🔄 to retry.</div>';});
+    document.getElementById('notice-list').innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">⚠️ Failed to load.</div>';
   }
 }
 
 function refreshAll(){
-  ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.innerHTML='<div class="loading-box"><div class="spinner"></div>Refreshing…</div>';
-  });
-  showToast('Refreshing data…');
-  fetchData();
+  ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading-box"><div class="spinner"></div>Refreshing…</div>';});
+  showToast('Refreshing data…'); fetchData();
 }
 
-// ── RENDER ALL ──
-function renderAll(){
-  renderLiveClasses();
-  renderMaterials('All');
-  renderExams();
-  renderOther();
-}
+function renderAll(){ renderLiveClasses(); renderMaterials('All'); renderExams(); renderOther(); renderNotices(); }
 
-// ── LIVE CLASSES (Type = Live) ──
+// LIVE
 function renderLiveClasses(){
-  const lives = allRows.filter(r=>r.Type==='Live');
-  const html = lives.length ? lives.map(r=>liveCardHTML(r)).join('') 
-    : '<div class="empty-box">📭 No live classes scheduled yet.</div>';
-  document.getElementById('home-live-list').innerHTML = html;
-  document.getElementById('study-live-list').innerHTML = html;
+  const lives=allRows.filter(r=>r.Type==='Live');
+  const html=lives.length?lives.map(r=>liveCardHTML(r)).join(''):'<div class="empty-box">📭 No live classes yet.</div>';
+  document.getElementById('home-live-list').innerHTML=html;
+  document.getElementById('study-live-list').innerHTML=html;
 }
-
 function liveCardHTML(r){
-  const info = r.Info || '';
-  // Determine badge
-  let badgeHTML = `<span class="live-badge badge-zoom">ZOOM</span>`;
-  const infoLow = info.toLowerCase();
-  if(infoLow.includes('live') || infoLow.includes('now')) badgeHTML = `<span class="live-badge badge-live">● LIVE</span>`;
-  else if(infoLow.includes('soon') || infoLow.includes('upcoming')) badgeHTML = `<span class="live-badge badge-soon">SOON</span>`;
-  
-  const link = r.Link || '#';
-  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(link)}')">
+  const info=r.Info||'';
+  let b=`<span class="live-badge badge-zoom">ZOOM</span>`;
+  const il=info.toLowerCase();
+  if(il.includes('live')||il.includes('now')) b=`<span class="live-badge badge-live">● LIVE</span>`;
+  else if(il.includes('soon')||il.includes('upcoming')) b=`<span class="live-badge badge-soon">SOON</span>`;
+  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(r.Link||'#')}')">
     <div class="live-avatar">📹</div>
-    <div class="live-info">
-      <div class="live-title">${r.Title}</div>
-      <div class="live-meta">🕐 ${info||'Live Class'}</div>
-    </div>
-    ${badgeHTML}
-  </div>`;
+    <div class="live-info"><div class="live-title">${r.Title}</div><div class="live-meta">🕐 ${info||'Live Class'}</div></div>
+    ${b}</div>`;
 }
 
-// ── MATERIALS (Type = Material) ──
-
+// MATERIALS
 function renderMaterials(filter){
-  currentMatFilter = filter;
-  const term = matSearchTerm.toLowerCase();
-  let rows = allRows.filter(r=>{
-    if(filter==='All') return true;
-    return r.Type === filter;
-  }).filter(r=>{
-    if(!term) return true;
-    return r.Title.toLowerCase().includes(term) || (r.Info||'').toLowerCase().includes(term);
-  });
-
-  const el = document.getElementById('mat-list');
-  if(!rows.length){
-    el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';
-    return;
-  }
-  el.innerHTML = rows.map(r=>matCardHTML(r)).join('');
+  currentMatFilter=filter;
+  const term=matSearchTerm.toLowerCase();
+  const rows=allRows.filter(r=>filter==='All'?true:r.Type===filter).filter(r=>!term?true:r.Title.toLowerCase().includes(term)||(r.Info||'').toLowerCase().includes(term));
+  const el=document.getElementById('mat-list');
+  if(!rows.length){el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';return;}
+  el.innerHTML=rows.map(r=>matCardHTML(r)).join('');
 }
-
-function filterMaterials(filter, btn){
-  document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMaterials(filter);
-}
-
-function searchMaterials(){
-  matSearchTerm = document.getElementById('mat-search').value;
-  renderMaterials(currentMatFilter);
-}
-
+function filterMaterials(filter,btn){ document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderMaterials(filter); }
+function searchMaterials(){ matSearchTerm=document.getElementById('mat-search').value; renderMaterials(currentMatFilter); }
 function matCardHTML(r){
-  const link = r.Link && r.Link.startsWith('http') ? r.Link : null;
-  const info = r.Info || '';
-  const typeLabel = r.Type || 'Material';
-  const colors = {Live:'#e8f5ee;color:#1a6b3c', Material:'#eff6ff;color:#2563eb', Exam:'#fffbeb;color:#b45309', Other:'#f5f3ff;color:#7c3aed'};
-  const tagStyle = colors[typeLabel] || colors['Material'];
-  const btnHTML = link 
-    ? `<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`
-    : `<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
-  return `<div class="mat-card">
-    <div class="mat-title">${r.Title}</div>
-    ${info ? `<div class="mat-sub">${info}</div>` : ''}
-    <span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span>
-    <div class="mat-links">${btnHTML}</div>
-  </div>`;
+  const link=r.Link&&r.Link.startsWith('http')?r.Link:null;
+  const typeLabel=r.Type||'Material';
+  const colors={Live:'#e8f5ee;color:#1a6b3c',Material:'#eff6ff;color:#2563eb',Exam:'#fffbeb;color:#b45309',Other:'#f5f3ff;color:#7c3aed',Notice:'#fef2f2;color:#dc2626'};
+  const tagStyle=colors[typeLabel]||colors['Material'];
+  const btnHTML=link?`<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`:`<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
+  return `<div class="mat-card"><div class="mat-title">${r.Title}</div>${r.Info?`<div class="mat-sub">${r.Info}</div>`:''}<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span><div class="mat-links">${btnHTML}</div></div>`;
 }
 
-// ── EXAMS (Type = Exam) ──
+// EXAMS
 function renderExams(){
-  const exams = allRows.filter(r=>r.Type==='Exam');
-  const el = document.getElementById('exam-list');
-  if(!exams.length){
-    el.innerHTML='<div class="empty-box">📭 No exam links added yet.<br><small>Add rows with Type = Exam in your Google Sheet.</small></div>';
-    return;
-  }
-  // Group by Info field (acts as category), or show individually
-  const grouped = {};
-  exams.forEach(r=>{
-    const cat = r.Info || 'General';
-    if(!grouped[cat]) grouped[cat]=[];
-    grouped[cat].push(r);
-  });
-
-  let html = '';
+  const exams=allRows.filter(r=>r.Type==='Exam');
+  const el=document.getElementById('exam-list');
+  if(!exams.length){el.innerHTML='<div class="empty-box">📭 No exam links yet.<br><small>Add Type = Exam in your sheet.</small></div>';return;}
+  const grouped={};
+  exams.forEach(r=>{const c=r.Info||'General';if(!grouped[c])grouped[c]=[];grouped[c].push(r);});
+  let html='';
   Object.entries(grouped).forEach(([cat,rows])=>{
-    html += `<div class="exam-card">
-      <div class="exam-card-head">
-        <div class="exam-icon" style="background:var(--primary-light)">✏️</div>
-        <div><div class="exam-card-title">${cat}</div><div class="exam-card-sub">${rows.length} link${rows.length>1?'s':''} available</div></div>
-      </div>
-      <div class="exam-sets">`;
-    rows.forEach(r=>{
-      const link = r.Link && r.Link.startsWith('http') ? r.Link : '#';
-      html += `<a class="set-btn" href="${link}" target="_blank" rel="noopener">${r.Title}</a>`;
-    });
-    html += `</div></div>`;
+    html+=`<div class="exam-card"><div class="exam-card-head"><div class="exam-icon" style="background:var(--primary-light)">✏️</div><div><div class="exam-card-title">${cat}</div><div class="exam-card-sub">${rows.length} link${rows.length>1?'s':''}</div></div></div><div class="exam-sets">`;
+    rows.forEach(r=>{html+=`<a class="set-btn" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener">${r.Title}</a>`;});
+    html+=`</div></div>`;
   });
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
-// ── OTHER (Type = Other) ──
+// OTHER
 function renderOther(){
-  const others = allRows.filter(r=>r.Type==='Other');
-  const el = document.getElementById('other-list');
-  if(!others.length){
-    el.innerHTML='<div class="empty-box">📭 No links added yet.<br><small>Add rows with Type = Other in your Google Sheet.</small></div>';
-    return;
-  }
-  el.innerHTML = others.map(r=>{
-    const link = r.Link && r.Link.startsWith('http') ? r.Link : '#';
-    const info = r.Info || 'External link';
-    return `<a class="other-card" href="${link}" target="_blank" rel="noopener">
-      <div class="other-icon">🔗</div>
-      <div class="other-info">
-        <div class="other-title">${r.Title}</div>
-        <div class="other-sub">${info}</div>
-      </div>
-      <span class="other-arrow">›</span>
-    </a>`;
-  }).join('');
+  const others=allRows.filter(r=>r.Type==='Other');
+  const el=document.getElementById('other-list');
+  if(!others.length){el.innerHTML='<div class="empty-box">📭 No links yet.<br><small>Add Type = Other in your sheet.</small></div>';return;}
+  el.innerHTML=others.map(r=>`<a class="other-card" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener"><div class="other-icon">🔗</div><div class="other-info"><div class="other-title">${r.Title}</div><div class="other-sub">${r.Info||'External link'}</div></div><span class="other-arrow">›</span></a>`).join('');
 }
 
-// ── MODAL ──
-function openLiveModal(title, info, link){
-  currentZoomLink = link;
-  document.getElementById('m-title').textContent = title;
-  document.getElementById('m-info').textContent = info;
-  document.getElementById('m-time').textContent = info || 'See link for schedule';
-  const badges = document.getElementById('m-badges');
-  const infoLow = info.toLowerCase();
-  if(infoLow.includes('live')||infoLow.includes('now')){
-    badges.innerHTML='<span class="live-badge badge-live" style="font-size:11px">● LIVE NOW</span>';
-  } else {
-    badges.innerHTML='<span class="live-badge badge-soon" style="font-size:11px">🕐 Upcoming</span>';
-  }
+// MODAL
+function openLiveModal(title,info,link){
+  currentZoomLink=link;
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-info').textContent=info;
+  document.getElementById('m-time').textContent=info||'See link for schedule';
+  const badges=document.getElementById('m-badges');
+  const il=info.toLowerCase();
+  badges.innerHTML=(il.includes('live')||il.includes('now'))?'<span class="live-badge badge-live" style="font-size:11px">● LIVE NOW</span>':'<span class="live-badge badge-soon" style="font-size:11px">🕐 Upcoming</span>';
   badges.innerHTML+='<span class="live-badge badge-zoom" style="font-size:11px">📹 Zoom</span>';
   document.getElementById('liveModal').classList.add('open');
 }
+function closeModal(e){if(e.target===document.getElementById('liveModal'))document.getElementById('liveModal').classList.remove('open');}
+function joinZoom(){if(currentZoomLink&&currentZoomLink!=='#')window.open(currentZoomLink,'_blank');else showToast('No link available.');}
 
-function closeModal(e){
-  if(e.target===document.getElementById('liveModal'))
-    document.getElementById('liveModal').classList.remove('open');
-}
-
-function joinZoom(){
-  if(currentZoomLink && currentZoomLink!=='#'){
-    window.open(currentZoomLink,'_blank');
-  } else {
-    showToast('No link available for this class.');
-  }
-}
-
-// ── UTILS ──
-function esc(str){
-  return (str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-}
-
-function showNotif(){ showToast('Refreshing for new notices!'); refreshAll(); }
-
+function esc(str){return(str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function showNotif(){showToast('Refreshing!');refreshAll();}
 function showToast(msg){
   let t=document.getElementById('toast');
-  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t)}
-  t.textContent=msg;t.style.opacity='1';
-  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
 }
 
-// ── INIT ──
+setDailyQuote();
+setHeroDate();
 fetchData();
 </script>
 </body>
