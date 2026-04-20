@@ -38,8 +38,6 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;transition:background .3s,color .3s}
 .app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.12);position:relative;transition:background .3s}
-
-/* ── SPLASH SCREEN ── */
 #splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a3d20,#1a6b3c,#22c55e);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease}
 #splash.hide{opacity:0;pointer-events:none}
 .splash-logo{width:90px;height:90px;background:rgba(255,255,255,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:splashPop .5s ease both;box-shadow:0 8px 32px rgba(0,0,0,.2)}
@@ -51,8 +49,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 @keyframes splashPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes splashFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes splashLoad{from{width:0}to{width:100%}}
-
-/* ── PWA INSTALL BANNER ── */
 #install-banner{display:none;position:fixed;bottom:76px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;background:var(--white);border:1.5px solid var(--primary);border-radius:var(--radius);padding:14px 16px;z-index:50;box-shadow:var(--shadow-md);animation:slideUp .3s ease}
 #install-banner.show{display:flex;align-items:center;gap:12px}
 .install-icon{font-size:26px;flex-shrink:0}
@@ -62,13 +58,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .install-btns{display:flex;gap:8px;flex-shrink:0}
 .install-yes{background:var(--primary);color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
 .install-no{background:var(--bg);color:var(--text2);border:1.5px solid var(--border);padding:7px 10px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
-
-/* ── AUTO REFRESH BAR ── */
 #refresh-bar{height:2px;background:transparent;position:relative;overflow:hidden}
 #refresh-bar.active{background:var(--border)}
 #refresh-fill{height:100%;width:0%;background:var(--primary);transition:width linear}
-
-/* TOP BAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;background:var(--white);border-bottom:1px solid var(--border2);position:relative;z-index:10;transition:background .3s,border-color .3s}
 .topbar-brand{display:flex;align-items:center;gap:10px}
 .brand-name{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.15}
@@ -77,36 +69,43 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .topbar-icons{display:flex;gap:8px;align-items:center}
 .icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative;transition:background .3s}
 .badge{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--white)}
-
-/* SCROLL */
+#topbar-avatar{display:none;width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:800;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--primary-light)}
+#topbar-avatar.show{display:flex}
 .page{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:90px}
 .page::-webkit-scrollbar{width:0}
 .section{display:none}
 .section.active{display:block}
-
-/* HERO */
-.hero{margin:14px 16px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20 0%,#1a6b3c 55%,#22c55e 100%);padding:22px 20px 18px;min-height:155px}
+.streak-banner{margin:14px 16px 0;padding:11px 14px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:var(--radius);display:flex;align-items:center;gap:10px;animation:fadeIn .4s ease both}
+.streak-fire{font-size:22px;animation:fireWobble 1.2s ease infinite alternate}
+@keyframes fireWobble{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
+.streak-text{flex:1}
+.streak-title{font-size:13px;font-weight:800;color:#fff}
+.streak-sub{font-size:10px;color:rgba(255,255,255,.7);margin-top:1px}
+.streak-badge{background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:800;color:#fff;white-space:nowrap}
+.hero{margin:10px 16px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20 0%,#1a6b3c 55%,#22c55e 100%);padding:22px 20px 18px;min-height:155px}
 .hero-c1{position:absolute;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.06);top:-30px;right:-30px}
 .hero-c2{position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-20px;right:40px}
 .hero-c3{position:absolute;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.05);top:30px;left:-10px}
 .hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative}
 .hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:99px;text-transform:uppercase}
-.hero-date{font-size:10px;color:rgba(255,255,255,.65);font-weight:600}
+.hero-date-block{text-align:right}
+.hero-date{font-size:10px;color:rgba(255,255,255,.75);font-weight:700;line-height:1.4}
+.hero-bs-date{font-size:9px;color:rgba(255,255,255,.5);font-weight:600;margin-top:1px}
 .hero h2{font-size:18px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:5px;position:relative}
 .hero p{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5;position:relative}
 .hero-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;position:relative}
 .hero-btn{display:inline-block;background:#fff;color:var(--primary);font-size:11px;font-weight:700;padding:7px 16px;border-radius:99px;cursor:pointer;border:none}
-.hero-stats-row{display:flex;gap:12px}
-.hero-stat-num{font-size:14px;font-weight:800;color:#fff;line-height:1;text-align:center}
-.hero-stat-label{font-size:8px;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px;text-align:center}
-
-/* DAILY QUOTE */
+.hero-stats-row{display:flex;gap:10px}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:15px;font-weight:800;color:#fff;line-height:1;transition:all .4s ease}
+.hero-stat-label{font-size:8px;color:rgba(255,255,255,.55);font-weight:600;margin-top:2px}
+.hero-stat-divider{width:1px;background:rgba(255,255,255,.2);align-self:stretch;margin:0 2px}
+.stat-loading{opacity:.4;animation:statPulse 1s ease infinite alternate}
+@keyframes statPulse{from{opacity:.3}to{opacity:.6}}
 .quote-card{margin:10px 16px 0;padding:13px 15px;background:linear-gradient(135deg,#052e16,#0a3d20);border-radius:var(--radius);position:relative;overflow:hidden;border:1px solid rgba(34,197,94,.2)}
 .quote-card::before{content:'❝';position:absolute;top:-8px;left:8px;font-size:44px;color:rgba(34,197,94,.12);font-family:serif;line-height:1}
 .quote-text{font-size:12px;color:rgba(255,255,255,.9);line-height:1.7;font-style:italic;position:relative}
 .quote-author{font-size:10px;color:rgba(255,255,255,.45);font-weight:600;margin-top:5px;position:relative}
-
-/* NOTICE */
 .notice-strip{margin:10px 16px 0;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border)}
 .notice-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent);cursor:pointer}
 .notice-head h4{font-size:12px;font-weight:800;color:#fff}
@@ -117,19 +116,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .notice-item:hover{background:var(--bg)}
 .notice-item-date{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
 .notice-item-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.4}
-
-/* QUICK TABS */
 .quick-tabs{display:flex;gap:8px;padding:12px 16px 2px;overflow-x:auto}
 .quick-tabs::-webkit-scrollbar{height:0}
 .qtab{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
 .qtab.active,.qtab:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
-
-/* SEC HEAD */
 .sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
 .sec-head h3{font-size:15px;font-weight:800;color:var(--text)}
 .view-all{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;background:none;border:none}
-
-/* LIVE CARD */
 .live-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:all .2s}
 .live-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
 .live-avatar{width:46px;height:46px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -141,15 +134,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .badge-soon{background:var(--accent-light);color:var(--accent);border:1px solid #fde68a}
 .badge-zoom{background:#e8f5ee;color:var(--primary);border:1px solid #a7f3d0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-/* ICON GRID */
 .icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 16px 8px}
 .icon-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:14px 8px;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border2);transition:all .2s}
 .icon-item:hover{background:var(--primary-light);border-color:var(--primary)}
 .icon-item .ii{font-size:22px}
 .icon-item span{font-size:11px;font-weight:600;color:var(--text2);text-align:center}
-
-/* MAT */
 .mat-card{margin:0 16px 10px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);transition:all .2s}
 .mat-card:hover{border-color:var(--primary);background:var(--primary-light)}
 .mat-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
@@ -159,13 +148,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .mat-link:hover{background:var(--primary);color:#fff}
 .share-btn{font-size:11px;color:var(--text2);font-weight:600;background:var(--bg);padding:4px 10px;border-radius:99px;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:4px}
 .share-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-/* SEARCH */
 .search-bar{margin:14px 16px 8px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
 .search-bar input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text);outline:none}
 .search-bar input::placeholder{color:var(--text3)}
-
-/* EXAM */
 .exam-card{margin:0 16px 12px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow)}
 .exam-card-head{padding:14px;display:flex;align-items:center;gap:10px;background:var(--white)}
 .exam-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -174,16 +159,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .exam-sets{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px;background:var(--white)}
 .set-btn{font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
 .set-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
-
-/* STUDY */
 .study-cat{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
 .study-cat:hover{border-color:var(--primary);transform:translateX(3px)}
 .study-cat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .study-cat-info h4{font-size:14px;font-weight:700;color:var(--text)}
 .study-cat-info p{font-size:11px;color:var(--text2);margin-top:2px}
 .study-cat-arrow{margin-left:auto;font-size:16px;color:var(--text3)}
-
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
 .modal{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease}
@@ -198,8 +179,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus J
 .join-zoom-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-bottom:10px}
 .join-zoom-btn:hover{background:var(--primary-dark)}
 .cancel-btn{width:100%;padding:12px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
-
-/* NAV */
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1.5px solid var(--border);display:flex;padding:6px 0 max(10px,env(safe-area-inset-bottom));z-index:20;transition:background .3s,border-color .3s}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;padding:4px 2px;color:var(--text3);font-family:inherit;transition:color .2s;min-width:0}
 .nav-btn.active{color:var(--primary)}
@@ -207,14 +186,10 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .nav-btn .nl{font-size:8px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
 .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--primary);margin-top:1px;opacity:0;transition:opacity .2s}
 .nav-btn.active .nav-dot{opacity:1}
-
-/* TABS */
 .tab-bar{display:flex;border-bottom:1.5px solid var(--border);padding:0 16px;background:var(--white);position:sticky;top:0;z-index:5;overflow-x:auto;transition:background .3s}
 .tab-bar::-webkit-scrollbar{height:0}
 .tbar-btn{flex-shrink:0;padding:12px 10px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap}
 .tbar-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
-
-/* OTHER */
 .other-card{margin:0 16px 10px;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);text-decoration:none}
 .other-card:hover{border-color:var(--primary);background:var(--primary-light);transform:translateX(3px)}
 .other-icon{width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -222,12 +197,73 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .other-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
 .other-sub{font-size:11px;color:var(--text2)}
 .other-arrow{font-size:16px;color:var(--text3)}
-
-/* LOADING */
 .loading-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px;font-weight:600}
 .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty-box{padding:30px 16px;text-align:center;color:var(--text3);font-size:13px}
+.skeleton-wrap{padding:0 16px}
+.skeleton-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center}
+.sk-avatar{width:46px;height:46px;border-radius:12px;background:var(--border);flex-shrink:0;overflow:hidden;position:relative}
+.sk-lines{flex:1}
+.sk-line{height:10px;border-radius:99px;background:var(--border);margin-bottom:8px;overflow:hidden;position:relative}
+.sk-line:last-child{width:60%;margin-bottom:0}
+.sk-avatar::after,.sk-line::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);animation:shimmer 1.4s ease infinite;transform:translateX(-100%)}
+.dark .sk-avatar::after,.dark .sk-line::after{background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.06) 50%,transparent 100%)}
+@keyframes shimmer{to{transform:translateX(100%)}}
+
+/* ═══ AUTH / PROFILE STYLES ═══ */
+.auth-page{padding:0 20px 30px}
+.auth-hero{background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:var(--radius);padding:28px 20px 22px;text-align:center;margin:14px 0 20px;position:relative;overflow:hidden}
+.auth-hero::before{content:'';position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05);top:-30px;right:-30px}
+.auth-hero-icon{font-size:36px;margin-bottom:8px}
+.auth-hero-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px}
+.auth-hero-sub{font-size:12px;color:rgba(255,255,255,.65)}
+.auth-tabs{display:flex;background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;text-align:center;padding:8px 0;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:inherit;color:var(--text2)}
+.auth-tab.active{background:var(--primary);color:#fff}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase}
+.auth-field input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s}
+.auth-field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+.dark .auth-field input{background:var(--bg)}
+.field-hint{font-size:10px;color:var(--text3);margin-top:4px}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3);padding:4px}
+.strength-bar{display:flex;gap:4px;margin-top:7px}
+.strength-seg{height:3px;flex:1;border-radius:99px;background:var(--border);transition:background .3s}
+.auth-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px}
+.auth-btn:hover{background:var(--primary-dark)}
+.auth-btn:active{transform:scale(.98)}
+.auth-msg{padding:11px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;margin-bottom:14px;display:none;line-height:1.5}
+.auth-msg.error{background:var(--red-light);color:var(--red);border:1px solid #fecaca;display:block}
+.auth-msg.success{background:var(--green-light);color:var(--green);border:1px solid #a7f3d0;display:block}
+.auth-divider{text-align:center;font-size:11px;color:var(--text3);margin:16px 0;position:relative}
+.auth-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+.auth-divider span{background:var(--white);padding:0 10px;position:relative}
+.dark .auth-divider span{background:var(--white)}
+/* Profile logged-in */
+.profile-header{background:linear-gradient(135deg,#0a3d20,#1a6b3c);padding:28px 20px 24px;text-align:center}
+.profile-avatar{width:76px;height:76px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--primary);margin:0 auto 10px;border:3px solid rgba(255,255,255,.3)}
+.profile-name{font-size:19px;font-weight:800;color:#fff;margin-bottom:3px}
+.profile-email{font-size:12px;color:rgba(255,255,255,.6)}
+.profile-joined{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 16px 0}
+.profile-stat-box{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center}
+.profile-stat-n{font-size:22px;font-weight:800;color:var(--primary)}
+.profile-stat-l{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600}
+.profile-menu{margin:14px 16px 0;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.profile-menu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .2s}
+.profile-menu-item:last-child{border-bottom:none}
+.profile-menu-item:hover{background:var(--bg)}
+.pmi-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pmi-label{flex:1;font-size:13px;font-weight:700;color:var(--text)}
+.pmi-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.pmi-arrow{font-size:16px;color:var(--text3)}
+.logout-btn{display:block;margin:12px 16px;width:calc(100% - 32px);padding:13px;background:var(--red-light);color:var(--red);border:1.5px solid #fecaca;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.logout-btn:hover{background:var(--red);color:#fff}
+.edit-modal{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease}
+.edit-modal h3{font-size:17px;font-weight:800;color:var(--text);margin-bottom:16px}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .live-card,.mat-card,.study-cat,.exam-card,.other-card,.notice-strip,.quote-card{animation:fadeIn .3s ease both}
@@ -235,7 +271,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
 <div id="splash">
   <div class="splash-logo">
     <svg width="52" height="52" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
@@ -250,13 +285,9 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   <div class="splash-bar"><div class="splash-bar-fill"></div></div>
 </div>
 
-<!-- PWA INSTALL BANNER -->
 <div id="install-banner">
   <div class="install-icon">📲</div>
-  <div class="install-text">
-    <h4>Install Digital Nepal App</h4>
-    <p>Add to home screen for quick access!</p>
-  </div>
+  <div class="install-text"><h4>Install Digital Nepal App</h4><p>Add to home screen for quick access!</p></div>
   <div class="install-btns">
     <button class="install-yes" onclick="installApp()">Install</button>
     <button class="install-no" onclick="dismissInstall()">✕</button>
@@ -264,9 +295,8 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </div>
 
 <div class="app" id="app">
-
-  <!-- TOP BAR -->
   <div id="refresh-bar"><div id="refresh-fill"></div></div>
+
   <div class="topbar">
     <div class="topbar-brand">
       <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" style="border-radius:11px;flex-shrink:0">
@@ -285,6 +315,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       </div>
     </div>
     <div class="topbar-icons">
+      <button id="topbar-avatar" onclick="switchNav('profile')" title="My Profile"></button>
       <button class="icon-btn" onclick="toggleDark()" id="darkBtn">🌙</button>
       <button class="icon-btn" onclick="refreshAll()">🔄</button>
       <button class="icon-btn" onclick="showNotif()">🔔<span class="badge"></span></button>
@@ -295,45 +326,50 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
     <!-- HOME -->
     <div class="section active" id="pg-home">
+      <div class="streak-banner" id="streak-banner">
+        <div class="streak-fire">🔥</div>
+        <div class="streak-text">
+          <div class="streak-title" id="streak-title">Loading streak…</div>
+          <div class="streak-sub" id="streak-sub">Keep studying daily!</div>
+        </div>
+        <div class="streak-badge" id="streak-badge">…</div>
+      </div>
       <div class="hero">
         <div class="hero-c1"></div><div class="hero-c2"></div><div class="hero-c3"></div>
         <div class="hero-top">
           <div class="hero-tag">🇳🇵 FREE</div>
-          <div class="hero-date" id="hero-date"></div>
+          <div class="hero-date-block">
+            <div class="hero-date" id="hero-date"></div>
+            <div class="hero-bs-date" id="hero-bs-date"></div>
+          </div>
         </div>
         <h2>Live Class · Materials<br>Model Test · Lok Sewa Prep</h2>
         <p>Digital Nepal — Your Smart Study Partner 🏔</p>
         <div class="hero-bottom">
           <button class="hero-btn" onclick="switchNav('materials')">Explore →</button>
           <div class="hero-stats-row">
-            <div><div class="hero-stat-num">FREE</div><div class="hero-stat-label">Always</div></div>
-            <div><div class="hero-stat-num">📹</div><div class="hero-stat-label">Live</div></div>
+            <div class="hero-stat"><div class="hero-stat-num stat-loading" id="stat-live">–</div><div class="hero-stat-label">Live</div></div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat"><div class="hero-stat-num stat-loading" id="stat-materials">–</div><div class="hero-stat-label">Materials</div></div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat"><div class="hero-stat-num stat-loading" id="stat-exams">–</div><div class="hero-stat-label">Exams</div></div>
           </div>
         </div>
       </div>
-
       <div class="quote-card">
         <div class="quote-text" id="daily-quote">लोड हुँदैछ…</div>
         <div class="quote-author">— प्रेरणा · Digital Nepal</div>
       </div>
-
       <div class="notice-strip">
-        <div class="notice-head" onclick="toggleNotice()">
-          <h4>📢 सूचना / Notice</h4>
-          <span class="notice-toggle" id="notice-toggle-icon">▼ Show</span>
-        </div>
-        <div class="notice-body" id="notice-body" style="display:none">
-          <div id="notice-list"><div class="loading-box" style="padding:14px"><div class="spinner"></div></div></div>
-        </div>
+        <div class="notice-head" onclick="toggleNotice()"><h4>📢 सूचना / Notice</h4><span class="notice-toggle" id="notice-toggle-icon">▼ Show</span></div>
+        <div class="notice-body" id="notice-body" style="display:none"><div id="notice-list"><div class="loading-box" style="padding:14px"><div class="spinner"></div></div></div></div>
       </div>
-
       <div class="quick-tabs">
         <div class="qtab active">Live Classes</div>
         <div class="qtab" onclick="switchNav('materials')">Materials</div>
         <div class="qtab" onclick="switchNav('exam')">Exams</div>
         <div class="qtab" onclick="switchNav('other')">Other</div>
       </div>
-
       <div class="icon-grid">
         <div class="icon-item" onclick="switchNav('home')"><span class="ii">▶️</span><span>Live Class</span></div>
         <div class="icon-item" onclick="switchNav('materials')"><span class="ii">📄</span><span>Materials</span></div>
@@ -342,40 +378,23 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div class="icon-item" onclick="refreshAll()"><span class="ii">🔄</span><span>Refresh</span></div>
         <div class="icon-item" onclick="shareApp()"><span class="ii">📤</span><span>Share App</span></div>
       </div>
-
-      <div class="sec-head">
-        <h3>🔴 Live & Upcoming Classes</h3>
-        <button class="view-all" onclick="switchNav('study')">View All →</button>
-      </div>
-      <div id="home-live-list"><div class="loading-box"><div class="spinner"></div>Loading classes…</div></div>
-    </div><!-- /home -->
+      <div class="sec-head"><h3>🔴 Live & Upcoming Classes</h3><button class="view-all" onclick="switchNav('study')">View All →</button></div>
+      <div id="home-live-list"><div class="skeleton-wrap">
+        <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div>
+        <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div>
+      </div></div>
+    </div>
 
     <!-- STUDY -->
     <div class="section" id="pg-study">
       <div class="sec-head" style="padding-top:18px"><h3>📚 My Courses</h3></div>
-      <div class="study-cat" onclick="switchNav('materials')">
-        <div class="study-cat-icon" style="background:#eff6ff">📘</div>
-        <div class="study-cat-info"><h4>Study Materials</h4><p>Notes · PDFs · Study Links</p></div>
-        <span class="study-cat-arrow">›</span>
-      </div>
-      <div class="study-cat" onclick="switchNav('exam')">
-        <div class="study-cat-icon" style="background:var(--purple-light)">✏️</div>
-        <div class="study-cat-info"><h4>Model Tests & Exams</h4><p>Practice sets · Exam links</p></div>
-        <span class="study-cat-arrow">›</span>
-      </div>
-      <div class="study-cat" onclick="switchNav('home')">
-        <div class="study-cat-icon" style="background:var(--green-light)">📹</div>
-        <div class="study-cat-info"><h4>Live Zoom Classes</h4><p>Join live sessions</p></div>
-        <span class="study-cat-arrow">›</span>
-      </div>
-      <div class="study-cat" onclick="switchNav('other')">
-        <div class="study-cat-icon" style="background:#fff7ed">🔗</div>
-        <div class="study-cat-info"><h4>Other Links & Resources</h4><p>Extra resources & tools</p></div>
-        <span class="study-cat-arrow">›</span>
-      </div>
+      <div class="study-cat" onclick="switchNav('materials')"><div class="study-cat-icon" style="background:#eff6ff">📘</div><div class="study-cat-info"><h4>Study Materials</h4><p>Notes · PDFs · Study Links</p></div><span class="study-cat-arrow">›</span></div>
+      <div class="study-cat" onclick="switchNav('exam')"><div class="study-cat-icon" style="background:var(--purple-light)">✏️</div><div class="study-cat-info"><h4>Model Tests & Exams</h4><p>Practice sets · Exam links</p></div><span class="study-cat-arrow">›</span></div>
+      <div class="study-cat" onclick="switchNav('home')"><div class="study-cat-icon" style="background:var(--green-light)">📹</div><div class="study-cat-info"><h4>Live Zoom Classes</h4><p>Join live sessions</p></div><span class="study-cat-arrow">›</span></div>
+      <div class="study-cat" onclick="switchNav('other')"><div class="study-cat-icon" style="background:#fff7ed">🔗</div><div class="study-cat-info"><h4>Other Links & Resources</h4><p>Extra resources & tools</p></div><span class="study-cat-arrow">›</span></div>
       <div class="sec-head"><h3>🔴 Live Classes Today</h3></div>
-      <div id="study-live-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
-    </div><!-- /study -->
+      <div id="study-live-list"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div>
+    </div>
 
     <!-- MATERIALS -->
     <div class="section" id="pg-materials">
@@ -387,25 +406,134 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <button class="tbar-btn" onclick="filterMaterials('Notice',this)">Notice</button>
         <button class="tbar-btn" onclick="filterMaterials('Other',this)">Other</button>
       </div>
-      <div class="search-bar">
-        <span>🔍</span>
-        <input type="text" id="mat-search" placeholder="Search materials..." oninput="searchMaterials()">
-      </div>
-      <div id="mat-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
-    </div><!-- /materials -->
+      <div class="search-bar"><span>🔍</span><input type="text" id="mat-search" placeholder="Search materials..." oninput="searchMaterials()"></div>
+      <div id="mat-list"><div class="skeleton-wrap">
+        <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div>
+        <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div>
+      </div></div>
+    </div>
 
     <!-- EXAM -->
     <div class="section" id="pg-exam">
       <div class="sec-head" style="padding-top:18px"><h3>📝 Model Tests & Exams</h3></div>
-      <div id="exam-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
-    </div><!-- /exam -->
+      <div id="exam-list"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div>
+    </div>
 
     <!-- OTHER -->
     <div class="section" id="pg-other">
       <div class="sec-head" style="padding-top:18px"><h3>🔗 Other Links & Resources</h3></div>
-      <div id="other-list"><div class="loading-box"><div class="spinner"></div>Loading…</div></div>
-    </div><!-- /other -->
+      <div id="other-list"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div>
+    </div>
 
+    <!-- PROFILE -->
+    <div class="section" id="pg-profile">
+
+      <!-- NOT LOGGED IN -->
+      <div id="auth-screen">
+        <div class="auth-page">
+          <div class="auth-hero">
+            <div class="auth-hero-icon">🏔</div>
+            <div class="auth-hero-title">Join Digital Nepal</div>
+            <div class="auth-hero-sub">Create your free account to save your progress</div>
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Login</button>
+            <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+          </div>
+          <div class="auth-msg" id="auth-msg"></div>
+
+          <!-- LOGIN -->
+          <div id="form-login">
+            <div class="auth-field">
+              <label>Email Address</label>
+              <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email">
+            </div>
+            <div class="auth-field">
+              <label>Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
+                <button class="pw-toggle" onclick="togglePw('login-password',this)" type="button">👁</button>
+              </div>
+            </div>
+            <button class="auth-btn" onclick="doLogin()">Login to My Account →</button>
+            <div class="auth-divider"><span>Don't have an account?</span></div>
+            <button class="auth-btn" style="background:var(--bg);color:var(--primary);border:1.5px solid var(--primary)" onclick="switchAuthTab('register')">Create Free Account</button>
+          </div>
+
+          <!-- REGISTER -->
+          <div id="form-register" style="display:none">
+            <div class="auth-field">
+              <label>Full Name</label>
+              <input type="text" id="reg-name" placeholder="Hari Bahadur Thapa" autocomplete="name">
+            </div>
+            <div class="auth-field">
+              <label>Email Address</label>
+              <input type="email" id="reg-email" placeholder="you@email.com" autocomplete="email">
+              <div class="field-hint">Use this email to login on any device</div>
+            </div>
+            <div class="auth-field">
+              <label>Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password" oninput="checkStrength(this.value)">
+                <button class="pw-toggle" onclick="togglePw('reg-password',this)" type="button">👁</button>
+              </div>
+              <div class="strength-bar"><div class="strength-seg" id="s1"></div><div class="strength-seg" id="s2"></div><div class="strength-seg" id="s3"></div><div class="strength-seg" id="s4"></div></div>
+            </div>
+            <div class="auth-field">
+              <label>Confirm Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="reg-confirm" placeholder="Repeat your password" autocomplete="new-password">
+                <button class="pw-toggle" onclick="togglePw('reg-confirm',this)" type="button">👁</button>
+              </div>
+            </div>
+            <button class="auth-btn" onclick="doRegister()">Create My Account →</button>
+            <div class="auth-divider"><span>Already have an account?</span></div>
+            <button class="auth-btn" style="background:var(--bg);color:var(--primary);border:1.5px solid var(--primary)" onclick="switchAuthTab('login')">Login Instead</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGGED IN -->
+      <div id="profile-screen" style="display:none">
+        <div class="profile-header">
+          <div class="profile-avatar" id="prof-avatar"></div>
+          <div class="profile-name" id="prof-name"></div>
+          <div class="profile-email" id="prof-email"></div>
+          <div class="profile-joined" id="prof-joined"></div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat-box"><div class="profile-stat-n" id="prof-streak">0</div><div class="profile-stat-l">🔥 Day Streak</div></div>
+          <div class="profile-stat-box"><div class="profile-stat-n" id="prof-days">0</div><div class="profile-stat-l">📅 Days Active</div></div>
+          <div class="profile-stat-box"><div class="profile-stat-n" id="prof-member">0</div><div class="profile-stat-l">🏅 Days Member</div></div>
+        </div>
+        <div class="profile-menu" style="margin-top:14px">
+          <div class="profile-menu-item" onclick="openEditModal()">
+            <div class="pmi-icon" style="background:#e8f5ee">✏️</div>
+            <div style="flex:1"><div class="pmi-label">Edit Profile</div><div class="pmi-sub">Change name or password</div></div>
+            <div class="pmi-arrow">›</div>
+          </div>
+          <div class="profile-menu-item" onclick="toggleDark()">
+            <div class="pmi-icon" style="background:#f5f3ff">🌙</div>
+            <div style="flex:1"><div class="pmi-label">Dark Mode</div><div class="pmi-sub">Toggle app theme</div></div>
+            <div class="pmi-arrow">›</div>
+          </div>
+          <div class="profile-menu-item" onclick="shareApp()">
+            <div class="pmi-icon" style="background:#fffbeb">📤</div>
+            <div style="flex:1"><div class="pmi-label">Share App</div><div class="pmi-sub">Invite your friends</div></div>
+            <div class="pmi-arrow">›</div>
+          </div>
+          <div class="profile-menu-item" onclick="switchNav('materials')">
+            <div class="pmi-icon" style="background:#eff6ff">📄</div>
+            <div style="flex:1"><div class="pmi-label">Go to Materials</div><div class="pmi-sub">Browse study content</div></div>
+            <div class="pmi-arrow">›</div>
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+        <div style="height:20px"></div>
+      </div>
+
+    </div><!-- /pg-profile -->
   </div><!-- /page -->
 
   <nav>
@@ -414,19 +542,17 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')"><span class="ni">📄</span><span class="nl">Materials</span><span class="nav-dot"></span></button>
     <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')"><span class="ni">✏️</span><span class="nl">Exam</span><span class="nav-dot"></span></button>
     <button class="nav-btn" id="nav-other" onclick="switchNav('other')"><span class="ni">🔗</span><span class="nl">Other</span><span class="nav-dot"></span></button>
+    <button class="nav-btn" id="nav-profile" onclick="switchNav('profile')"><span class="ni">👤</span><span class="nl">Profile</span><span class="nav-dot"></span></button>
   </nav>
-</div><!-- /app -->
+</div>
 
-<!-- MODAL -->
+<!-- ZOOM MODAL -->
 <div class="modal-overlay" id="liveModal" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
       <div style="font-size:28px">📹</div>
-      <div>
-        <div class="modal-title" id="m-title"></div>
-        <div style="font-size:12px;color:var(--text2)" id="m-info"></div>
-      </div>
+      <div><div class="modal-title" id="m-title"></div><div style="font-size:12px;color:var(--text2)" id="m-info"></div></div>
     </div>
     <div style="margin:12px 0 16px;display:flex;gap:8px;flex-wrap:wrap" id="m-badges"></div>
     <div class="modal-info-row">⏰ Time: <strong id="m-time"></strong></div>
@@ -441,235 +567,193 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   </div>
 </div>
 
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="edit-modal">
+    <div class="modal-handle"></div>
+    <h3>✏️ Edit Profile</h3>
+    <div class="auth-msg" id="edit-msg"></div>
+    <div class="auth-field">
+      <label>Full Name</label>
+      <input type="text" id="edit-name" placeholder="Your name">
+    </div>
+    <div class="auth-field">
+      <label>New Password <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none">(leave blank to keep current)</span></label>
+      <div class="pw-wrap">
+        <input type="password" id="edit-password" placeholder="New password (optional)">
+        <button class="pw-toggle" onclick="togglePw('edit-password',this)" type="button">👁</button>
+      </div>
+    </div>
+    <button class="auth-btn" onclick="saveEdit()">Save Changes</button>
+    <div style="height:10px"></div>
+    <button class="cancel-btn" onclick="document.getElementById('editModal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
+
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
+const USERS_KEY='dn-users',SESSION_KEY='dn-session';
 let allRows=[],currentZoomLink='',currentMatFilter='All',matSearchTerm='';
 let darkMode=localStorage.getItem('dn-dark')==='true';
 let deferredPrompt=null;
-const AUTO_REFRESH_MS=5*60*1000; // 5 minutes
+const AUTO_REFRESH_MS=5*60*1000;
 
-// ── SPLASH ──
-window.addEventListener('load',()=>{
-  setTimeout(()=>{
-    document.getElementById('splash').classList.add('hide');
-    setTimeout(()=>document.getElementById('splash').remove(),600);
-  },1800);
-});
-
-// ── PWA INSTALL ──
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  if(!localStorage.getItem('dn-install-dismissed')){
-    setTimeout(()=>document.getElementById('install-banner').classList.add('show'),3000);
-  }
-});
-function installApp(){
-  document.getElementById('install-banner').classList.remove('show');
-  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>deferredPrompt=null); }
-}
-function dismissInstall(){
-  document.getElementById('install-banner').classList.remove('show');
-  localStorage.setItem('dn-install-dismissed','true');
-}
-
-// ── AUTO REFRESH (every 5 min) ──
-function startAutoRefresh(){
-  const bar=document.getElementById('refresh-bar');
-  const fill=document.getElementById('refresh-fill');
-  bar.classList.add('active');
-  fill.style.transition=`width ${AUTO_REFRESH_MS}ms linear`;
-  fill.style.width='100%';
-  setTimeout(()=>{
-    fetchData();
-    fill.style.transition='none';
-    fill.style.width='0%';
-    setTimeout(startAutoRefresh,100);
-  },AUTO_REFRESH_MS);
-}
-
-// ── DARK MODE ──
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('splash').classList.add('hide');setTimeout(()=>document.getElementById('splash').remove(),600);},1800);});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('dn-install-dismissed'))setTimeout(()=>document.getElementById('install-banner').classList.add('show'),3000);});
+function installApp(){document.getElementById('install-banner').classList.remove('show');if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>deferredPrompt=null);}}
+function dismissInstall(){document.getElementById('install-banner').classList.remove('show');localStorage.setItem('dn-install-dismissed','true');}
+function startAutoRefresh(){const bar=document.getElementById('refresh-bar'),fill=document.getElementById('refresh-fill');bar.classList.add('active');fill.style.transition=`width ${AUTO_REFRESH_MS}ms linear`;fill.style.width='100%';setTimeout(()=>{fetchData();fill.style.transition='none';fill.style.width='0%';setTimeout(startAutoRefresh,100);},AUTO_REFRESH_MS);}
 function toggleDark(){darkMode=!darkMode;localStorage.setItem('dn-dark',darkMode);applyDark();}
-function applyDark(){
-  document.getElementById('app').classList.toggle('dark',darkMode);
-  document.getElementById('darkBtn').textContent=darkMode?'☀️':'🌙';
-}
+function applyDark(){document.getElementById('app').classList.toggle('dark',darkMode);document.getElementById('darkBtn').textContent=darkMode?'☀️':'🌙';}
 applyDark();
+function shareApp(){if(navigator.share){navigator.share({title:'Digital Nepal — Lok Sewa Prep',text:'Free Lok Sewa preparation app!',url:APP_URL});}else{navigator.clipboard.writeText(APP_URL).then(()=>showToast('App link copied! 📤'));}}
+function shareMaterial(title,link){const text=`${title}\n${link}\n\nDigital Nepal App: ${APP_URL}`;if(navigator.share){navigator.share({title,text,url:link});}else{navigator.clipboard.writeText(text).then(()=>showToast('Link copied! 📤'));}}
 
-// ── SHARE APP ──
-function shareApp(){
-  if(navigator.share){
-    navigator.share({title:'Digital Nepal — Lok Sewa Prep',text:'Free Lok Sewa preparation app — Live classes, materials, model tests!',url:APP_URL});
-  } else {
-    navigator.clipboard.writeText(APP_URL).then(()=>showToast('App link copied! Share it 📤'));
-  }
-}
-
-// ── SHARE MATERIAL ──
-function shareMaterial(title,link){
-  const text=`${title}\n${link}\n\nDigital Nepal App: ${APP_URL}`;
-  if(navigator.share){navigator.share({title,text,url:link});}
-  else{navigator.clipboard.writeText(text).then(()=>showToast('Link copied! Share it 📤'));}
-}
-
-// ── DAILY QUOTE ──
-const quotes=[
-  'सफलता एक दिनमा आउँदैन, तर हरेक दिनको मेहनतले एक दिन अवश्य आउँछ।',
-  'आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस् — भोलि धेरै ढिलो हुनसक्छ।',
-  'पढ्नु भनेको भविष्यको ढोका खोल्नु हो — हरेक पाना एक कदम अगाडि।',
-  'लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन — हिम्मत राख्नुहोस्।',
-  'हरेक दिनको १% सुधारले तपाईँलाई एक वर्षमा ३७ गुणा शक्तिशाली बनाउँछ।',
-  'ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।',
-  'अरूको सफलता देखेर निराश नहोनुस् — तपाईँको पालो पनि आउँछ।',
-  'आज गरेको मेहनत भोलिको सफलताको जग हो।',
-  'परीक्षामा सफल हुन चाहनुहुन्छ भने आजबाटै कठोर परिश्रम गर्नुहोस्।',
-  'सानो सानो प्रयासले ठूलो लक्ष्य प्राप्त हुन्छ — हार नमान्नुहोस्।',
-  'नेपालको सेवा गर्ने मौका पाउनु ठूलो सौभाग्य हो — यसको लागि तयार हुनुहोस्।',
-  'विद्यार्थी जीवन एकपटक मात्र आउँछ — यसलाई सार्थक बनाउनुहोस्।',
-  'कठिनाइ देखेर भाग्नु होइन, सामना गर्नु नै वीरता हो।',
-  'तपाईँको मेहनत कहिल्यै खेर जाँदैन — सही समयमा फल अवश्य मिल्छ।',
-];
+const quotes=['सफलता एक दिनमा आउँदैन, तर हरेक दिनको मेहनतले एक दिन अवश्य आउँछ।','आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस् — भोलि धेरै ढिलो हुनसक्छ।','पढ्नु भनेको भविष्यको ढोका खोल्नु हो — हरेक पाना एक कदम अगाडि।','लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन — हिम्मत राख्नुहोस्।','हरेक दिनको १% सुधारले तपाईँलाई एक वर्षमा ३७ गुणा शक्तिशाली बनाउँछ।','ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।','अरूको सफलता देखेर निराश नहोनुस् — तपाईँको पालो पनि आउँछ।','आज गरेको मेहनत भोलिको सफलताको जग हो।','परीक्षामा सफल हुन चाहनुहुन्छ भने आजबाटै कठोर परिश्रम गर्नुहोस्।','सानो सानो प्रयासले ठूलो लक्ष्य प्राप्त हुन्छ — हार नमान्नुहोस्।','नेपालको सेवा गर्ने मौका पाउनु ठूलो सौभाग्य हो — यसको लागि तयार हुनुहोस्।','विद्यार्थी जीवन एकपटक मात्र आउँछ — यसलाई सार्थक बनाउनुहोस्।','कठिनाइ देखेर भाग्नु होइन, सामना गर्नु नै वीरता हो।','तपाईँको मेहनत कहिल्यै खेर जाँदैन — सही समयमा फल अवश्य मिल्छ।'];
 function setDailyQuote(){document.getElementById('daily-quote').textContent=quotes[new Date().getDate()%quotes.length];}
 
-// ── HERO DATE ──
-function setHeroDate(){
-  const days=['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'];
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const n=new Date();
-  document.getElementById('hero-date').textContent=`${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]}`;
+function adToBS(adYear,adMonth,adDay){const bsData=[[2000,1943,3,14,[30,32,31,32,31,30,30,30,29,30,29,30]],[2001,1944,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2002,1945,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2003,1946,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2004,1947,3,14,[30,32,31,32,31,30,30,30,29,30,29,31]],[2005,1948,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2006,1949,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2007,1950,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2008,1951,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2009,1952,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2010,1953,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2011,1954,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2012,1955,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2013,1956,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2014,1957,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2015,1958,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2016,1959,3,14,[31,31,31,32,31,31,29,30,29,30,29,31]],[2017,1960,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2018,1961,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2019,1962,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2020,1963,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2021,1964,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2022,1965,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2023,1966,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2024,1967,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2025,1968,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2026,1969,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2027,1970,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2028,1971,3,14,[31,32,31,32,31,30,30,30,29,30,29,31]],[2029,1972,3,13,[31,31,32,31,31,30,30,29,29,30,29,31]],[2030,1973,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2031,1974,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2032,1975,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2033,1976,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2034,1977,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2035,1978,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2036,1979,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2037,1980,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2038,1981,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2039,1982,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2040,1983,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2041,1984,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2042,1985,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2043,1986,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2044,1987,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2045,1988,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2046,1989,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2047,1990,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2048,1991,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2049,1992,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2050,1993,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2051,1994,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2052,1995,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2053,1996,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2054,1997,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2055,1998,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2056,1999,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2057,2000,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2058,2001,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2059,2002,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2060,2003,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2061,2004,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2062,2005,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2063,2006,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2064,2007,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2065,2008,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2066,2009,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2067,2010,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2068,2011,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2069,2012,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2070,2013,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2071,2014,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2072,2015,3,14,[31,31,31,32,31,31,29,30,29,30,29,31]],[2073,2016,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2074,2017,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2075,2018,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2076,2019,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2077,2020,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2078,2021,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2079,2022,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]],[2080,2023,3,15,[30,32,31,32,31,30,30,30,29,30,29,31]],[2081,2024,3,13,[31,31,32,31,31,31,30,29,30,29,30,30]],[2082,2025,3,14,[31,31,32,32,31,30,30,29,30,29,30,30]],[2083,2026,3,14,[31,32,31,32,31,30,30,30,29,29,30,31]]];
+const bsMonths=['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पुष','माघ','फाल्गुन','चैत्र'];
+let startEntry=null;for(let i=bsData.length-1;i>=0;i--){const[,sy,sm,sd]=bsData[i];if(adYear>sy||(adYear===sy&&adMonth-1>sm)||(adYear===sy&&adMonth-1===sm&&adDay>=sd)){startEntry=bsData[i];break;}}
+if(!startEntry)return{y:'?',m:'?',d:'?',monthName:'?'};
+const[bsY,sy,sm,sd,months]=startEntry;
+const startAD=new Date(sy,sm,sd),targetAD=new Date(adYear,adMonth-1,adDay);
+let rem=Math.round((targetAD-startAD)/(1000*60*60*24));let bsYear=bsY,bsMonth=0,bsDay=0;
+outer:for(let yi=0;yi<bsData.length;yi++){if(bsData[yi][0]<bsY)continue;const[by,,,,mths]=bsData[yi];bsYear=by;for(let mi=0;mi<12;mi++){if(bsData[yi][0]===bsY&&mi===0){const fmr=months[0]-sd+1;if(rem<fmr){bsMonth=0;bsDay=sd+rem;break outer;}rem-=fmr;mi=0;for(let mi2=1;mi2<12;mi2++){if(rem<mths[mi2]){bsMonth=mi2;bsDay=rem+1;break outer;}rem-=mths[mi2];}break;}if(rem<mths[mi]){bsMonth=mi;bsDay=rem+1;break outer;}rem-=mths[mi];}if(yi+1<bsData.length){const[,,,, nmths]=bsData[yi+1];bsYear=bsData[yi+1][0];for(let mi=0;mi<12;mi++){if(rem<nmths[mi]){bsMonth=mi;bsDay=rem+1;break outer;}rem-=nmths[mi];}}}
+return{y:bsYear,m:bsMonth+1,d:bsDay,monthName:bsMonths[bsMonth]};}
+function setHeroDate(){const days=['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],n=new Date();document.getElementById('hero-date').textContent=`${days[n.getDay()]}, ${n.getDate()} ${months[n.getMonth()]} ${n.getFullYear()}`;const bs=adToBS(n.getFullYear(),n.getMonth()+1,n.getDate());document.getElementById('hero-bs-date').textContent=`वि.सं. ${bs.y} ${bs.monthName} ${bs.d}`;}
+
+function updateStreak(){const today=new Date().toDateString(),stored=JSON.parse(localStorage.getItem('dn-streak')||'{}'),lastVisit=stored.lastVisit||null;let streak=stored.streak||0;const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);if(lastVisit!==today){streak=lastVisit===yesterday.toDateString()?streak+1:1;localStorage.setItem('dn-streak',JSON.stringify({streak,lastVisit:today}));}const titleEl=document.getElementById('streak-title'),subEl=document.getElementById('streak-sub'),badgeEl=document.getElementById('streak-badge');badgeEl.textContent=`Day ${streak}`;if(streak===1){titleEl.textContent='Welcome! Streak started 🎉';subEl.textContent='Visit daily to build your streak!';}else if(streak<7){titleEl.textContent=`${streak}-Day Streak! Keep going!`;subEl.textContent="You're building a great habit 💪";}else if(streak<30){titleEl.textContent=`${streak}-Day Streak! Amazing! 🏆`;subEl.textContent="You're on fire! Don't stop now!";}else{titleEl.textContent=`${streak}-Day Streak! Legend! 🥇`;subEl.textContent='Incredible dedication — Lok Sewa is yours!';}return streak;}
+
+/* ═══ AUTH SYSTEM ═══ */
+function hashPw(pw){let h=0;for(let i=0;i<pw.length;i++){h=((h<<5)-h)+pw.charCodeAt(i);h|=0;}return h.toString(36);}
+function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||'{}');}
+function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u));}
+function getSession(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}
+function saveSession(user){localStorage.setItem(SESSION_KEY,JSON.stringify(user));}
+function clearSession(){localStorage.removeItem(SESSION_KEY);}
+
+function switchAuthTab(tab){
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+  document.getElementById('form-login').style.display=tab==='login'?'block':'none';
+  document.getElementById('form-register').style.display=tab==='register'?'block':'none';
+  clearAuthMsg();
+}
+function showAuthMsg(msg,type='error'){const el=document.getElementById('auth-msg');el.textContent=msg;el.className='auth-msg '+type;}
+function clearAuthMsg(){const el=document.getElementById('auth-msg');el.className='auth-msg';el.textContent='';}
+
+function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const pw=document.getElementById('reg-password').value;
+  const conf=document.getElementById('reg-confirm').value;
+  if(!name){showAuthMsg('Please enter your full name.');return;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthMsg('Please enter a valid email address.');return;}
+  if(pw.length<6){showAuthMsg('Password must be at least 6 characters.');return;}
+  if(pw!==conf){showAuthMsg('Passwords do not match. Please try again.');return;}
+  const users=getUsers();
+  if(users[email]){showAuthMsg('An account with this email already exists. Please login.');return;}
+  const newUser={name,email,pwHash:hashPw(pw),joinedAt:new Date().toISOString()};
+  users[email]=newUser;saveUsers(users);saveSession(newUser);
+  showAuthMsg('Account created successfully! Welcome 🎉','success');
+  setTimeout(()=>renderProfileScreen(newUser),800);
 }
 
-// ── NOTICE ──
+function doLogin(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pw=document.getElementById('login-password').value;
+  if(!email){showAuthMsg('Please enter your email address.');return;}
+  if(!pw){showAuthMsg('Please enter your password.');return;}
+  const users=getUsers(),user=users[email];
+  if(!user){showAuthMsg('No account found with this email. Please register first.');return;}
+  if(user.pwHash!==hashPw(pw)){showAuthMsg('Incorrect password. Please try again.');return;}
+  saveSession(user);
+  showAuthMsg('Login successful! Welcome back 👋','success');
+  setTimeout(()=>renderProfileScreen(user),600);
+}
+
+function doLogout(){
+  if(!confirm('Are you sure you want to logout?'))return;
+  clearSession();renderAuthScreen();showToast('Logged out successfully.');
+}
+
+function renderAuthScreen(){
+  document.getElementById('auth-screen').style.display='block';
+  document.getElementById('profile-screen').style.display='none';
+  updateTopbarAvatar(null);clearAuthMsg();
+}
+
+function renderProfileScreen(user){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('profile-screen').style.display='block';
+  const initials=user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('prof-avatar').textContent=initials;
+  document.getElementById('prof-name').textContent=user.name;
+  document.getElementById('prof-email').textContent=user.email;
+  const joined=new Date(user.joinedAt);
+  document.getElementById('prof-joined').textContent=`Member since ${joined.toLocaleDateString('en-NP',{year:'numeric',month:'long',day:'numeric'})}`;
+  const streakData=JSON.parse(localStorage.getItem('dn-streak')||'{}');
+  document.getElementById('prof-streak').textContent=streakData.streak||1;
+  document.getElementById('prof-days').textContent=streakData.streak||1;
+  const daysMember=Math.max(1,Math.floor((Date.now()-joined.getTime())/(1000*60*60*24)));
+  document.getElementById('prof-member').textContent=daysMember;
+  updateTopbarAvatar(user);
+}
+
+function updateTopbarAvatar(user){
+  const btn=document.getElementById('topbar-avatar');
+  if(user){const initials=user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);btn.textContent=initials;btn.classList.add('show');}
+  else{btn.textContent='';btn.classList.remove('show');}
+}
+
+function checkProfileOnLoad(){const session=getSession();if(session)renderProfileScreen(session);else renderAuthScreen();}
+function togglePw(id,btn){const inp=document.getElementById(id);if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}else{inp.type='password';btn.textContent='👁';}}
+function checkStrength(pw){const segs=['s1','s2','s3','s4'].map(id=>document.getElementById(id));let score=0;if(pw.length>=6)score++;if(pw.length>=10)score++;if(/[A-Z]/.test(pw)&&/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;const colors=['#ef4444','#f59e0b','#22c55e','#16a34a'];segs.forEach((s,i)=>{s.style.background=i<score?colors[score-1]:'var(--border)';});}
+
+function openEditModal(){const session=getSession();if(!session)return;document.getElementById('edit-name').value=session.name;document.getElementById('edit-password').value='';document.getElementById('edit-msg').className='auth-msg';document.getElementById('editModal').classList.add('open');}
+function closeEditModal(e){if(e.target===document.getElementById('editModal'))document.getElementById('editModal').classList.remove('open');}
+function saveEdit(){
+  const session=getSession();if(!session)return;
+  const name=document.getElementById('edit-name').value.trim();
+  const pw=document.getElementById('edit-password').value;
+  const editMsg=document.getElementById('edit-msg');
+  if(!name){editMsg.textContent='Name cannot be empty.';editMsg.className='auth-msg error';return;}
+  const users=getUsers(),user=users[session.email];
+  user.name=name;
+  if(pw){if(pw.length<6){editMsg.textContent='Password must be at least 6 characters.';editMsg.className='auth-msg error';return;}user.pwHash=hashPw(pw);}
+  users[session.email]=user;saveUsers(users);saveSession(user);
+  renderProfileScreen(user);document.getElementById('editModal').classList.remove('open');showToast('Profile updated ✅');
+}
+
+/* ═══ NOTICE ═══ */
 let noticeOpen=false;
-function toggleNotice(){
-  noticeOpen=!noticeOpen;
-  document.getElementById('notice-body').style.display=noticeOpen?'block':'none';
-  document.getElementById('notice-toggle-icon').textContent=noticeOpen?'▲ Hide':'▼ Show';
-}
-function renderNotices(){
-  const notices=allRows.filter(r=>r.Type==='Notice');
-  const el=document.getElementById('notice-list');
-  if(!notices.length){el.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">📭 No notices yet.<br><small>Add Type = Notice in your sheet.</small></div>';return;}
-  el.innerHTML=notices.map(r=>`<div class="notice-item" onclick="${r.Link&&r.Link.startsWith('http')?`window.open('${esc(r.Link)}','_blank')`:'void(0)'}"><div class="notice-item-date">${r.Info||'Notice'}</div><div class="notice-item-title">${r.Title}</div></div>`).join('');
-}
+function toggleNotice(){noticeOpen=!noticeOpen;document.getElementById('notice-body').style.display=noticeOpen?'block':'none';document.getElementById('notice-toggle-icon').textContent=noticeOpen?'▲ Hide':'▼ Show';}
+function renderNotices(){const notices=allRows.filter(r=>r.Type==='Notice'),el=document.getElementById('notice-list');if(!notices.length){el.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">📭 No notices yet.</div>';return;}el.innerHTML=notices.map(r=>`<div class="notice-item" onclick="${r.Link&&r.Link.startsWith('http')?`window.open('${esc(r.Link)}','_blank')`:'void(0)'}"><div class="notice-item-date">${r.Info||'Notice'}</div><div class="notice-item-title">${r.Title}</div></div>`).join('');}
 
-// ── NAV ──
-function switchNav(id){
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const btn=document.getElementById('nav-'+id);if(btn)btn.classList.add('active');
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('pg-'+id).classList.add('active');
-  document.querySelector('.page').scrollTop=0;
-}
+function switchNav(id){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const btn=document.getElementById('nav-'+id);if(btn)btn.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById('pg-'+id).classList.add('active');document.querySelector('.page').scrollTop=0;}
 
-// ── FETCH ──
-async function fetchData(){
-  try{
-    const res=await fetch(APPS_SCRIPT_URL);
-    const json=await res.json();
-    allRows=json.map(r=>({Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim()})).filter(r=>r.Title.length>0);
-    renderAll();
-  }catch(e){
-    showToast('Could not load data. Check connection.');
-    ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty-box">⚠️ Failed to load. Tap 🔄 to retry.</div>';});
-    document.getElementById('notice-list').innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">⚠️ Failed.</div>';
-  }
-}
-function refreshAll(){
-  ['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading-box"><div class="spinner"></div>Refreshing…</div>';});
-  showToast('Refreshing data…');fetchData();
-}
-function renderAll(){renderLiveClasses();renderMaterials('All');renderExams();renderOther();renderNotices();}
-
-// ── LIVE ──
-function renderLiveClasses(){
-  const lives=allRows.filter(r=>r.Type==='Live');
-  const html=lives.length?lives.map(r=>liveCardHTML(r)).join(''):'<div class="empty-box">📭 No live classes yet.</div>';
-  document.getElementById('home-live-list').innerHTML=html;
-  document.getElementById('study-live-list').innerHTML=html;
-}
-function liveCardHTML(r){
-  const info=r.Info||'';
-  let b=`<span class="live-badge badge-zoom">ZOOM</span>`;
-  const il=info.toLowerCase();
-  if(il.includes('live')||il.includes('now'))b=`<span class="live-badge badge-live">● LIVE</span>`;
-  else if(il.includes('soon')||il.includes('upcoming'))b=`<span class="live-badge badge-soon">SOON</span>`;
-  return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(r.Link||'#')}')"><div class="live-avatar">📹</div><div class="live-info"><div class="live-title">${r.Title}</div><div class="live-meta">🕐 ${info||'Live Class'}</div></div>${b}</div>`;
-}
-
-// ── MATERIALS ──
-function renderMaterials(filter){
-  currentMatFilter=filter;
-  const term=matSearchTerm.toLowerCase();
-  const rows=allRows.filter(r=>filter==='All'?true:r.Type===filter).filter(r=>!term?true:r.Title.toLowerCase().includes(term)||(r.Info||'').toLowerCase().includes(term));
-  const el=document.getElementById('mat-list');
-  if(!rows.length){el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';return;}
-  el.innerHTML=rows.map(r=>matCardHTML(r)).join('');
-}
+async function fetchData(){try{const res=await fetch(APPS_SCRIPT_URL),json=await res.json();allRows=json.map(r=>({Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim()})).filter(r=>r.Title.length>0);renderAll();}catch(e){showToast('Could not load data. Tap 🔄 to retry.');['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty-box">⚠️ Failed to load.</div>';});document.getElementById('notice-list').innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">⚠️ Failed.</div>';updateStatCounters(0,0,0);}}
+function refreshAll(){['home-live-list','study-live-list','mat-list','exam-list','other-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=`<div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div>`;});showToast('Refreshing…');fetchData();}
+function updateStatCounters(live,materials,exams){function animCount(el,target){let cur=0;const step=Math.max(1,Math.ceil(target/20));el.classList.remove('stat-loading');const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur;if(cur>=target)clearInterval(t);},40);}animCount(document.getElementById('stat-live'),live);animCount(document.getElementById('stat-materials'),materials);animCount(document.getElementById('stat-exams'),exams);}
+function renderAll(){updateStatCounters(allRows.filter(r=>r.Type==='Live').length,allRows.filter(r=>r.Type==='Material').length,allRows.filter(r=>r.Type==='Exam').length);renderLiveClasses();renderMaterials('All');renderExams();renderOther();renderNotices();}
+function renderLiveClasses(){const lives=allRows.filter(r=>r.Type==='Live');const html=lives.length?lives.map(r=>liveCardHTML(r)).join(''):'<div class="empty-box">📭 No live classes yet.</div>';document.getElementById('home-live-list').innerHTML=html;document.getElementById('study-live-list').innerHTML=html;}
+function liveCardHTML(r){const info=r.Info||'';let b=`<span class="live-badge badge-zoom">ZOOM</span>`;const il=info.toLowerCase();if(il.includes('live')||il.includes('now'))b=`<span class="live-badge badge-live">● LIVE</span>`;else if(il.includes('soon')||il.includes('upcoming'))b=`<span class="live-badge badge-soon">SOON</span>`;return `<div class="live-card" onclick="openLiveModal('${esc(r.Title)}','${esc(info)}','${esc(r.Link||'#')}')"><div class="live-avatar">📹</div><div class="live-info"><div class="live-title">${r.Title}</div><div class="live-meta">🕐 ${info||'Live Class'}</div></div>${b}</div>`;}
+function renderMaterials(filter){currentMatFilter=filter;const term=matSearchTerm.toLowerCase();const rows=allRows.filter(r=>filter==='All'?true:r.Type===filter).filter(r=>!term?true:r.Title.toLowerCase().includes(term)||(r.Info||'').toLowerCase().includes(term));const el=document.getElementById('mat-list');if(!rows.length){el.innerHTML='<div class="empty-box">📭 Nothing found.</div>';return;}el.innerHTML=rows.map(r=>matCardHTML(r)).join('');}
 function filterMaterials(filter,btn){document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMaterials(filter);}
 function searchMaterials(){matSearchTerm=document.getElementById('mat-search').value;renderMaterials(currentMatFilter);}
-function matCardHTML(r){
-  const link=r.Link&&r.Link.startsWith('http')?r.Link:null;
-  const typeLabel=r.Type||'Material';
-  const colors={Live:'#e8f5ee;color:#1a6b3c',Material:'#eff6ff;color:#2563eb',Exam:'#fffbeb;color:#b45309',Other:'#f5f3ff;color:#7c3aed',Notice:'#fef2f2;color:#dc2626'};
-  const tagStyle=colors[typeLabel]||colors['Material'];
-  const openBtn=link?`<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`:`<span style="font-size:11px;color:var(--text3)">No link yet</span>`;
-  const shareBtn=link?`<button class="share-btn" onclick="shareMaterial('${esc(r.Title)}','${link}')">📤 Share</button>`:'';
-  return `<div class="mat-card"><div class="mat-title">${r.Title}</div>${r.Info?`<div class="mat-sub">${r.Info}</div>`:''}<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span><div class="mat-links">${openBtn}${shareBtn}</div></div>`;
-}
-
-// ── EXAMS ──
-function renderExams(){
-  const exams=allRows.filter(r=>r.Type==='Exam');
-  const el=document.getElementById('exam-list');
-  if(!exams.length){el.innerHTML='<div class="empty-box">📭 No exam links yet.<br><small>Add Type = Exam in your sheet.</small></div>';return;}
-  const grouped={};
-  exams.forEach(r=>{const c=r.Info||'General';if(!grouped[c])grouped[c]=[];grouped[c].push(r);});
-  let html='';
-  Object.entries(grouped).forEach(([cat,rows])=>{
-    html+=`<div class="exam-card"><div class="exam-card-head"><div class="exam-icon" style="background:var(--primary-light)">✏️</div><div><div class="exam-card-title">${cat}</div><div class="exam-card-sub">${rows.length} link${rows.length>1?'s':''}</div></div></div><div class="exam-sets">`;
-    rows.forEach(r=>{html+=`<a class="set-btn" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener">${r.Title}</a>`;});
-    html+=`</div></div>`;
-  });
-  el.innerHTML=html;
-}
-
-// ── OTHER ──
-function renderOther(){
-  const others=allRows.filter(r=>r.Type==='Other');
-  const el=document.getElementById('other-list');
-  if(!others.length){el.innerHTML='<div class="empty-box">📭 No links yet.<br><small>Add Type = Other in your sheet.</small></div>';return;}
-  el.innerHTML=others.map(r=>`<a class="other-card" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener"><div class="other-icon">🔗</div><div class="other-info"><div class="other-title">${r.Title}</div><div class="other-sub">${r.Info||'External link'}</div></div><span class="other-arrow">›</span></a>`).join('');
-}
-
-// ── MODAL ──
-function openLiveModal(title,info,link){
-  currentZoomLink=link;
-  document.getElementById('m-title').textContent=title;
-  document.getElementById('m-info').textContent=info;
-  document.getElementById('m-time').textContent=info||'See link for schedule';
-  const badges=document.getElementById('m-badges');
-  const il=info.toLowerCase();
-  badges.innerHTML=(il.includes('live')||il.includes('now'))?'<span class="live-badge badge-live" style="font-size:11px">● LIVE NOW</span>':'<span class="live-badge badge-soon" style="font-size:11px">🕐 Upcoming</span>';
-  badges.innerHTML+='<span class="live-badge badge-zoom" style="font-size:11px">📹 Zoom</span>';
-  document.getElementById('liveModal').classList.add('open');
-}
+function matCardHTML(r){const link=r.Link&&r.Link.startsWith('http')?r.Link:null,typeLabel=r.Type||'Material';const colors={Live:'#e8f5ee;color:#1a6b3c',Material:'#eff6ff;color:#2563eb',Exam:'#fffbeb;color:#b45309',Other:'#f5f3ff;color:#7c3aed',Notice:'#fef2f2;color:#dc2626'};const tagStyle=colors[typeLabel]||colors['Material'];const openBtn=link?`<a class="mat-link" href="${link}" target="_blank" rel="noopener">🔗 Open Link</a>`:`<span style="font-size:11px;color:var(--text3)">No link yet</span>`;const shareBtn=link?`<button class="share-btn" onclick="shareMaterial('${esc(r.Title)}','${link}')">📤 Share</button>`:'';return `<div class="mat-card"><div class="mat-title">${r.Title}</div>${r.Info?`<div class="mat-sub">${r.Info}</div>`:''}<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${tagStyle};border:1px solid rgba(0,0,0,.08);margin-bottom:8px">${typeLabel}</span><div class="mat-links">${openBtn}${shareBtn}</div></div>`;}
+function renderExams(){const exams=allRows.filter(r=>r.Type==='Exam'),el=document.getElementById('exam-list');if(!exams.length){el.innerHTML='<div class="empty-box">📭 No exam links yet.</div>';return;}const grouped={};exams.forEach(r=>{const c=r.Info||'General';if(!grouped[c])grouped[c]=[];grouped[c].push(r);});let html='';Object.entries(grouped).forEach(([cat,rows])=>{html+=`<div class="exam-card"><div class="exam-card-head"><div class="exam-icon" style="background:var(--primary-light)">✏️</div><div><div class="exam-card-title">${cat}</div><div class="exam-card-sub">${rows.length} link${rows.length>1?'s':''}</div></div></div><div class="exam-sets">`;rows.forEach(r=>{html+=`<a class="set-btn" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener">${r.Title}</a>`;});html+=`</div></div>`;});el.innerHTML=html;}
+function renderOther(){const others=allRows.filter(r=>r.Type==='Other'),el=document.getElementById('other-list');if(!others.length){el.innerHTML='<div class="empty-box">📭 No links yet.</div>';return;}el.innerHTML=others.map(r=>`<a class="other-card" href="${r.Link&&r.Link.startsWith('http')?r.Link:'#'}" target="_blank" rel="noopener"><div class="other-icon">🔗</div><div class="other-info"><div class="other-title">${r.Title}</div><div class="other-sub">${r.Info||'External link'}</div></div><span class="other-arrow">›</span></a>`).join('');}
+function openLiveModal(title,info,link){currentZoomLink=link;document.getElementById('m-title').textContent=title;document.getElementById('m-info').textContent=info;document.getElementById('m-time').textContent=info||'See link for schedule';const badges=document.getElementById('m-badges'),il=info.toLowerCase();badges.innerHTML=(il.includes('live')||il.includes('now'))?'<span class="live-badge badge-live" style="font-size:11px">● LIVE NOW</span>':'<span class="live-badge badge-soon" style="font-size:11px">🕐 Upcoming</span>';badges.innerHTML+='<span class="live-badge badge-zoom" style="font-size:11px">📹 Zoom</span>';document.getElementById('liveModal').classList.add('open');}
 function closeModal(e){if(e.target===document.getElementById('liveModal'))document.getElementById('liveModal').classList.remove('open');}
 function joinZoom(){if(currentZoomLink&&currentZoomLink!=='#')window.open(currentZoomLink,'_blank');else showToast('No link available.');}
-
 function esc(str){return(str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 function showNotif(){showToast('Refreshing!');refreshAll();}
-function showToast(msg){
-  let t=document.getElementById('toast');
-  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t);}
-  t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
-}
+function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:600;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
 
-setDailyQuote();
-setHeroDate();
-fetchData();
-setTimeout(startAutoRefresh, AUTO_REFRESH_MS);
+setDailyQuote();setHeroDate();updateStreak();checkProfileOnLoad();fetchData();setTimeout(startAutoRefresh,AUTO_REFRESH_MS);
 </script>
 </body>
 </html>
