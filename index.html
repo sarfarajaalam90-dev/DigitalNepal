@@ -8,6 +8,23 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Digital Nepal">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Digital Nepal">
+<meta name="msapplication-TileColor" content="#1a6b3c">
+<meta name="msapplication-TileImage" content="icons/icon-144.png">
+<meta name="msapplication-config" content="none">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Digital Nepal">
+<meta property="og:description" content="Your Digital Partner for Lok Sewa Preparation">
+<meta property="og:image" content="icons/icon-512.png">
+<meta property="og:type" content="website">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1075,5 +1092,28 @@ function updateStreak(){
 setDailyQuote();setHeroDate();updateStreak();checkProfileOnLoad();
 setInterval(function(){fetchData(true);},5*60*1000);
 </script>
+
+<script>
+// Register Service Worker
+if('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js')
+      .then(function(reg) { console.log('SW registered:', reg.scope); })
+      .catch(function(err) { console.log('SW failed:', err); });
+  });
+}
+
+// Handle ?goto= deep links from shortcuts
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var goto = params.get('goto');
+  if(goto) {
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if(typeof switchNav === 'function') switchNav(goto);
+      }, 2000);
+    });
+  }
+})();
+</script>
 </body>
-</html>
