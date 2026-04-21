@@ -11,7 +11,7 @@
   "theme_color": "#1a6b3c",
   "icons": [
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-96.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-96.png",
       "type": "image/png",
       "sizes": "32x32",
       "isSquare": true,
@@ -24,7 +24,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-72.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-72.png",
       "type": "image/png",
       "sizes": "16x16",
       "isSquare": true,
@@ -37,7 +37,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-192.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-192.png",
       "isSquare": false,
       "isPng": true,
       "isWebp": false,
@@ -48,7 +48,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-152.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-152.png",
       "sizes": "152x152",
       "isSquare": true,
       "isPng": true,
@@ -60,7 +60,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-144.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-144.png",
       "sizes": "144x144",
       "isSquare": true,
       "isPng": true,
@@ -72,7 +72,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-128.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-128.png",
       "sizes": "120x120",
       "isSquare": true,
       "isPng": true,
@@ -84,7 +84,7 @@
       "is192x192": false
     },
     {
-      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icons/icon-512.png",
+      "src": "https://sarfarajaalam90-dev.github.io/DigitalNepal/icon-512.png",
       "isSquare": false,
       "isPng": true,
       "isWebp": false,
