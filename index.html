@@ -1116,4 +1116,115 @@ if('serviceWorker' in navigator) {
   }
 })();
 </script>
+  <style>
+    #auth-section {
+        max-width: 350px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+    #auth-section input {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    #auth-section button {
+        width: 45%;
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+    }
+    #auth-section button.secondary {
+        background-color: #007bff;
+    }
+</style>
+
+<div id="auth-section">
+    <h3>Digital Nepal - Login</h3>
+    <input type="number" id="userPhone" placeholder="Mobile Number (10 digits)" required>
+    <input type="password" id="userPass" placeholder="Password" required>
+    
+    <div>
+        <button onclick="handleAuth('login')">Login</button>
+        <button class="secondary" onclick="handleAuth('register')">Register</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script>
+  // तपाईंको Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAaTyHTxmuktChm8AtJC15dfVejD66Gxvg",
+    authDomain: "digitalnepalapp.firebaseapp.com",
+    projectId: "digitalnepalapp",
+    storageBucket: "digitalnepalapp.firebasestorage.app",
+    messagingSenderId: "570701053036",
+    appId: "1:570701053036:web:0d074762777277e9d26c49",
+    measurementId: "G-VV0LRZQ2EK"
+  };
+
+  // Firebase सुचारु गर्ने
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
+
+  // लगइन र रजिस्टर ह्यान्डल गर्ने फंक्शन
+  function handleAuth(type) {
+    const phone = document.getElementById('userPhone').value;
+    const pass = document.getElementById('userPass').value;
+
+    if(phone.length < 10) {
+      alert("कृपया १० अंकको मोबाइल नम्बर राख्नुहोस्।");
+      return;
+    }
+    if(pass.length < 6) {
+      alert("पासवर्ड कम्तिमा ६ अक्षरको हुनुपर्छ।");
+      return;
+    }
+
+    // नम्बरलाई सिस्टमको लागि इमेलमा बदल्ने
+    const fakeEmail = phone + "@nepal.com";
+
+    if (type === 'register') {
+      auth.createUserWithEmailAndPassword(fakeEmail, pass)
+        .then(() => {
+          alert("बधाई छ! एकाउन्ट बन्यो। अब लगइन गर्नुहोस्।");
+        })
+        .catch(error => {
+          alert("Register Error: " + error.message);
+        });
+    } else {
+      auth.signInWithEmailAndPassword(fakeEmail, pass)
+        .then(() => {
+          alert("लगइन सफल भयो!");
+          // लगइन सफल भएपछि अर्को पेजमा पठाउन (उदा: home.html)
+          // window.location.href = "home.html"; 
+        })
+        .catch(error => {
+          alert("नम्बर वा पासवर्ड मिलेन।");
+        });
+    }
+  }
+
+  // युजर पहिले नै लगइन छ कि छैन चेक गर्ने
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("User is logged in:", user.email);
+      // यहाँ तपाईं लगइन भएको युजरलाई सिधै होमपेजमा लैजान सक्नुहुन्छ
+    }
+  });
+</script>
 </body>
