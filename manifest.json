@@ -17,49 +17,49 @@
   ],
   "icons": [
     {
-      "src": "/DigitalNepal/icons/icon-72.png",
+      "src": "/DigitalNepal/icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-96.png",
+      "src": "/DigitalNepal/icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-128.png",
+      "src": "/DigitalNepal/icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-144.png",
+      "src": "/DigitalNepal/icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-152.png",
+      "src": "/DigitalNepal/icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-192.png",
+      "src": "/DigitalNepal/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/DigitalNepal/icons/icon-384.png",
+      "src": "/DigitalNepal/icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icons/icon-512.png",
+      "src": "/DigitalNepal/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -67,14 +67,14 @@
   ],
   "screenshots": [
     {
-      "src": "/DigitalNepal/icons/screenshot-narrow.png",
+      "src": "/DigitalNepal/screenshot-narrow.png",
       "sizes": "360x640",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Digital Nepal Home Screen"
     },
     {
-      "src": "/DigitalNepal/icons/screenshot-wide.png",
+      "src": "/DigitalNepal/screenshot-wide.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
@@ -89,7 +89,7 @@
       "url": "/DigitalNepal/index.html?goto=materials",
       "icons": [
         {
-          "src": "/DigitalNepal/icons/icon-96.png",
+          "src": "/DigitalNepal/icon-96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -102,7 +102,7 @@
       "url": "/DigitalNepal/index.html?goto=exam",
       "icons": [
         {
-          "src": "/DigitalNepal/icons/icon-96.png",
+          "src": "/DigitalNepal/icon-96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
