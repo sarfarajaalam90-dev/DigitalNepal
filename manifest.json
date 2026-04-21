@@ -1,112 +1,25 @@
 {
-  "id": "com.digitalnepal.loksewa",
   "name": "Digital Nepal",
-  "short_name": "DigitalNepal",
-  "description": "Your Digital Partner for Lok Sewa Preparation. Live classes, study materials and model tests.",
-  "start_url": "/DigitalNepal/index.html",
-  "scope": "/DigitalNepal/",
+  "short_name": "Digital Nepal",
+  "description": "Digital Partner for Lok Sewa Preparation",
+  "start_url": "index.html",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#0a3d20",
+  "background_color": "#1a6b3c",
   "theme_color": "#1a6b3c",
-  "lang": "en-US",
-  "dir": "ltr",
-  "categories": [
-    "education",
-    "productivity"
-  ],
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
-      "src": "/DigitalNepal/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/DigitalNepal/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/DigitalNepal/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/DigitalNepal/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/DigitalNepal/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/DigitalNepal/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/DigitalNepal/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/DigitalNepal/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/DigitalNepal/screenshot-narrow.png",
-      "sizes": "360x640",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Digital Nepal Home Screen"
-    },
-    {
-      "src": "/DigitalNepal/screenshot-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Digital Nepal Desktop View"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Study Materials",
-      "short_name": "Materials",
-      "description": "Open study materials",
-      "url": "/DigitalNepal/index.html?goto=materials",
-      "icons": [
-        {
-          "src": "/DigitalNepal/icon-96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Model Exam",
-      "short_name": "Exam",
-      "description": "Open model exams",
-      "url": "/DigitalNepal/index.html?goto=exam",
-      "icons": [
-        {
-          "src": "/DigitalNepal/icon-96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
     }
   ]
 }
