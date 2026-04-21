@@ -26,6 +26,39 @@
 <meta property="og:image" content="icons/icon-512.png">
 <meta property="og:type" content="website">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAaTyHTxmuktChm8AtJC15dfVejD66Gxvg",
+  authDomain: "digitalnepalapp.firebaseapp.com",
+  projectId: "digitalnepalapp",
+  storageBucket: "digitalnepalapp.firebasestorage.app",
+  messagingSenderId: "570701053036",
+  appId: "1:570701053036:web:0d074762777277e9d26c49",
+  measurementId: "G-VV0LRZQ2EK"
+};
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const fbAuth = firebase.auth();
+// Auto-login: if Firebase already has session, restore profile
+fbAuth.onAuthStateChanged(function(fbUser) {
+  if (fbUser) {
+    var stored = JSON.parse(localStorage.getItem('dn-session-v3') || 'null');
+    var name = (stored && stored.email === fbUser.email) ? stored.name : (fbUser.displayName || fbUser.email.split('@')[0]);
+    var uid  = (stored && stored.uid) ? stored.uid : generateUID();
+    var joinedAt = (stored && stored.joinedAt) ? stored.joinedAt : new Date().toISOString();
+    var user = {name: name, email: fbUser.email, uid: uid, joinedAt: joinedAt};
+    localStorage.setItem('dn-session-v3', JSON.stringify(user));
+    // Only render if DOM is ready
+    if(document.readyState === 'complete' || document.readyState === 'interactive'){
+      renderProfileScreen(user);
+    } else {
+      document.addEventListener('DOMContentLoaded', function(){ renderProfileScreen(user); });
+    }
+  }
+});
+</script>
 <style>
 :root{
   --primary:#1a6b3c;--primary-light:#e8f5ee;--primary-dark:#145530;
@@ -533,6 +566,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             <div id="form-login">
               <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="you@email.com" autocomplete="email"></div>
               <div class="auth-field"><label>Password</label><div class="pw-wrap"><input type="password" id="login-password" placeholder="Your password" autocomplete="current-password"><button class="pw-toggle" onclick="togglePw('login-password',this)" type="button">&#128065;</button></div></div>
+              <div style="text-align:right;margin-top:-6px;margin-bottom:10px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--primary);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Forgot Password?</button></div>
               <button class="auth-btn" onclick="doLogin()">Login &rarr;</button>
               <div class="auth-divider"><span>No account?</span></div>
               <button class="auth-btn" style="background:var(--bg);color:var(--primary);border:1.5px solid var(--primary)" onclick="switchAuthTab('register')">Create Free Account</button>
@@ -638,7 +672,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
-const USERS_KEY='dn-users-v3',SESSION_KEY='dn-session-v3';
+const SESSION_KEY='dn-session-v3'; // Users stored in Firebase Auth
 const CACHE_KEY='dn-cache-v3',CACHE_TS_KEY='dn-cache-ts-v3';
 const CACHE_MAX=10*60*1000;
 let allRows=[],currentZoomLink='',matSearchTerm='';
@@ -980,13 +1014,14 @@ function openLiveModal(title,info,link){
 function closeModal(e){if(e.target===document.getElementById('liveModal'))document.getElementById('liveModal').classList.remove('open');}
 function joinZoom(){if(currentZoomLink&&currentZoomLink!=='#')window.open(currentZoomLink,'_blank');else showToast('No link available.');}
 
-/* AUTH */
-function hashPw(pw){let h=0;for(let i=0;i<pw.length;i++){h=((h<<5)-h)+pw.charCodeAt(i);h|=0;}return h.toString(36);}
-function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||'{}')}
-function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u));}
+/* ============================================================
+   AUTH — Firebase Email + Password
+   ============================================================ */
 function getSession(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}
 function saveSession(u){localStorage.setItem(SESSION_KEY,JSON.stringify(u));}
 function clearSession(){localStorage.removeItem(SESSION_KEY);}
+function generateUID(){var c=parseInt(localStorage.getItem('dn-uid-cnt')||'0')+1;localStorage.setItem('dn-uid-cnt',c);return 'DigitalNepal'+String(c).padStart(4,'0');}
+
 function switchAuthTab(tab){
   document.getElementById('tab-login').classList.toggle('active',tab==='login');
   document.getElementById('tab-register').classList.toggle('active',tab==='register');
@@ -996,35 +1031,110 @@ function switchAuthTab(tab){
 }
 function showAuthMsg(msg,type){type=type||'error';var el=document.getElementById('auth-msg');el.textContent=msg;el.className='auth-msg '+type;}
 function clearAuthMsg(){var el=document.getElementById('auth-msg');el.className='auth-msg';el.textContent='';}
-function generateUID(){var c=parseInt(localStorage.getItem('dn-uid-cnt')||'0')+1;localStorage.setItem('dn-uid-cnt',c);return 'DigitalNepal'+String(c).padStart(4,'0');}
+
+/* Friendly Firebase error messages */
+function fbErrMsg(code){
+  var map={
+    'auth/user-not-found':'No account found with this email. Please register first.',
+    'auth/wrong-password':'Incorrect password. Please try again.',
+    'auth/invalid-email':'Please enter a valid email address.',
+    'auth/email-already-in-use':'This email is already registered. Please login.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/too-many-requests':'Too many failed attempts. Please wait a moment and try again.',
+    'auth/network-request-failed':'Network error. Please check your internet connection.',
+    'auth/invalid-credential':'Email or password is incorrect.'
+  };
+  return map[code]||'Something went wrong. Please try again.';
+}
+
+/* REGISTER with Firebase */
 function doRegister(){
   var name=document.getElementById('reg-name').value.trim();
   var email=document.getElementById('reg-email').value.trim().toLowerCase();
   var pw=document.getElementById('reg-password').value;
   var conf=document.getElementById('reg-confirm').value;
   if(!name){showAuthMsg('Please enter your full name.');return;}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthMsg('Please enter a valid email.');return;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAuthMsg('Please enter a valid email address.');return;}
   if(pw.length<6){showAuthMsg('Password must be at least 6 characters.');return;}
   if(pw!==conf){showAuthMsg('Passwords do not match.');return;}
-  var users=getUsers();
-  var uid=users[email]?users[email].uid:generateUID();
-  var newUser={name:name,email:email,pwHash:hashPw(pw),joinedAt:users[email]?users[email].joinedAt:new Date().toISOString(),uid:uid};
-  users[email]=newUser;saveUsers(users);saveSession(newUser);
-  showAuthMsg('Account created! ID: '+uid,'success');
-  setTimeout(function(){renderProfileScreen(newUser);},900);
+
+  var btn=document.querySelector('#form-register .auth-btn');
+  btn.textContent='Creating account...';btn.disabled=true;
+
+  fbAuth.createUserWithEmailAndPassword(email, pw)
+    .then(function(cred){
+      // Update display name in Firebase
+      return cred.user.updateProfile({displayName: name}).then(function(){
+        var uid=generateUID();
+        var user={name:name, email:email, uid:uid, joinedAt:new Date().toISOString()};
+        saveSession(user);
+        showAuthMsg('Account created! Your ID: '+uid, 'success');
+        setTimeout(function(){renderProfileScreen(user);},900);
+      });
+    })
+    .catch(function(err){
+      showAuthMsg(fbErrMsg(err.code));
+    })
+    .finally(function(){
+      btn.textContent='Create Account →';btn.disabled=false;
+    });
 }
+
+/* LOGIN with Firebase */
 function doLogin(){
   var email=document.getElementById('login-email').value.trim().toLowerCase();
   var pw=document.getElementById('login-password').value;
   if(!email){showAuthMsg('Please enter your email.');return;}
   if(!pw){showAuthMsg('Please enter your password.');return;}
-  var users=getUsers(),user=users[email];
-  if(!user){showAuthMsg('No account found. Please register first.');return;}
-  if(user.pwHash!==hashPw(pw)){showAuthMsg('Incorrect password.');return;}
-  saveSession(user);showAuthMsg('Welcome back, '+user.name,'success');
-  setTimeout(function(){renderProfileScreen(user);},600);
+
+  var btn=document.querySelector('#form-login .auth-btn');
+  btn.textContent='Logging in...';btn.disabled=true;
+
+  fbAuth.signInWithEmailAndPassword(email, pw)
+    .then(function(cred){
+      var fbUser=cred.user;
+      var stored=getSession();
+      var name=(stored&&stored.email===email)?stored.name:(fbUser.displayName||email.split('@')[0]);
+      var uid=(stored&&stored.uid)?stored.uid:generateUID();
+      var joinedAt=(stored&&stored.joinedAt)?stored.joinedAt:new Date().toISOString();
+      var user={name:name, email:email, uid:uid, joinedAt:joinedAt};
+      saveSession(user);
+      showAuthMsg('Welcome back, '+name+'!','success');
+      setTimeout(function(){renderProfileScreen(user);},600);
+    })
+    .catch(function(err){
+      showAuthMsg(fbErrMsg(err.code));
+    })
+    .finally(function(){
+      btn.textContent='Login →';btn.disabled=false;
+    });
 }
-function doLogout(){if(!confirm('Logout?'))return;clearSession();renderAuthScreen();showToast('Logged out.');}
+
+/* FORGOT PASSWORD */
+function doForgotPassword(){
+  var email=document.getElementById('login-email').value.trim().toLowerCase();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showAuthMsg('Please enter your email address above first, then tap Forgot Password.');return;
+  }
+  fbAuth.sendPasswordResetEmail(email)
+    .then(function(){
+      showAuthMsg('Password reset email sent to '+email+'. Please check your inbox.','success');
+    })
+    .catch(function(err){
+      showAuthMsg(fbErrMsg(err.code));
+    });
+}
+
+/* LOGOUT */
+function doLogout(){
+  if(!confirm('Logout?'))return;
+  fbAuth.signOut().then(function(){
+    clearSession();
+    renderAuthScreen();
+    showToast('Logged out successfully.');
+  });
+}
+
 function renderAuthScreen(){
   document.getElementById('auth-screen').style.display='block';
   document.getElementById('profile-screen').style.display='none';
@@ -1033,7 +1143,7 @@ function renderAuthScreen(){
 function renderProfileScreen(user){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('profile-screen').style.display='block';
-  var initials=user.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+  var initials=user.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'DN';
   document.getElementById('prof-avatar').textContent=initials;
   document.getElementById('prof-name').textContent=user.name;
   document.getElementById('prof-email').textContent=user.email;
@@ -1051,7 +1161,7 @@ function updateSidebarUser(user){
   var avatarEl=document.getElementById('sidebar-avatar');
   if(!nameEl)return;
   if(user){
-    var initials=user.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+    var initials=user.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'DN';
     if(avatarEl){avatarEl.textContent=initials;avatarEl.style.background='rgba(255,255,255,.2)';}
     nameEl.textContent=user.name;idEl.textContent=user.uid||user.email;
   }else{
@@ -1059,10 +1169,28 @@ function updateSidebarUser(user){
     nameEl.textContent='Guest User';idEl.textContent='Not logged in';
   }
 }
-function checkProfileOnLoad(){var s=getSession();if(s)renderProfileScreen(s);else renderAuthScreen();}
+function checkProfileOnLoad(){
+  // Firebase onAuthStateChanged (in <head>) handles auto-login.
+  // If no Firebase session, check localStorage as fallback.
+  var s=getSession();
+  if(s&&!fbAuth.currentUser){
+    // Stale session — show auth screen so user logs in fresh
+    clearSession();renderAuthScreen();
+  } else if(!s){
+    renderAuthScreen();
+  }
+  // If Firebase session exists, onAuthStateChanged will call renderProfileScreen
+}
 function togglePw(id,btn){var inp=document.getElementById(id);if(inp.type==='password'){inp.type='text';btn.innerHTML='&#128584;';}else{inp.type='password';btn.innerHTML='&#128065;';}}
 function checkStrength(pw){var segs=['s1','s2','s3','s4'].map(function(id){return document.getElementById(id);});var score=0;if(pw.length>=6)score++;if(pw.length>=10)score++;if(/[A-Z]/.test(pw)&&/[0-9]/.test(pw))score++;if(/[^A-Za-z0-9]/.test(pw))score++;var colors=['#ef4444','#f59e0b','#22c55e','#16a34a'];segs.forEach(function(s,i){s.style.background=i<score?colors[score-1]:'var(--border)';});}
-function openEditModal(){var s=getSession();if(!s)return;document.getElementById('edit-name').value=s.name;document.getElementById('edit-password').value='';document.getElementById('edit-msg').className='auth-msg';document.getElementById('editModal').classList.add('open');}
+
+function openEditModal(){
+  var s=getSession();if(!s)return;
+  document.getElementById('edit-name').value=s.name;
+  document.getElementById('edit-password').value='';
+  document.getElementById('edit-msg').className='auth-msg';
+  document.getElementById('editModal').classList.add('open');
+}
 function closeEditModal(e){if(e.target===document.getElementById('editModal'))document.getElementById('editModal').classList.remove('open');}
 function saveEdit(){
   var s=getSession();if(!s)return;
@@ -1070,10 +1198,35 @@ function saveEdit(){
   var pw=document.getElementById('edit-password').value;
   var em=document.getElementById('edit-msg');
   if(!name){em.textContent='Name cannot be empty.';em.className='auth-msg error';return;}
-  var users=getUsers(),user=users[s.email];user.name=name;
-  if(pw){if(pw.length<6){em.textContent='Password must be 6+ chars.';em.className='auth-msg error';return;}user.pwHash=hashPw(pw);}
-  users[s.email]=user;saveUsers(users);saveSession(user);
-  renderProfileScreen(user);document.getElementById('editModal').classList.remove('open');showToast('Profile updated');
+
+  var fbUser=fbAuth.currentUser;
+  var promises=[];
+
+  // Update display name in Firebase
+  if(fbUser) promises.push(fbUser.updateProfile({displayName:name}));
+
+  // Update password in Firebase if provided
+  if(pw){
+    if(pw.length<6){em.textContent='Password must be 6+ chars.';em.className='auth-msg error';return;}
+    if(fbUser) promises.push(fbUser.updatePassword(pw));
+  }
+
+  Promise.all(promises).then(function(){
+    var user=Object.assign({},s,{name:name});
+    saveSession(user);
+    renderProfileScreen(user);
+    document.getElementById('editModal').classList.remove('open');
+    showToast('Profile updated successfully!');
+  }).catch(function(err){
+    // If re-auth needed (Firebase requires recent login for password change)
+    if(err.code==='auth/requires-recent-login'){
+      em.textContent='Please logout and login again before changing password.';
+      em.className='auth-msg error';
+    } else {
+      em.textContent=fbErrMsg(err.code);
+      em.className='auth-msg error';
+    }
+  });
 }
 function shareApp(){if(navigator.share){navigator.share({title:'Digital Nepal',text:'Free Lok Sewa prep app!',url:APP_URL});}else{navigator.clipboard.writeText(APP_URL).then(function(){showToast('App link copied!');});}}
 function shareMaterial(title,link){var text=title+'\n'+link+'\n\n'+APP_URL;if(navigator.share){navigator.share({title:title,text:text,url:link});}else{navigator.clipboard.writeText(text).then(function(){showToast('Link copied!');});}}
@@ -1115,116 +1268,5 @@ if('serviceWorker' in navigator) {
     });
   }
 })();
-</script>
-  <style>
-    #auth-section {
-        max-width: 350px;
-        margin: 50px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        text-align: center;
-        font-family: Arial, sans-serif;
-    }
-    #auth-section input {
-        width: 90%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-    #auth-section button {
-        width: 45%;
-        padding: 10px;
-        margin: 5px;
-        cursor: pointer;
-        border-radius: 5px;
-        border: none;
-        background-color: #28a745;
-        color: white;
-        font-weight: bold;
-    }
-    #auth-section button.secondary {
-        background-color: #007bff;
-    }
-</style>
-
-<div id="auth-section">
-    <h3>Digital Nepal - Login</h3>
-    <input type="number" id="userPhone" placeholder="Mobile Number (10 digits)" required>
-    <input type="password" id="userPass" placeholder="Password" required>
-    
-    <div>
-        <button onclick="handleAuth('login')">Login</button>
-        <button class="secondary" onclick="handleAuth('register')">Register</button>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
-<script>
-  // तपाईंको Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyAaTyHTxmuktChm8AtJC15dfVejD66Gxvg",
-    authDomain: "digitalnepalapp.firebaseapp.com",
-    projectId: "digitalnepalapp",
-    storageBucket: "digitalnepalapp.firebasestorage.app",
-    messagingSenderId: "570701053036",
-    appId: "1:570701053036:web:0d074762777277e9d26c49",
-    measurementId: "G-VV0LRZQ2EK"
-  };
-
-  // Firebase सुचारु गर्ने
-  if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-  }
-  const auth = firebase.auth();
-
-  // लगइन र रजिस्टर ह्यान्डल गर्ने फंक्शन
-  function handleAuth(type) {
-    const phone = document.getElementById('userPhone').value;
-    const pass = document.getElementById('userPass').value;
-
-    if(phone.length < 10) {
-      alert("कृपया १० अंकको मोबाइल नम्बर राख्नुहोस्।");
-      return;
-    }
-    if(pass.length < 6) {
-      alert("पासवर्ड कम्तिमा ६ अक्षरको हुनुपर्छ।");
-      return;
-    }
-
-    // नम्बरलाई सिस्टमको लागि इमेलमा बदल्ने
-    const fakeEmail = phone + "@nepal.com";
-
-    if (type === 'register') {
-      auth.createUserWithEmailAndPassword(fakeEmail, pass)
-        .then(() => {
-          alert("बधाई छ! एकाउन्ट बन्यो। अब लगइन गर्नुहोस्।");
-        })
-        .catch(error => {
-          alert("Register Error: " + error.message);
-        });
-    } else {
-      auth.signInWithEmailAndPassword(fakeEmail, pass)
-        .then(() => {
-          alert("लगइन सफल भयो!");
-          // लगइन सफल भएपछि अर्को पेजमा पठाउन (उदा: home.html)
-          // window.location.href = "home.html"; 
-        })
-        .catch(error => {
-          alert("नम्बर वा पासवर्ड मिलेन।");
-        });
-    }
-  }
-
-  // युजर पहिले नै लगइन छ कि छैन चेक गर्ने
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      console.log("User is logged in:", user.email);
-      // यहाँ तपाईं लगइन भएको युजरलाई सिधै होमपेजमा लैजान सक्नुहुन्छ
-    }
-  });
 </script>
 </body>
