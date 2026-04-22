@@ -46,7 +46,7 @@ fbAuth.onAuthStateChanged(function(fbUser) {
   if (fbUser) {
     var stored = JSON.parse(localStorage.getItem('dn-session-v3') || 'null');
     var name = (stored && stored.email === fbUser.email) ? stored.name : (fbUser.displayName || fbUser.email.split('@')[0]);
-    var uid  = (stored && stored.uid) ? stored.uid : generateUID();
+    var uid  = (stored && stored.email === fbUser.email && stored.uid) ? stored.uid : getOrCreateUID(fbUser.email);
     var joinedAt = (stored && stored.joinedAt) ? stored.joinedAt : new Date().toISOString();
     var user = {name: name, email: fbUser.email, uid: uid, joinedAt: joinedAt};
     localStorage.setItem('dn-session-v3', JSON.stringify(user));
@@ -389,6 +389,13 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .install-btns{display:flex;gap:6px;flex-shrink:0;margin-left:auto}
 .install-yes{background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer}
 .install-no{background:var(--bg);color:var(--text2);border:1.5px solid var(--border);padding:6px 9px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer}
+
+/* SUB-TABS */
+.sub-tabs{display:flex;background:var(--bg);border-bottom:1.5px solid var(--border);padding:0 14px}
+.stab{padding:9px 16px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;margin-bottom:-1.5px}
+.stab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.sub-panel{display:none;padding-top:6px}
+.sub-panel.active{display:block}
 </style>
 </head>
 <body>
@@ -504,7 +511,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div id="home-live-list"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div>
       </div>
 
-      <!-- MATERIALS — compact, 6+ per screen, tabs: 1st/2nd/3rd Paper -->
+      <!-- MATERIALS -->
       <div class="section" id="pg-materials">
         <div class="paper-tabs">
           <button class="ptab active" id="mtab-1" onclick="switchMatTab('1',this)">1st Paper</button>
@@ -512,14 +519,36 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <button class="ptab" id="mtab-3" onclick="switchMatTab('3',this)">3rd Paper</button>
         </div>
         <div class="search-bar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="mat-search" placeholder="Search..." oninput="searchMaterials()"></div>
+        <!-- 1st Paper: GK + IQ -->
         <div class="paper-panel active" id="mpanel-1">
-          <div id="mat-list-1"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div>
+          <div class="sub-tabs">
+            <button class="stab active" onclick="switchSubTab('1','gk',this)">GK</button>
+            <button class="stab" onclick="switchSubTab('1','iq',this)">IQ</button>
+          </div>
+          <div class="sub-panel active" id="spanel-1-gk"><div id="mat-list-1-gk"><div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div></div></div>
+          <div class="sub-panel" id="spanel-1-iq"><div id="mat-list-1-iq"><div class="empty-box">Set Info = "1st Paper IQ" in sheet</div></div></div>
         </div>
+        <!-- 2nd Paper: Sec A/B/C -->
         <div class="paper-panel" id="mpanel-2">
-          <div id="mat-list-2"><div class="empty-box">Add 2nd Paper materials in your sheet with Info = "2nd Paper"</div></div>
+          <div class="sub-tabs">
+            <button class="stab active" onclick="switchSubTab('2','a',this)">Sec A</button>
+            <button class="stab" onclick="switchSubTab('2','b',this)">Sec B</button>
+            <button class="stab" onclick="switchSubTab('2','c',this)">Sec C</button>
+          </div>
+          <div class="sub-panel active" id="spanel-2-a"><div id="mat-list-2-a"><div class="empty-box">Set Info = "2nd Paper Sec A" in sheet</div></div></div>
+          <div class="sub-panel" id="spanel-2-b"><div id="mat-list-2-b"><div class="empty-box">Set Info = "2nd Paper Sec B" in sheet</div></div></div>
+          <div class="sub-panel" id="spanel-2-c"><div id="mat-list-2-c"><div class="empty-box">Set Info = "2nd Paper Sec C" in sheet</div></div></div>
         </div>
+        <!-- 3rd Paper: Sec A/B/C -->
         <div class="paper-panel" id="mpanel-3">
-          <div id="mat-list-3"><div class="empty-box">Add 3rd Paper materials in your sheet with Info = "3rd Paper"</div></div>
+          <div class="sub-tabs">
+            <button class="stab active" onclick="switchSubTab('3','a',this)">Sec A</button>
+            <button class="stab" onclick="switchSubTab('3','b',this)">Sec B</button>
+            <button class="stab" onclick="switchSubTab('3','c',this)">Sec C</button>
+          </div>
+          <div class="sub-panel active" id="spanel-3-a"><div id="mat-list-3-a"><div class="empty-box">Set Info = "3rd Paper Sec A" in sheet</div></div></div>
+          <div class="sub-panel" id="spanel-3-b"><div id="mat-list-3-b"><div class="empty-box">Set Info = "3rd Paper Sec B" in sheet</div></div></div>
+          <div class="sub-panel" id="spanel-3-c"><div id="mat-list-3-c"><div class="empty-box">Set Info = "3rd Paper Sec C" in sheet</div></div></div>
         </div>
       </div>
 
@@ -594,19 +623,51 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             <div class="profile-stat-box"><div class="profile-stat-n" id="prof-days">0</div><div class="profile-stat-l">Days Active</div></div>
             <div class="profile-stat-box"><div class="profile-stat-n" id="prof-member">0</div><div class="profile-stat-l">Days Member</div></div>
           </div>
-          <div class="profile-menu" style="margin-top:12px">
-            <div class="profile-menu-item">
-              <div class="pmi-icon" style="background:#f5f3ff" id="dark-icon">&#127769;</div>
-              <div class="pmi-info"><div class="pmi-label" id="dark-label">Dark Mode</div><div class="pmi-sub" id="dark-sub">Switch to night theme</div></div>
-              <div class="toggle-switch" id="dark-toggle" onclick="toggleDark()"><div class="toggle-knob"></div></div>
-            </div>
-            <div class="profile-menu-item" onclick="openEditModal()"><div class="pmi-icon" style="background:#e8f5ee">&#9999;</div><div class="pmi-info"><div class="pmi-label">Edit Profile</div><div class="pmi-sub">Change name or password</div></div><div class="pmi-arrow">&rsaquo;</div></div>
-            <div class="profile-menu-item" onclick="switchNav('other')"><div class="pmi-icon" style="background:#fff7ed">&#128279;</div><div class="pmi-info"><div class="pmi-label">Other Links</div><div class="pmi-sub">Extra resources &amp; tools</div></div><div class="pmi-arrow">&rsaquo;</div></div>
-            <div class="profile-menu-item" onclick="shareApp()"><div class="pmi-icon" style="background:#fffbeb">&#128228;</div><div class="pmi-info"><div class="pmi-label">Share App</div><div class="pmi-sub">Invite your friends</div></div><div class="pmi-arrow">&rsaquo;</div></div>
-            <div class="profile-menu-item" onclick="refreshAll()"><div class="pmi-icon" style="background:#eff6ff">&#8635;</div><div class="pmi-info"><div class="pmi-label">Refresh Content</div><div class="pmi-sub">Reload all data</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+          <!-- Profile tabs -->
+          <div class="auth-tabs" style="margin:12px 14px 0">
+            <button class="auth-tab active" id="ptab-course" onclick="switchProfileTab('course')">Course</button>
+            <button class="auth-tab" id="ptab-settings" onclick="switchProfileTab('settings')">Settings</button>
           </div>
-          <div style="height:12px"></div>
-          <button class="logout-btn" onclick="doLogout()">Logout</button>
+          <!-- COURSE -->
+          <div id="prof-course-panel">
+            <div class="sec-head" style="padding-top:10px"><h3>My Courses</h3></div>
+            <div style="margin:0 14px 8px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center">
+              <div style="font-size:28px;margin-bottom:6px">&#127979;</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Lok Sewa Preparation</div>
+              <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Full Course — 1st, 2nd &amp; 3rd Paper</div>
+              <div style="display:flex;gap:6px;justify-content:center">
+                <span style="font-size:10px;background:var(--primary-light);color:var(--primary);padding:3px 9px;border-radius:99px;font-weight:700;border:1px solid #a7f3d0">Active</span>
+                <span style="font-size:10px;background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:99px;font-weight:700;border:1px solid #fde68a">FREE</span>
+              </div>
+            </div>
+            <div class="sec-head"><h3>Quick Access</h3></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px">
+              <div onclick="switchNav('materials')" style="padding:12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer">
+                <div style="font-size:22px;margin-bottom:4px">&#128196;</div>
+                <div style="font-size:11px;font-weight:700;color:var(--text)">Materials</div>
+              </div>
+              <div onclick="switchNav('exam')" style="padding:12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer">
+                <div style="font-size:22px;margin-bottom:4px">&#128221;</div>
+                <div style="font-size:11px;font-weight:700;color:var(--text)">Exams</div>
+              </div>
+            </div>
+          </div>
+          <!-- SETTINGS -->
+          <div id="prof-settings-panel" style="display:none">
+            <div class="profile-menu" style="margin:12px 14px 0">
+              <div class="profile-menu-item">
+                <div class="pmi-icon" style="background:#f5f3ff" id="dark-icon">&#127769;</div>
+                <div class="pmi-info"><div class="pmi-label" id="dark-label">Dark Mode</div><div class="pmi-sub" id="dark-sub">Switch to night theme</div></div>
+                <div class="toggle-switch" id="dark-toggle" onclick="toggleDark()"><div class="toggle-knob"></div></div>
+              </div>
+              <div class="profile-menu-item" onclick="openEditModal()"><div class="pmi-icon" style="background:#e8f5ee">&#9999;</div><div class="pmi-info"><div class="pmi-label">Edit Profile</div><div class="pmi-sub">Change name or password</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="switchNav('other')"><div class="pmi-icon" style="background:#fff7ed">&#128279;</div><div class="pmi-info"><div class="pmi-label">Other Links</div><div class="pmi-sub">Extra resources &amp; tools</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="shareApp()"><div class="pmi-icon" style="background:#fffbeb">&#128228;</div><div class="pmi-info"><div class="pmi-label">Share App</div><div class="pmi-sub">Invite your friends</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="refreshAll()"><div class="pmi-icon" style="background:#eff6ff">&#8635;</div><div class="pmi-info"><div class="pmi-label">Refresh Content</div><div class="pmi-sub">Reload all data</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+            </div>
+            <div style="height:12px"></div>
+            <button class="logout-btn" onclick="doLogout()">Logout</button>
+          </div>
           <div class="profile-bottom-space"></div>
         </div>
       </div>
@@ -732,7 +793,7 @@ setInterval(updateClock,1000);updateClock();
 var BS_MONTHS=['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
 var BS_DAYS=['Aaita','Soma','Mangal','Budha','Bihi','Sukra','Shani'];
 function adToBS(y,m,d){
-  var ref=new Date(2024,3,13);
+  var ref=new Date(2024,3,14); // April 14 = 2081 Baisakh 1
   var target=new Date(y,m-1,d);
   var rem=Math.round((target-ref)/86400000);
   var bsY=2081,bsM=0,bsD=1;
@@ -756,7 +817,7 @@ function setHeroDate(){
 }
 
 /* QUOTES */
-var QUOTES=['Safalta ek dinma audaina, tara mehnatale dina aaunchha.','Aafno sapnalai sakar parna aaja nai suru garnuhos.','Padnu bhaneko bhavisyako dhoka kholnu ho.','Lok Sewako tayari gahro cha, tara asambhav chhaina.','Hardik mehnatalai safaltako bato hunchha.','Gyan nai shakti ho — jati padnuhunchha, uti agadi badhnuhunchha.','Aaja gareko mehnat bholiko safaltako jaga ho.'];
+var QUOTES=['सफलता एक दिनमा आउँदैन, तर मेहनतले दिन आउँछ।','आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस्।','पढ्नु भनेको भविष्यको ढोका खोल्नु हो।','लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन।','ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।','आज गरेको मेहनत भोलिको सफलताको जग हो।','धैर्य र परिश्रमले असम्भवलाई पनि सम्भव बनाउँछ।'];
 function setDailyQuote(){document.getElementById('daily-quote').textContent=QUOTES[new Date().getDate()%QUOTES.length];}
 
 /* CACHE */
@@ -787,7 +848,7 @@ function fetchWithTimeout(url,ms){
 
 /* FETCH */
 function processRows(json){
-  return json.map(function(r){return{Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim()};;}).filter(function(r){return r.Title.length>0;});
+  return json.map(function(r){return{Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim(),Pic:String(r.Pic||r.Image||r.Photo||'').trim()};;}).filter(function(r){return r.Title.length>0;});
 }
 async function fetchData(silent){
   if(silent===undefined)silent=false;
@@ -899,7 +960,9 @@ function renderAll(){
     allRows.filter(function(r){return r.Type==='Exam';}).length
   );
   renderLiveClasses();
-  renderMaterials('1');renderMaterials('2');renderMaterials('3');
+  renderSubPanel('1','gk');renderSubPanel('1','iq');
+  renderSubPanel('2','a');renderSubPanel('2','b');renderSubPanel('2','c');
+  renderSubPanel('3','a');renderSubPanel('3','b');renderSubPanel('3','c');
   renderExams('1');renderExams('2');renderExams('3');
   renderOther();renderNotices();
 }
@@ -908,41 +971,94 @@ function renderLiveClasses(){
   document.getElementById('home-live-list').innerHTML=lives.length?lives.map(function(r,i){return liveCardHTML(r,i);}).join(''):'<div class="empty-box">No live classes yet.</div>';
 }
 function liveCardHTML(r,i){
-  i=i||0;
-  var info=r.Info||'';var b='<span class="live-badge badge-zoom">ZOOM</span>';
-  var il=info.toLowerCase();
-  if(il.indexOf('live')>=0||il.indexOf('now')>=0)b='<span class="live-badge badge-live">LIVE</span>';
-  else if(il.indexOf('soon')>=0||il.indexOf('upcoming')>=0)b='<span class="live-badge badge-soon">SOON</span>';
-  return '<div class="live-card" style="animation-delay:'+(i*0.06)+'s" onclick="openLiveModal(\''+esc(r.Title)+'\'\,\''+esc(info)+'\'\,\''+esc(r.Link||'')+'\')">'
-    +'<div class="live-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>'
-    +'<div class="live-info"><div class="live-title">'+r.Title+'</div><div class="live-meta">'+( info||'Live Class')+'</div></div>'+b+'</div>';
+  i = i || 0;
+  var info = r.Info || '';
+  var link = r.Link || '';
+  var pic  = r.Pic  || '';
+  var il   = info.toLowerCase();
+  var badge = '<span class="live-badge badge-zoom">ONLINE</span>';
+  if(il.indexOf('live') >= 0 || il.indexOf('now') >= 0)
+    badge = '<span class="live-badge badge-live">LIVE</span>';
+  else if(il.indexOf('soon') >= 0 || il.indexOf('upcoming') >= 0)
+    badge = '<span class="live-badge badge-soon">SOON</span>';
+
+  var avatarInner = pic && pic.startsWith('http')
+    ? '<img src="' + pic + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
+
+  var joinBtn = (link && link.startsWith('http'))
+    ? '<a href="' + link + '" target="_blank" rel="noopener" style="display:inline-block;font-size:10px;font-weight:700;padding:4px 11px;background:var(--primary);color:#fff;border-radius:99px;text-decoration:none;margin-top:4px">Join</a>'
+    : '';
+
+  return '<div class="live-card" style="animation-delay:' + (i * 0.06) + 's">'
+    + '<div class="live-avatar" style="overflow:hidden">' + avatarInner + '</div>'
+    + '<div class="live-info">'
+    + '<div class="live-title">' + r.Title + '</div>'
+    + '<div class="live-meta">' + (info || 'Live Class') + '</div>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">'
+    + badge + joinBtn
+    + '</div>'
+    + '</div>';
 }
 
 /* MATERIALS — paper-based, compact cards */
-function renderMaterials(paperNum){
+/* Active sub-tab tracker */
+var activeSubTab={'1':'gk','2':'a','3':'a'};
+
+function switchSubTab(paper,sub,btn){
+  var panel=document.getElementById('mpanel-'+paper);
+  panel.querySelectorAll('.stab').forEach(function(b){b.classList.remove('active');});
+  panel.querySelectorAll('.sub-panel').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('spanel-'+paper+'-'+sub).classList.add('active');
+  activeSubTab[paper]=sub;
+  renderSubPanel(paper,sub);
+}
+
+function switchProfileTab(tab){
+  document.getElementById('ptab-course').classList.toggle('active',tab==='course');
+  document.getElementById('ptab-settings').classList.toggle('active',tab==='settings');
+  document.getElementById('prof-course-panel').style.display=tab==='course'?'block':'none';
+  document.getElementById('prof-settings-panel').style.display=tab==='settings'?'block':'none';
+}
+
+/* Sub-tab keyword map */
+var SUB_KW={
+  '1-gk':['gk','general knowledge','gk '],
+  '1-iq':['iq','intelligence','mental ability','iq '],
+  '2-a':['sec a','section a'],
+  '2-b':['sec b','section b'],
+  '2-c':['sec c','section c'],
+  '3-a':['sec a','section a'],
+  '3-b':['sec b','section b'],
+  '3-c':['sec c','section c']
+};
+var PAPER_KW={'1':['1st'],'2':['2nd'],'3':['3rd']};
+
+function renderSubPanel(paper,sub){
   var term=matSearchTerm.toLowerCase();
-  // Paper mapping: Info field contains "1st Paper", "2nd Paper", "3rd Paper"
-  // If Info is empty or matches nothing, default to 1st paper
-  var paperMap={'1':['1st paper','1st','paper 1','paper1','first'],'2':['2nd paper','2nd','paper 2','paper2','second'],'3':['3rd paper','3rd','paper 3','paper3','third']};
-  var keywords=paperMap[paperNum]||paperMap['1'];
+  var kws=SUB_KW[paper+'-'+sub]||[];
+  var pkws=PAPER_KW[paper]||[];
   var rows=allRows.filter(function(r){
     if(r.Type!=='Material')return false;
-    var infoL=(r.Info||'').toLowerCase();
-    if(paperNum==='1'){
-      // Default: if info doesn't match 2nd/3rd paper, show in 1st
-      var in2=paperMap['2'].some(function(k){return infoL.indexOf(k)>=0;});
-      var in3=paperMap['3'].some(function(k){return infoL.indexOf(k)>=0;});
-      if(in2||in3)return false;
-      return true;
-    }
-    return keywords.some(function(k){return infoL.indexOf(k)>=0;});
+    var il=(r.Info||'').toLowerCase();
+    var inPaper=pkws.some(function(k){return il.indexOf(k)>=0;});
+    if(!inPaper)return false;
+    if(!kws.length)return true;
+    return kws.some(function(k){return il.indexOf(k)>=0;});
   }).filter(function(r){
-    return!term?true:r.Title.toLowerCase().indexOf(term)>=0||(r.Info||'').toLowerCase().indexOf(term)>=0;
+    return !term||r.Title.toLowerCase().indexOf(term)>=0||(r.Info||'').toLowerCase().indexOf(term)>=0;
   });
-  var el=document.getElementById('mat-list-'+paperNum);
+  var el=document.getElementById('mat-list-'+paper+'-'+sub);
   if(!el)return;
-  if(!rows.length){el.innerHTML='<div class="empty-box">No materials for this paper yet.<br><small>Add with Info = "'+paperNum+'st/nd/rd Paper" in your sheet.</small></div>';return;}
+  if(!rows.length){el.innerHTML='<div class="empty-box">No materials yet.<br><small>In sheet set Info = "'+paper+'st/2nd/3rd Paper '+sub.toUpperCase()+'" or Sec '+sub.toUpperCase()+'</small></div>';return;}
   el.innerHTML=rows.map(function(r,i){return matCardHTML(r,i);}).join('');
+}
+
+function renderMaterials(paperNum){
+  var sub=activeSubTab[paperNum]||'gk';
+  renderSubPanel(paperNum,sub);
 }
 function searchMaterials(){
   matSearchTerm=document.getElementById('mat-search').value;
@@ -1021,6 +1137,14 @@ function getSession(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null
 function saveSession(u){localStorage.setItem(SESSION_KEY,JSON.stringify(u));}
 function clearSession(){localStorage.removeItem(SESSION_KEY);}
 function generateUID(){var c=parseInt(localStorage.getItem('dn-uid-cnt')||'0')+1;localStorage.setItem('dn-uid-cnt',c);return 'DigitalNepal'+String(c).padStart(4,'0');}
+function getOrCreateUID(email){
+  var key='dn-uid-'+btoa(email).replace(/=/g,'');
+  var ex=localStorage.getItem(key);
+  if(ex)return ex;
+  var uid=generateUID();
+  localStorage.setItem(key,uid);
+  return uid;
+}
 
 function switchAuthTab(tab){
   document.getElementById('tab-login').classList.toggle('active',tab==='login');
@@ -1095,7 +1219,7 @@ function doLogin(){
       var fbUser=cred.user;
       var stored=getSession();
       var name=(stored&&stored.email===email)?stored.name:(fbUser.displayName||email.split('@')[0]);
-      var uid=(stored&&stored.uid)?stored.uid:generateUID();
+      var uid=(stored&&stored.email===email&&stored.uid)?stored.uid:getOrCreateUID(email);
       var joinedAt=(stored&&stored.joinedAt)?stored.joinedAt:new Date().toISOString();
       var user={name:name, email:email, uid:uid, joinedAt:joinedAt};
       saveSession(user);
