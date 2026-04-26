@@ -416,6 +416,26 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .stab.active{color:var(--primary);border-bottom-color:var(--primary)}
 .sub-panel{display:none;padding-top:6px}
 .sub-panel.active{display:block}
+
+/* PROFILE SLIDE PANEL */
+#profile-slide-panel{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:var(--white);
+  z-index:90;
+  transform:translateY(-100%);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  padding-bottom:80px;
+}
+#profile-slide-panel.open{transform:translateY(0);}
+#profile-slide-panel.open ~ .page,
+#profile-slide-panel.open ~ nav{pointer-events:none;}
+.topbar-brand-clickable{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.topbar-brand-clickable:active{opacity:.8;}
+.profile-slide-indicator{
+  width:40px;height:4px;background:var(--border);
+  border-radius:99px;margin:10px auto 0;
+}
 </style>
 </head>
 <body>
@@ -430,7 +450,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
 <!-- INSTALL BANNER -->
 <div id="install-banner">
-  <div class="install-icon">&#128242;</div>
+  <div class="install-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
   <div class="install-text"><h4>Install Digital Nepal</h4><p>Add to home screen!</p></div>
   <div class="install-btns">
     <button class="install-yes" onclick="installApp()">Install</button>
@@ -464,7 +484,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <button class="snav-btn active" id="snav-home" onclick="switchNav('home')"><span class="sni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</button>
       <button class="snav-btn" id="snav-materials" onclick="switchNav('materials')"><span class="sni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Materials</button>
       <button class="snav-btn" id="snav-exam" onclick="switchNav('exam')"><span class="sni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Exam</button>
-      <button class="snav-btn" id="snav-other" onclick="switchNav('other')"><span class="sni">&#128279;</span>Other Links</button>
+      <button class="snav-btn" id="snav-other" onclick="switchNav('other')"><span class="sni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>Other Links</button>
       <button class="snav-btn" id="snav-profile" onclick="switchNav('profile')"><span class="sni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profile</button>
     </div>
     <div class="sidebar-bottom">
@@ -479,9 +499,15 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   </div>
 
 <div class="app" id="app">
+    <!-- PROFILE SLIDE PANEL -->
+    <div id="profile-slide-panel">
+      <div class="profile-slide-indicator"></div>
+      <div id="profile-slide-content"></div>
+    </div>
+
     <!-- TOPBAR -->
     <div class="topbar">
-     <div class="topbar-brand" onclick="switchNav('profile')" style="cursor:pointer">
+     <div class="topbar-brand topbar-brand-clickable" onclick="toggleProfileSlide()">
         <div class="topbar-logo"><img src="data:image/jpeg;base64,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"></div>
         <div>
           <div class="brand-name">Digital <span>Nepal</span></div>
@@ -537,7 +563,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <button class="ptab active" id="mtab-1" onclick="switchMatTab('1',this)">1st Paper</button>
           <button class="ptab" id="mtab-2" onclick="switchMatTab('2',this)">2nd Paper</button>
           <button class="ptab" id="mtab-3" onclick="switchMatTab('3',this)">3rd Paper</button>
-          <button class="ptab" id="mtab-rec" onclick="switchMatTab('rec',this)">&#127909; Recording</button>
+          <button class="ptab" id="mtab-rec" onclick="switchMatTab('rec',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Recording</button>
         </div>
         <div class="search-bar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="mat-search" placeholder="Search..." oninput="searchMaterials()"></div>
         <!-- 1st Paper: GK + IQ -->
@@ -582,7 +608,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             <input type="date" id="rdf-date-input" style="flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;color:var(--text);background:var(--white);outline:none">
             <button onclick="applyCustomDate()" style="padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Go</button>
           </div>
-          <div id="rec-list"><div class="empty-box">&#127909;<br>No recordings yet.<br><small>Add Type = "Recording" in your sheet.</small></div></div>
+          <div id="rec-list"><div class="empty-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg><br>No recordings yet.<br><small>Add Type = "Recording" in your sheet.</small></div></div>
         </div>
       </div>
 
@@ -628,7 +654,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Choose a Game</div>
           <!-- GK Quiz Card -->
           <div onclick="startGKQuiz()" style="padding:16px;background:linear-gradient(135deg,#0a3d20,#22c55e);border-radius:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(26,107,60,.35)">
-            <div style="width:54px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">&#129504;</div>
+            <div style="width:54px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-2.7A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.44-2.7A2.5 2.5 0 0 0 14.5 2z"/></svg></div>
             <div style="flex:1">
               <div style="font-size:15px;font-weight:800;color:#fff">GK Quiz Challenge</div>
               <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:3px">15 Questions &bull; +2 correct &bull; -0.4 wrong</div>
@@ -641,11 +667,11 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           </div>
           <!-- Coming soon games -->
           <div style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.55">
-            <div style="font-size:28px">&#127381;</div>
+            <div style="font-size:28px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg></div>
             <div><div style="font-size:13px;font-weight:700;color:var(--text)">Word Scramble</div><div style="font-size:11px;color:var(--text2)">Coming soon...</div></div>
           </div>
           <div style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:12px;opacity:.55">
-            <div style="font-size:28px">&#128221;</div>
+            <div style="font-size:28px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div><div style="font-size:13px;font-weight:700;color:var(--text)">Fill in the Blanks</div><div style="font-size:11px;color:var(--text2)">Coming soon...</div></div>
           </div>
         </div>
@@ -665,17 +691,17 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div id="syllabus-list"></div>
         <!-- Static syllabus cards -->
         <div onclick="showToast('Add link in your sheet with Info=Syllabus')" style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer">
-          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#128218;</div>
+          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Kharidar Syllabus</div><div style="font-size:11px;color:var(--text2)">PSC Lok Sewa Aayog</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </div>
         <div onclick="showToast('Add link in your sheet with Info=Syllabus')" style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer">
-          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#128218;</div>
+          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">NaSu Syllabus</div><div style="font-size:11px;color:var(--text2)">PSC Lok Sewa Aayog</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </div>
         <div onclick="showToast('Add link in your sheet with Info=Syllabus')" style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:12px;cursor:pointer">
-          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#128218;</div>
+          <div style="width:40px;height:40px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Officer Syllabus</div><div style="font-size:11px;color:var(--text2)">PSC Lok Sewa Aayog</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </div>
@@ -684,22 +710,22 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <!-- Contact panel -->
       <div id="opanel-contact" class="opanel" style="display:none;padding:12px 14px">
         <div style="background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:14px;padding:20px;text-align:center;margin-bottom:14px">
-          <div style="font-size:40px;margin-bottom:8px">&#128222;</div>
+          <div style="font-size:40px;margin-bottom:8px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.69a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
           <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px">Contact Digital Nepal</div>
           <div style="font-size:12px;color:rgba(255,255,255,.7)">We are here to help you!</div>
         </div>
         <a href="https://wa.me/" style="text-decoration:none;display:flex;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;align-items:center;gap:12px">
-          <div style="width:40px;height:40px;background:#dcfce7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#128172;</div>
+          <div style="width:40px;height:40px;background:#dcfce7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">WhatsApp</div><div style="font-size:11px;color:var(--text2)">Message us directly</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </a>
         <a href="https://t.me/" style="text-decoration:none;display:flex;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;align-items:center;gap:12px">
-          <div style="width:40px;height:40px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#9992;</div>
+          <div style="width:40px;height:40px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Telegram</div><div style="font-size:11px;color:var(--text2)">Join our channel</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </a>
         <a href="mailto:digitalnepal@gmail.com" style="text-decoration:none;display:flex;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;align-items:center;gap:12px">
-          <div style="width:40px;height:40px;background:#fef2f2;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">&#128140;</div>
+          <div style="width:40px;height:40px;background:#fef2f2;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
           <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text)">Email</div><div style="font-size:11px;color:var(--text2)">digitalnepal@gmail.com</div></div>
           <span style="font-size:16px;color:var(--text3)">&rsaquo;</span>
         </a>
@@ -712,7 +738,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <div id="auth-screen">
           <div class="auth-page">
             <div class="auth-hero">
-              <div class="auth-hero-icon">&#127956;</div>
+              <div class="auth-hero-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
               <div class="auth-hero-title">Join Digital Nepal</div>
               <div class="auth-hero-sub">Free account &mdash; login on any device</div>
             </div>
@@ -764,7 +790,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             <div style="margin:0 14px 8px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
               <!-- Kharidar -->
               <div style="display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border2)">
-                <div style="width:40px;height:40px;border-radius:10px;background:#e8f5ee;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127979;</div>
+                <div style="width:40px;height:40px;border-radius:10px;background:#e8f5ee;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13px;font-weight:700;color:var(--text)">Kharidar Full Course</div>
                   <div style="font-size:11px;color:var(--text2);margin-top:2px">1st &amp; 2nd Paper &bull; Complete Prep</div>
@@ -773,7 +799,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
               </div>
               <!-- NaSu -->
               <div style="display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border2)">
-                <div style="width:40px;height:40px;border-radius:10px;background:#fffbeb;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127959;</div>
+                <div style="width:40px;height:40px;border-radius:10px;background:#fffbeb;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="18" x2="16" y2="18"/><line x1="8" y1="6" x2="8" y2="6.01"/><line x1="12" y1="6" x2="12" y2="6.01"/><line x1="16" y1="6" x2="16" y2="6.01"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/></svg></div>
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13px;font-weight:700;color:var(--text)">NaSu Full Course</div>
                   <div style="font-size:11px;color:var(--text2);margin-top:2px">1st, 2nd &amp; 3rd Paper &bull; Full Bundle</div>
@@ -782,7 +808,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
               </div>
               <!-- Officer -->
               <div style="display:flex;align-items:center;gap:11px;padding:13px 14px">
-                <div style="width:40px;height:40px;border-radius:10px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127881;</div>
+                <div style="width:40px;height:40px;border-radius:10px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13px;font-weight:700;color:var(--text)">Officer Full Course</div>
                   <div style="font-size:11px;color:var(--text2);margin-top:2px">All Papers &bull; Premium Bundle</div>
@@ -792,7 +818,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             </div>
             <!-- Free enrollment notice -->
             <div style="margin:0 14px 10px;padding:12px 14px;background:var(--green-light);border:1.5px solid #a7f3d0;border-radius:var(--radius)">
-              <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:2px">&#127881; Currently Enrolled</div>
+              <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:2px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Currently Enrolled</div>
               <div style="font-size:12px;color:var(--text)">Lok Sewa Preparation — <span style="color:var(--accent);font-weight:700">FREE</span></div>
               <div style="font-size:10px;color:var(--text2);margin-top:2px">Full access to all free content</div>
             </div>
@@ -801,13 +827,13 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <div id="prof-settings-panel" style="display:none">
             <div class="profile-menu" style="margin:12px 14px 0">
               <div class="profile-menu-item">
-                <div class="pmi-icon" style="background:#f5f3ff" id="dark-icon">&#127769;</div>
+                <div class="pmi-icon" style="background:#f5f3ff" id="dark-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
                 <div class="pmi-info"><div class="pmi-label" id="dark-label">Dark Mode</div><div class="pmi-sub" id="dark-sub">Switch to night theme</div></div>
                 <div class="toggle-switch" id="dark-toggle" onclick="toggleDark()"><div class="toggle-knob"></div></div>
               </div>
-              <div class="profile-menu-item" onclick="openEditModal()"><div class="pmi-icon" style="background:#e8f5ee">&#9999;</div><div class="pmi-info"><div class="pmi-label">Edit Profile</div><div class="pmi-sub">Change name or password</div></div><div class="pmi-arrow">&rsaquo;</div></div>
-              <div class="profile-menu-item" onclick="switchNav('other')"><div class="pmi-icon" style="background:#fff7ed">&#128279;</div><div class="pmi-info"><div class="pmi-label">Other Links</div><div class="pmi-sub">Extra resources &amp; tools</div></div><div class="pmi-arrow">&rsaquo;</div></div>
-              <div class="profile-menu-item" onclick="shareApp()"><div class="pmi-icon" style="background:#fffbeb">&#128228;</div><div class="pmi-info"><div class="pmi-label">Share App</div><div class="pmi-sub">Invite your friends</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="openEditModal()"><div class="pmi-icon" style="background:#e8f5ee"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="pmi-info"><div class="pmi-label">Edit Profile</div><div class="pmi-sub">Change name or password</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="switchNav('other')"><div class="pmi-icon" style="background:#fff7ed"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="pmi-info"><div class="pmi-label">Other Links</div><div class="pmi-sub">Extra resources &amp; tools</div></div><div class="pmi-arrow">&rsaquo;</div></div>
+              <div class="profile-menu-item" onclick="shareApp()"><div class="pmi-icon" style="background:#fffbeb"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="pmi-info"><div class="pmi-label">Share App</div><div class="pmi-sub">Invite your friends</div></div><div class="pmi-arrow">&rsaquo;</div></div>
               <div class="profile-menu-item" onclick="refreshAll()"><div class="pmi-icon" style="background:#eff6ff">&#8635;</div><div class="pmi-info"><div class="pmi-label">Refresh Content</div><div class="pmi-sub">Reload all data</div></div><div class="pmi-arrow">&rsaquo;</div></div>
             </div>
             <div style="height:12px"></div>
@@ -1586,7 +1612,7 @@ function renderRecordings(){
   var el=document.getElementById('rec-list'); if(!el) return;
   if(!recs.length){
     var label=recFilter==='today'?'today':recFilter==='yesterday'?'yesterday':'this date';
-    el.innerHTML='<div class="empty-box">&#127909;<br>No recordings for '+label+'.<br><small>Add Type="Recording" in sheet.</small></div>';
+    el.innerHTML='<div class="empty-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg><br>No recordings for '+label+'.<br><small>Add Type="Recording" in sheet.</small></div>';
     return;
   }
   el.innerHTML=recs.map(function(r,i){
@@ -1616,6 +1642,51 @@ function updateStreak(){
   if(stored.lastVisit!==today){streak=stored.lastVisit===yesterday.toDateString()?streak+1:1;localStorage.setItem('dn-streak',JSON.stringify({streak:streak,lastVisit:today}));}
   return streak;
 }
+
+
+/* PROFILE SLIDE PANEL */
+var profileSlideOpen = false;
+function toggleProfileSlide(){
+  profileSlideOpen = !profileSlideOpen;
+  var panel = document.getElementById('profile-slide-panel');
+  var content = document.getElementById('profile-slide-content');
+  if(profileSlideOpen){
+    // Copy profile section content into slide panel
+    var profileSec = document.getElementById('pg-profile');
+    content.innerHTML = profileSec.innerHTML;
+    panel.classList.add('open');
+    // Re-run profile render if user is logged in
+    var s = getSession();
+    if(s){ renderProfileScreenInPanel(s); }
+  } else {
+    panel.classList.remove('open');
+  }
+}
+function renderProfileScreenInPanel(user){
+  var initials = user.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'DN';
+  var av = document.querySelector('#profile-slide-content #prof-avatar');
+  var nm = document.querySelector('#profile-slide-content #prof-name');
+  var em = document.querySelector('#profile-slide-content #prof-email');
+  var uid = document.querySelector('#profile-slide-content #prof-uid');
+  if(av) av.textContent = initials;
+  if(nm) nm.textContent = user.name;
+  if(em) em.textContent = user.email;
+  if(uid) uid.textContent = 'ID: '+(user.uid||'N/A');
+  var authScreen = document.querySelector('#profile-slide-content #auth-screen');
+  var profScreen = document.querySelector('#profile-slide-content #profile-screen');
+  if(authScreen) authScreen.style.display = 'none';
+  if(profScreen) profScreen.style.display = 'block';
+}
+// Close slide panel when clicking outside (on overlay)
+document.addEventListener('click', function(e){
+  if(profileSlideOpen){
+    var panel = document.getElementById('profile-slide-panel');
+    if(!panel.contains(e.target) && !document.querySelector('.topbar-brand-clickable').contains(e.target)){
+      profileSlideOpen = false;
+      panel.classList.remove('open');
+    }
+  }
+});
 
 /* INIT */
 setDailyQuote();setHeroDate();updateStreak();checkProfileOnLoad();
