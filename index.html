@@ -1588,7 +1588,7 @@ function notifyMe(){
 /* ============================================================
    DAILY CHALLENGE GAME
    ============================================================ */
-var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTDaokWtMXKvkqPLfpdsXjYF6G6Yc7GRmwI4Auy8XCxVTSDxi5kphxbfRK-ldPjcm9Mu9p5EGJaH6bi/pub?gid=0&single=true&output=csv';
+var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvboPbqXSBqbMR5UilxgOyrLvrSsxHl45mTxw6DH8DDnK1sRw_X9qIcke2Wi6zSgX4bv0gyA1hmyE-/pub?gid=0&single=true&output=csv';
 var DC_STORE_KEY='dn-dc-v1';
 var dcQuestions=[],dcSession={q:[],idx:0,score:0,answers:[]},dcTimer=null,dcTimeLeft=30;
 
@@ -1629,19 +1629,26 @@ async function startDailyChallenge(){
   area.innerHTML='<div style="padding:40px;text-align:center"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;font-weight:700;color:var(--text2)">Loading questions...</div></div>';
   try{
     var rows=await fetchDCSheet();
-    if(!rows||rows.length<5){area.innerHTML='<div class="empty-box" style="margin:20px 14px">Could not load questions. Check your Google Sheet link and make sure it is public.</div><button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';return;}
+    if(!rows||rows.length<1){
+      area.innerHTML='<div class="empty-box" style="margin:20px 14px"><b>0 questions loaded.</b><br><small>Sheet may still be loading or has formatting issues. Wait 10 seconds and try again.</small></div>'
+        +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">🔄 Retry</button>'
+        +'<button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
+      return;
+    }
     // Pick 15 random questions
     var shuffled=rows.slice().sort(function(){return Math.random()-.5;});
-    dcQuestions=shuffled.slice(0,15);
+    dcQuestions=shuffled.slice(0,Math.min(15,shuffled.length));
     dcSession={q:dcQuestions,idx:0,score:0,answers:[]};
     renderDCQuestion();
   }catch(e){
-    area.innerHTML='<div class="empty-box" style="margin:20px 14px">Error loading questions. Try again.</div><button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
+    area.innerHTML='<div class="empty-box" style="margin:20px 14px"><b>Network error loading questions.</b><br><small>Check your internet connection and that the sheet is published as CSV (File → Share → Publish to web → CSV).</small></div>'
+      +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">🔄 Retry</button>'
+      +'<button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
   }
 }
 
 function fetchDCSheet(){
-  return fetch(DC_SHEET_URL).then(function(r){return r.text();}).then(function(csv){
+  function parseToRows(csv){
     var lines=csv.trim().split('\n');
     var rows=[];
     for(var i=1;i<lines.length;i++){
@@ -1651,7 +1658,20 @@ function fetchDCSheet(){
       }
     }
     return rows;
-  });
+  }
+  return fetch(DC_SHEET_URL)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(csv){return parseToRows(csv);})
+    .catch(function(){
+      return fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(DC_SHEET_URL))
+        .then(function(r){return r.text();})
+        .then(function(csv){return parseToRows(csv);})
+        .catch(function(){
+          return fetch('https://corsproxy.io/?'+encodeURIComponent(DC_SHEET_URL))
+            .then(function(r){return r.text();})
+            .then(function(csv){return parseToRows(csv);});
+        });
+    });
 }
 
 function parseCSVLine(line){
