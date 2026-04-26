@@ -1200,7 +1200,7 @@ function renderExams(paperNum){
 
 /* OTHER */
 function renderOther(){
-  var others=allRows.filter(function(r){return r.Type==='Other';});
+  var others=allRows.filter(function(r){return r.Type==='Other'&&(!r.Info||(r.Info.toLowerCase().indexOf('pyq')<0&&r.Info.toLowerCase().indexOf('syllabus')<0));});
   var el=document.getElementById('other-list');
   if(!others.length){el.innerHTML='<div class="empty-box">No links yet.</div>';return;}
   el.innerHTML=others.map(function(r,i){
