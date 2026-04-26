@@ -26,6 +26,7 @@
 <meta property="og:image" content="icons/icon-512.png">
 <meta property="og:type" content="website">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -667,6 +668,18 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
             </div>
             <div style="color:#fff;font-size:22px">&rsaquo;</div>
           </div>
+          <!-- Leaderboard quick view button -->
+          <button onclick="showDCLeaderboard()" style="width:100%;padding:11px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px">
+            <i class="fa-solid fa-ranking-star" style="color:var(--primary)"></i> View Leaderboard
+          </button>
+          <!-- Leaderboard inline panel -->
+          <div id="dc-lb-panel" style="display:none;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="font-size:13px;font-weight:800;color:var(--text)"><i class="fa-solid fa-ranking-star" style="color:var(--primary)"></i> Leaderboard</div>
+              <button onclick="document.getElementById('dc-lb-panel').style.display='none'" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="dc-lb-content"></div>
+          </div>
           <!-- Coming soon games -->
           <div style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.55">
             <div style="font-size:28px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg></div>
@@ -850,19 +863,19 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 <nav>
   <div class="nav-inner">
     <button class="nav-btn active" id="nav-home" onclick="switchNav('home')">
-      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="nav-icon-wrap"><i class="fa-solid fa-house" style="font-size:20px"></i></div>
       <span class="nl">Home</span>
     </button>
     <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')">
-      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="nav-icon-wrap"><i class="fa-solid fa-book-open" style="font-size:20px"></i></div>
       <span class="nl">Materials</span>
     </button>
     <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')">
-      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+      <div class="nav-icon-wrap"><i class="fa-solid fa-pen-to-square" style="font-size:20px"></i></div>
       <span class="nl">Exam</span>
     </button>
     <button class="nav-btn" id="nav-other" onclick="switchNav('other')">
-      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+      <div class="nav-icon-wrap"><i class="fa-solid fa-ellipsis" style="font-size:20px"></i></div>
       <span class="nl">Other</span>
     </button>
  
@@ -1590,7 +1603,82 @@ function notifyMe(){
    ============================================================ */
 var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvboPbqXSBqbMR5UilxgOyrLvrSsxHl45mTxw6DH8DDnK1sRw_X9qIcke2Wi6zSgX4bv0gyA1hmyE-/pub?gid=0&single=true&output=csv';
 var DC_STORE_KEY='dn-dc-v1';
+var DC_LB_KEY='dn-dc-lb-v1';
 var dcQuestions=[],dcSession={q:[],idx:0,score:0,answers:[]},dcTimer=null,dcTimeLeft=30;
+
+/* ── SOUND ENGINE ── */
+var dcAudioCtx=null;
+function getDCAudio(){if(!dcAudioCtx){try{dcAudioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return dcAudioCtx;}
+function playDCSound(type){
+  var ctx=getDCAudio();if(!ctx)return;
+  var osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.connect(gain);gain.connect(ctx.destination);
+  if(type==='correct'){
+    osc.type='sine';osc.frequency.setValueAtTime(520,ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(780,ctx.currentTime+0.12);
+    osc.frequency.linearRampToValueAtTime(1040,ctx.currentTime+0.22);
+    gain.gain.setValueAtTime(0.25,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.35);
+  } else if(type==='wrong'){
+    osc.type='sawtooth';osc.frequency.setValueAtTime(280,ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(180,ctx.currentTime+0.25);
+    gain.gain.setValueAtTime(0.2,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.3);
+  } else if(type==='finish'){
+    var notes=[523,659,784,1047];
+    notes.forEach(function(freq,i){
+      var o2=ctx.createOscillator(),g2=ctx.createGain();
+      o2.connect(g2);g2.connect(ctx.destination);
+      o2.type='sine';o2.frequency.setValueAtTime(freq,ctx.currentTime+i*0.12);
+      g2.gain.setValueAtTime(0.2,ctx.currentTime+i*0.12);
+      g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.12+0.25);
+      o2.start(ctx.currentTime+i*0.12);o2.stop(ctx.currentTime+i*0.12+0.25);
+    });
+  }
+}
+
+/* ── LEADERBOARD ── */
+function getLBKey(){return DC_LB_KEY;}
+function getLB(){try{return JSON.parse(localStorage.getItem(getLBKey())||'[]');}catch(e){return[];}}
+function saveLB(lb){localStorage.setItem(getLBKey(),JSON.stringify(lb));}
+function updateLB(name,score){
+  var lb=getLB();
+  var existing=lb.findIndex(function(e){return e.name===name;});
+  if(existing>=0){
+    if(score>lb[existing].best) lb[existing].best=score;
+    lb[existing].last=score;lb[existing].plays=(lb[existing].plays||1)+1;
+  } else {
+    lb.push({name:name,best:score,last:score,plays:1});
+  }
+  lb.sort(function(a,b){return b.best-a.best;});
+  lb=lb.slice(0,20); // keep top 20
+  saveLB(lb);
+  return lb;
+}
+function renderLBHTML(){
+  var lb=getLB();
+  if(!lb.length) return '<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)"><i class="fa-solid fa-ranking-star" style="font-size:24px;display:block;margin-bottom:8px"></i>No scores yet. Play to appear here!</div>';
+  var medals=['<i class="fa-solid fa-trophy" style="color:#f59e0b"></i>','<i class="fa-solid fa-medal" style="color:#94a3b8"></i>','<i class="fa-solid fa-award" style="color:#b45309"></i>'];
+  var myName='';var s=null;try{s=JSON.parse(localStorage.getItem('dn-session-v3')||'null');}catch(e){}
+  if(s) myName=s.name||'';
+  return lb.map(function(e,i){
+    var isMe=myName&&e.name===myName;
+    var rank=i<3?medals[i]:'<span style="font-size:11px;font-weight:800;color:var(--text3);width:20px;display:inline-block;text-align:center">'+(i+1)+'</span>';
+    var bg=i===0?'linear-gradient(135deg,#fffbeb,#fef3c7)':i===1?'linear-gradient(135deg,#f8fafc,#f1f5f9)':i===2?'linear-gradient(135deg,#fff7ed,#ffedd5)':'var(--white)';
+    var border=i===0?'#f59e0b':i===1?'#94a3b8':i===2?'#b45309':'var(--border)';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:'+(isMe?'linear-gradient(135deg,#e8f5ee,#dcfce7)':bg)+';border:1.5px solid '+(isMe?'var(--green)':border)+';border-radius:var(--radius-sm);margin-bottom:7px;position:relative">'
+      +(isMe?'<div style="position:absolute;top:3px;right:7px;font-size:8px;font-weight:800;color:var(--green)"><i class="fa-solid fa-circle-user"></i> YOU</div>':'')
+      +'<div style="width:28px;text-align:center;flex-shrink:0">'+rank+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:12px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.name+'</div>'
+      +'<div style="font-size:10px;color:var(--text2)"><i class="fa-solid fa-gamepad" style="font-size:9px"></i> '+e.plays+' play'+(e.plays>1?'s':'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0">'
+      +'<div style="font-size:14px;font-weight:800;color:'+(i===0?'#d97706':i===1?'#64748b':i===2?'#92400e':'var(--primary)')+'">'+e.best+'</div>'
+      +'<div style="font-size:9px;color:var(--text3);font-weight:600">best pts</div>'
+      +'</div></div>';
+  }).join('');
+}
 
 function getDCStore(){try{return JSON.parse(localStorage.getItem(DC_STORE_KEY)||'{}')||{};}catch(e){return{};}}
 function saveDCStore(obj){localStorage.setItem(DC_STORE_KEY,JSON.stringify(obj));}
@@ -1614,11 +1702,21 @@ function getDCLevel(pts){
   return            {name:'Beginner',color:'#1a6b3c',bg:'#e8f5ee'};
 }
 
+function showDCLeaderboard(){
+  var panel=document.getElementById('dc-lb-panel');
+  var content=document.getElementById('dc-lb-content');
+  if(panel.style.display==='none'||!panel.style.display){
+    content.innerHTML=renderLBHTML();
+    panel.style.display='block';
+  } else {
+    panel.style.display='none';
+  }
+}
 function updateDCBadges(){
   var streak=getDCStreak();var pts=getDCPoints();var lvl=getDCLevel(pts);
   var sb=document.getElementById('dc-streak-badge');
   var lb=document.getElementById('dc-level-badge');
-  if(sb) sb.textContent='🔥 Streak: '+streak;
+  if(sb) sb.innerHTML='<i class="fa-solid fa-fire" style="color:#f59e0b"></i> Streak: '+streak;
   if(lb) lb.textContent=lvl.name;
 }
 
@@ -1631,7 +1729,7 @@ async function startDailyChallenge(){
     var rows=await fetchDCSheet();
     if(!rows||rows.length<1){
       area.innerHTML='<div class="empty-box" style="margin:20px 14px"><b>0 questions loaded.</b><br><small>Sheet may still be loading or has formatting issues. Wait 10 seconds and try again.</small></div>'
-        +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">🔄 Retry</button>'
+        +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer"><i class="fa-solid fa-rotate-right"></i> Retry</button>'
         +'<button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
       return;
     }
@@ -1642,7 +1740,7 @@ async function startDailyChallenge(){
     renderDCQuestion();
   }catch(e){
     area.innerHTML='<div class="empty-box" style="margin:20px 14px"><b>Network error loading questions.</b><br><small>Check your internet connection and that the sheet is published as CSV (File → Share → Publish to web → CSV).</small></div>'
-      +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">🔄 Retry</button>'
+      +'<button onclick="startDailyChallenge()" style="display:block;margin:8px auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer"><i class="fa-solid fa-rotate-right"></i> Retry</button>'
       +'<button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
   }
 }
@@ -1704,7 +1802,7 @@ function renderDCQuestion(){
     '<div style="padding:14px 14px 0">'
     // Header
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
-    +'<button onclick="dcQuit()" style="background:var(--bg);border:none;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">✕ Quit</button>'
+    +'<button onclick="dcQuit()" style="background:var(--bg);border:none;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer"><i class="fa-solid fa-xmark"></i> Quit</button>'
     +'<div style="font-size:12px;font-weight:700;color:var(--text2)">'+num+' / '+total+'</div>'
     +'<div style="font-size:13px;font-weight:800;color:var(--primary)">Score: '+dcSession.score+'</div>'
     +'</div>'
@@ -1721,9 +1819,9 @@ function renderDCQuestion(){
     +'<div id="dc-opts">'
     +opts.map(function(o,i){
       var letter=['A','B','C','D'][i];
-      return '<button onclick="dcAnswer(this,\''+escQ(o.text)+'\',\''+escQ(correctText)+'\')" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px 13px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .2s">'
-      +'<span style="width:24px;height:24px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+letter+'</span>'
-      +o.text+'</button>';
+      return '<button data-val="'+escQ(o.text)+'" onclick="dcAnswer(this,\''+escQ(o.text)+'\',\''+escQ(correctText)+'\')" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .25s">'
+      +'<span class="dc-letter" style="width:26px;height:26px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s">'+letter+'</span>'
+      +'<span>'+o.text+'</span></button>';
     }).join('')
     +'</div></div>';
 
@@ -1752,21 +1850,24 @@ function escQ(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 function dcAnswer(btn,chosen,correct){
   clearInterval(dcTimer);
   var ok=(chosen.toLowerCase().trim()===correct.toLowerCase().trim());
-  if(ok) dcSession.score+=2; else dcSession.score-=2;
+  if(ok){dcSession.score+=2;playDCSound('correct');}else{dcSession.score-=2;playDCSound('wrong');}
   dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:chosen,correct:correct,ok:ok});
 
-  // Highlight all buttons
+  // Highlight all buttons - FULL background highlight
   var opts=document.getElementById('dc-opts');
   if(opts) opts.querySelectorAll('button').forEach(function(b){
-    var bText=b.textContent.trim().slice(1).trim(); // remove letter prefix span
-    // Actually get text another way:
-    var spans=b.querySelectorAll('span');
-    var bVal=b.textContent.replace(spans[0]?spans[0].textContent:'','').trim();
-    b.disabled=true;b.style.cursor='default';
-    if(bVal.toLowerCase().trim()===correct.toLowerCase().trim()){
-      b.style.background='var(--green-light)';b.style.borderColor='var(--green)';b.style.color='var(--green)';
+    var dataVal=b.getAttribute('data-val')||'';
+    b.disabled=true;b.style.cursor='default';b.style.transition='all .25s';
+    if(dataVal.toLowerCase().trim()===correct.toLowerCase().trim()){
+      // Correct answer - full green
+      b.style.background='var(--green)';b.style.borderColor='var(--green)';b.style.color='#fff';
+      b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
+      b.querySelector('.dc-letter').style.color='#fff';
     } else if(b===btn&&!ok){
-      b.style.background='var(--red-light)';b.style.borderColor='var(--red)';b.style.color='var(--red)';
+      // Wrong selected - full red
+      b.style.background='var(--red)';b.style.borderColor='var(--red)';b.style.color='#fff';
+      b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
+      b.querySelector('.dc-letter').style.color='#fff';
     }
   });
 
@@ -1780,11 +1881,12 @@ function dcAnswer(btn,chosen,correct){
 function dcTimeoutReveal(correct){
   var opts=document.getElementById('dc-opts');
   if(opts) opts.querySelectorAll('button').forEach(function(b){
-    var spans=b.querySelectorAll('span');
-    var bVal=b.textContent.replace(spans[0]?spans[0].textContent:'','').trim();
+    var dataVal=b.getAttribute('data-val')||'';
     b.disabled=true;b.style.cursor='default';
-    if(bVal.toLowerCase().trim()===correct.toLowerCase().trim()){
-      b.style.background='var(--green-light)';b.style.borderColor='var(--green)';b.style.color='var(--green)';
+    if(dataVal.toLowerCase().trim()===correct.toLowerCase().trim()){
+      b.style.background='var(--green)';b.style.borderColor='var(--green)';b.style.color='#fff';
+      b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
+      b.querySelector('.dc-letter').style.color='#fff';
     }
   });
   setTimeout(function(){dcNext();},900);
@@ -1804,6 +1906,7 @@ function dcQuit(){
 
 function dcShowResult(){
   clearInterval(dcTimer);
+  playDCSound('finish');
   // Update streak & points
   var store=getDCStore();
   var now=new Date();var utc=now.getTime()+(now.getTimezoneOffset()*60000);var np=new Date(utc+(5*3600+45*60)*1000);
@@ -1815,38 +1918,75 @@ function dcShowResult(){
   else streak=1;
   var totalPoints=(store.totalPoints||0)+Math.max(0,dcSession.score);
   saveDCStore({streak:streak,lastPlayed:today,totalPoints:totalPoints,bestScore:Math.max(store.bestScore||0,dcSession.score)});
+  // Save to leaderboard with user name
+  var lbSession=null;try{lbSession=JSON.parse(localStorage.getItem('dn-session-v3')||'null');}catch(e){}
+  var lbName=lbSession&&lbSession.name?lbSession.name:'Guest';
+  updateLB(lbName,dcSession.score);
   updateDCBadges();
   var lvl=getDCLevel(totalPoints);
   var correct=dcSession.answers.filter(function(a){return a.ok;}).length;
   var wrong=dcSession.answers.filter(function(a){return !a.ok;}).length;
   var area=document.getElementById('dc-game-area');
-  var streakEmoji=streak>=7?'🔥🔥🔥':streak>=3?'🔥🔥':streak>=1?'🔥':'';
+  var streakFire=streak>0?'<i class="fa-solid fa-fire" style="color:#f59e0b"></i> ':'';
+  var trophyIcon=dcSession.score>=20?'<i class="fa-solid fa-trophy" style="color:#f59e0b;font-size:38px"></i>':dcSession.score>=10?'<i class="fa-solid fa-star" style="color:#f59e0b;font-size:38px"></i>':'<i class="fa-solid fa-dumbbell" style="color:rgba(255,255,255,.8);font-size:38px"></i>';
   area.innerHTML=
-    '<div style="padding:16px">'
+    '<div style="padding:14px">'
     // Result card
-    +'<div style="background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:16px;padding:20px;text-align:center;margin-bottom:14px">'
-    +'<div style="font-size:36px;margin-bottom:6px">'+(dcSession.score>=20?'🏆':dcSession.score>=10?'⭐':'💪')+'</div>'
-    +'<div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:2px">'+dcSession.score+' pts</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,.7)">'+correct+' correct &bull; '+wrong+' wrong</div>'
-    +'<div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">'+streakEmoji+' '+streak+' Day Streak</span>'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">'+lvl.name+'</span>'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">Total: '+totalPoints+' pts</span>'
+    +'<div style="background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:16px;padding:18px;text-align:center;margin-bottom:12px">'
+    +'<div style="margin-bottom:8px">'+trophyIcon+'</div>'
+    +'<div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:2px">'+dcSession.score+' pts</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,.7)"><i class="fa-solid fa-circle-check" style="color:#86efac"></i> '+correct+' correct &nbsp; <i class="fa-solid fa-circle-xmark" style="color:#fca5a5"></i> '+wrong+' wrong</div>'
+    +'<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700">'+streakFire+streak+' Day Streak</span>'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700"><i class="fa-solid fa-layer-group"></i> '+lvl.name+'</span>'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700"><i class="fa-solid fa-star"></i> '+totalPoints+' total</span>'
     +'</div></div>'
-    // Review answers
-    +'<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px">Answer Review</div>'
+    // Tabs
+    +'<div style="display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:12px" id="dc-tabs-row">'
+    +'<button id="dc-tab-review" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.08)"><i class="fa-solid fa-list-check"></i> Review</button>'
+    +'<button id="dc-tab-lb" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text2)"><i class="fa-solid fa-ranking-star"></i> Leaderboard</button>'
+    +'</div>'
+    // Review panel
+    +'<div id="dc-panel-review">'
     +dcSession.answers.map(function(a,i){
-      return '<div style="margin-bottom:8px;padding:10px 12px;background:var(--white);border:1.5px solid '+(a.ok?'var(--green)':'var(--red)')+';border-radius:var(--radius-sm)">'
-      +'<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4">'+(i+1)+'. '+a.q+'</div>'
-      +'<div style="font-size:11px;color:'+(a.ok?'var(--green)':'var(--red)')+'">'+( a.ok?'✓ '+a.chosen:'✗ You: '+a.chosen)+'</div>'
-      +(!a.ok?'<div style="font-size:10px;color:var(--text2);margin-top:2px">✓ Correct: '+a.correct+'</div>':'')
+      var okIcon=a.ok?'<i class="fa-solid fa-circle-check" style="color:var(--green)"></i>':'<i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i>';
+      return '<div style="margin-bottom:8px;padding:11px 12px;background:var(--white);border:1.5px solid '+(a.ok?'var(--green)':'var(--red)')+';border-radius:var(--radius-sm)">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.5">'+okIcon+' '+(i+1)+'. '+a.q+'</div>'
+      +'<div style="font-size:11px;color:'+(a.ok?'var(--green)':'var(--red)')+';font-weight:600">'+(a.ok?'<i class="fa-solid fa-check"></i> '+a.chosen:'<i class="fa-solid fa-xmark"></i> You: '+a.chosen)+'</div>'
+      +(!a.ok?'<div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600"><i class="fa-solid fa-check"></i> Correct: '+a.correct+'</div>':'')
       +'</div>';
     }).join('')
+    +'</div>'
+    // Leaderboard panel (hidden initially)
+    +'<div id="dc-panel-lb" style="display:none">'+renderLBHTML()+'</div>'
     // Buttons
-    +'<div style="display:flex;gap:8px;margin-top:12px">'
-    +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">Play Again</button>'
-    +'<button onclick="dcQuit()" style="flex:1;padding:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">← Back</button>'
+    +'<div style="display:flex;gap:8px;margin-top:14px">'
+    +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer"><i class="fa-solid fa-rotate-right"></i> Play Again</button>'
+    +'<button onclick="dcQuit()" style="flex:1;padding:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer"><i class="fa-solid fa-arrow-left"></i> Back</button>'
     +'</div></div>';
+  // Attach tab listeners after DOM is set
+  setTimeout(function(){
+    var btnR=document.getElementById('dc-tab-review');
+    var btnL=document.getElementById('dc-tab-lb');
+    if(btnR) btnR.addEventListener('click',function(){dcSwitchTab('review');});
+    if(btnL) btnL.addEventListener('click',function(){dcSwitchTab('lb');});
+  },0);
+}
+
+function dcSwitchTab(tab){
+  var rev=document.getElementById('dc-panel-review');
+  var lb=document.getElementById('dc-panel-lb');
+  var tbR=document.getElementById('dc-tab-review');
+  var tbL=document.getElementById('dc-tab-lb');
+  if(tab==='review'){
+    rev.style.display='block';lb.style.display='none';
+    tbR.style.background='var(--white)';tbR.style.color='var(--primary)';tbR.style.boxShadow='0 1px 4px rgba(0,0,0,.08)';
+    tbL.style.background='transparent';tbL.style.color='var(--text2)';tbL.style.boxShadow='none';
+  } else {
+    rev.style.display='none';lb.style.display='block';
+    tbL.style.background='var(--white)';tbL.style.color='var(--primary)';tbL.style.boxShadow='0 1px 4px rgba(0,0,0,.08)';
+    tbR.style.background='transparent';tbR.style.color='var(--text2)';tbR.style.boxShadow='none';
+  }
 }
 
 /* Update streak/level badges on init */
