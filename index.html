@@ -376,6 +376,26 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .logout-btn:hover{background:var(--red);color:#fff}
 .profile-bottom-space{height:32px}
 
+/* RECORDING FILTER BUTTONS */
+.rdf-btn{flex-shrink:0;padding:6px 14px;border:1.5px solid var(--border);border-radius:99px;background:var(--bg);font-family:inherit;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.rdf-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* PURCHASE MODAL */
+.purchase-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.purchase-overlay.open{display:flex}
+.purchase-sheet{background:var(--white);border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:22px 18px 36px;animation:slideUp .3s ease}
+.purchase-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px}
+.purchase-coming-badge{display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:4px 12px;border-radius:99px;margin-bottom:12px;text-transform:uppercase}
+.purchase-course-name{font-size:19px;font-weight:800;color:var(--text);margin-bottom:4px}
+.purchase-price{font-size:28px;font-weight:800;color:var(--primary);margin:10px 0 3px}
+.purchase-price-note{font-size:11px;color:var(--text3);margin-bottom:12px}
+.purchase-features{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px}
+.purchase-feat{font-size:12px;color:var(--text2);padding:4px 0;display:flex;gap:8px;align-items:center}
+.purchase-feat::before{content:"✓";color:var(--primary);font-weight:800}
+.purchase-warning{background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px}
+.purchase-notify-btn{width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:10px}
+.purchase-close-btn{width:100%;padding:11px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+
 /* EDIT MODAL */
 .edit-modal{background:var(--white);border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:22px 18px 36px;animation:slideUp .3s ease}
 .edit-modal h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:14px}
@@ -517,6 +537,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <button class="ptab active" id="mtab-1" onclick="switchMatTab('1',this)">1st Paper</button>
           <button class="ptab" id="mtab-2" onclick="switchMatTab('2',this)">2nd Paper</button>
           <button class="ptab" id="mtab-3" onclick="switchMatTab('3',this)">3rd Paper</button>
+          <button class="ptab" id="mtab-rec" onclick="switchMatTab('rec',this)">&#127909; Recording</button>
         </div>
         <div class="search-bar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="mat-search" placeholder="Search..." oninput="searchMaterials()"></div>
         <!-- 1st Paper: GK + IQ -->
@@ -549,6 +570,19 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <div class="sub-panel active" id="spanel-3-a"><div id="mat-list-3-a"><div class="empty-box">Set Info = "3rd Paper Sec A" in sheet</div></div></div>
           <div class="sub-panel" id="spanel-3-b"><div id="mat-list-3-b"><div class="empty-box">Set Info = "3rd Paper Sec B" in sheet</div></div></div>
           <div class="sub-panel" id="spanel-3-c"><div id="mat-list-3-c"><div class="empty-box">Set Info = "3rd Paper Sec C" in sheet</div></div></div>
+        </div>
+        <!-- RECORDING PANEL -->
+        <div class="paper-panel" id="mpanel-rec">
+          <div style="display:flex;gap:6px;padding:10px 14px 4px;overflow-x:auto">
+            <button class="rdf-btn active" id="rdf-yesterday" onclick="switchRecFilter('yesterday',this)">Yesterday</button>
+            <button class="rdf-btn" id="rdf-today" onclick="switchRecFilter('today',this)">Today</button>
+            <button class="rdf-btn" id="rdf-custom" onclick="switchRecFilter('custom',this)">Custom Date</button>
+          </div>
+          <div id="rdf-custom-row" style="display:none;gap:8px;padding:0 14px 6px;align-items:center">
+            <input type="date" id="rdf-date-input" style="flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;color:var(--text);background:var(--white);outline:none">
+            <button onclick="applyCustomDate()" style="padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Go</button>
+          </div>
+          <div id="rec-list"><div class="empty-box">&#127909;<br>No recordings yet.<br><small>Add Type = "Recording" in your sheet.</small></div></div>
         </div>
       </div>
 
@@ -725,26 +759,42 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           </div>
           <!-- COURSE -->
           <div id="prof-course-panel">
-            <div class="sec-head" style="padding-top:10px"><h3>My Courses</h3></div>
-            <div style="margin:0 14px 8px;padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center">
-              <div style="font-size:28px;margin-bottom:6px">&#127979;</div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Lok Sewa Preparation</div>
-              <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Full Course — 1st, 2nd &amp; 3rd Paper</div>
-              <div style="display:flex;gap:6px;justify-content:center">
-                <span style="font-size:10px;background:var(--primary-light);color:var(--primary);padding:3px 9px;border-radius:99px;font-weight:700;border:1px solid #a7f3d0">Active</span>
-                <span style="font-size:10px;background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:99px;font-weight:700;border:1px solid #fde68a">FREE</span>
+            <div class="sec-head" style="padding-top:10px"><h3>Available Courses</h3></div>
+            <!-- Course Rows -->
+            <div style="margin:0 14px 8px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+              <!-- Kharidar -->
+              <div style="display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border2)">
+                <div style="width:40px;height:40px;border-radius:10px;background:#e8f5ee;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127979;</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--text)">Kharidar Full Course</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px">1st &amp; 2nd Paper &bull; Complete Prep</div>
+                </div>
+                <button onclick="openPurchaseModal('Kharidar Full Course','NPR 999','1st &amp; 2nd Paper, Live Classes, Model Tests, PDF Notes')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:7px 13px;border-radius:99px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Purchase</button>
+              </div>
+              <!-- NaSu -->
+              <div style="display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border2)">
+                <div style="width:40px;height:40px;border-radius:10px;background:#fffbeb;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127959;</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--text)">NaSu Full Course</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px">1st, 2nd &amp; 3rd Paper &bull; Full Bundle</div>
+                </div>
+                <button onclick="openPurchaseModal('NaSu Full Course','NPR 1,499','All 3 Papers, Live Classes, Recordings, Model Tests')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:7px 13px;border-radius:99px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Purchase</button>
+              </div>
+              <!-- Officer -->
+              <div style="display:flex;align-items:center;gap:11px;padding:13px 14px">
+                <div style="width:40px;height:40px;border-radius:10px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">&#127881;</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--text)">Officer Full Course</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:2px">All Papers &bull; Premium Bundle</div>
+                </div>
+                <button onclick="openPurchaseModal('Officer Full Course','NPR 1,999','All 3 Papers, Priority Support, Doubt Sessions, All Materials')" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:7px 13px;border-radius:99px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Purchase</button>
               </div>
             </div>
-            <div class="sec-head"><h3>Quick Access</h3></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px">
-              <div onclick="switchNav('materials')" style="padding:12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer">
-                <div style="font-size:22px;margin-bottom:4px">&#128196;</div>
-                <div style="font-size:11px;font-weight:700;color:var(--text)">Materials</div>
-              </div>
-              <div onclick="switchNav('exam')" style="padding:12px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer">
-                <div style="font-size:22px;margin-bottom:4px">&#128221;</div>
-                <div style="font-size:11px;font-weight:700;color:var(--text)">Exams</div>
-              </div>
+            <!-- Free enrollment notice -->
+            <div style="margin:0 14px 10px;padding:12px 14px;background:var(--green-light);border:1.5px solid #a7f3d0;border-radius:var(--radius)">
+              <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:2px">&#127881; Currently Enrolled</div>
+              <div style="font-size:12px;color:var(--text)">Lok Sewa Preparation — <span style="color:var(--accent);font-weight:700">FREE</span></div>
+              <div style="font-size:10px;color:var(--text2);margin-top:2px">Full access to all free content</div>
             </div>
           </div>
           <!-- SETTINGS -->
@@ -822,6 +872,27 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <button class="auth-btn" onclick="saveEdit()">Save Changes</button>
     <div style="height:10px"></div>
     <button class="cancel-btn" onclick="document.getElementById('editModal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
+
+<!-- PURCHASE MODAL -->
+<div class="purchase-overlay" id="purchaseModal" onclick="closePurchaseModalOutside(event)">
+  <div class="purchase-sheet">
+    <div class="purchase-handle"></div>
+    <div style="text-align:center">
+      <div class="purchase-coming-badge">&#127381; Coming Soon</div>
+      <div class="purchase-course-name" id="pm-name">Course Name</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Paid Course — Launching Soon</div>
+      <div class="purchase-price" id="pm-price">NPR 999</div>
+      <div class="purchase-price-note">One-time payment &bull; Lifetime access</div>
+    </div>
+    <div class="purchase-features" id="pm-features"></div>
+    <div class="purchase-warning">
+      <div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:3px">&#9888; Not Available Yet</div>
+      <div style="font-size:11px;color:#92400e">This course is being prepared. We will notify you when it launches!</div>
+    </div>
+    <button class="purchase-notify-btn" onclick="notifyMe()">&#128276; Notify Me When Available</button>
+    <button class="purchase-close-btn" onclick="document.getElementById('purchaseModal').classList.remove('open')">Close</button>
   </div>
 </div>
 
@@ -1013,7 +1084,9 @@ function switchMatTab(num,btn){
   btn.classList.add('active');
   document.querySelectorAll('#pg-materials .paper-panel').forEach(function(p){p.classList.remove('active');});
   document.getElementById('mpanel-'+num).classList.add('active');
-  renderMaterials(num);
+  var searchBar=document.querySelector('#pg-materials .search-bar');
+  if(searchBar) searchBar.style.display=num==='rec'?'none':'flex';
+  if(num==='rec'){renderRecordings();}else{renderMaterials(num);}
 }
 function switchExamTab(num,btn){
   document.querySelectorAll('#pg-exam .ptab').forEach(function(b){b.classList.remove('active');});
@@ -1463,6 +1536,77 @@ function saveEdit(){
 function shareApp(){if(navigator.share){navigator.share({title:'Digital Nepal',text:'Free Lok Sewa prep app!',url:APP_URL});}else{navigator.clipboard.writeText(APP_URL).then(function(){showToast('App link copied!');});}}
 function shareMaterial(title,link){var text=title+'\n'+link+'\n\n'+APP_URL;if(navigator.share){navigator.share({title:title,text:text,url:link});}else{navigator.clipboard.writeText(text).then(function(){showToast('Link copied!');});}}
 function esc(str){return(str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+/* PURCHASE MODAL */
+function openPurchaseModal(name, price, features){
+  document.getElementById('pm-name').textContent = name;
+  document.getElementById('pm-price').textContent = price;
+  var feats = features.split(',');
+  document.getElementById('pm-features').innerHTML = feats.map(function(f){
+    return '<div class="purchase-feat">'+f.trim()+'</div>';
+  }).join('');
+  document.getElementById('purchaseModal').classList.add('open');
+}
+function closePurchaseModalOutside(e){
+  if(e.target===document.getElementById('purchaseModal'))
+    document.getElementById('purchaseModal').classList.remove('open');
+}
+function notifyMe(){
+  document.getElementById('purchaseModal').classList.remove('open');
+  showToast('You will be notified when this course launches!');
+}
+
+/* RECORDING FILTER */
+var recFilter='yesterday';
+function switchRecFilter(filter, btn){
+  recFilter=filter;
+  document.querySelectorAll('.rdf-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var customRow=document.getElementById('rdf-custom-row');
+  customRow.style.display=filter==='custom'?'flex':'none';
+  if(filter!=='custom') renderRecordings();
+}
+function applyCustomDate(){ renderRecordings(); }
+function getFilterDate(){
+  var now=new Date();
+  var utc=now.getTime()+(now.getTimezoneOffset()*60000);
+  var np=new Date(utc+(5*3600+45*60)*1000);
+  if(recFilter==='today') return np.toISOString().slice(0,10);
+  if(recFilter==='yesterday'){var y=new Date(np);y.setDate(np.getDate()-1);return y.toISOString().slice(0,10);}
+  if(recFilter==='custom') return document.getElementById('rdf-date-input').value||'';
+  return '';
+}
+function renderRecordings(){
+  var filterDate=getFilterDate();
+  var recs=allRows.filter(function(r){
+    if(r.Type!=='Recording') return false;
+    if(!filterDate) return true;
+    var d=(r.Date||r.Info||'').slice(0,10);
+    return d===filterDate;
+  });
+  var el=document.getElementById('rec-list'); if(!el) return;
+  if(!recs.length){
+    var label=recFilter==='today'?'today':recFilter==='yesterday'?'yesterday':'this date';
+    el.innerHTML='<div class="empty-box">&#127909;<br>No recordings for '+label+'.<br><small>Add Type="Recording" in sheet.</small></div>';
+    return;
+  }
+  el.innerHTML=recs.map(function(r,i){
+    var link=r.Link&&r.Link.startsWith('http')?r.Link:'#';
+    var dateBadge=r.Date?'<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--primary-light);color:var(--primary);border:1px solid #a7f3d0;display:inline-block;margin-bottom:4px">'+r.Date.slice(0,10)+'</span>':'';
+    var safeTitle=esc(r.Title);
+    var safeLink=esc(link);
+    return '<div style="margin:0 14px 8px;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);display:flex;gap:10px;align-items:center">'
+      +'<div style="width:40px;height:40px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#127909;</div>'
+      +'<div style="flex:1;min-width:0">'+dateBadge
+      +'<div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.Title+'</div>'
+      +'<div style="font-size:10px;color:var(--text2);margin-bottom:5px">'+(r.Info||'Recorded Class')+'</div>'
+      +'<div style="display:flex;gap:5px">'
+      +'<a class="mat-link" href="'+link+'" target="_blank" rel="noopener">Watch</a>'
+      +'<button class="share-btn" onclick="shareMaterial(decodeURIComponent(\'' +encodeURIComponent(r.Title)+ '\'),\'' +safeLink+ '\')">Share</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+
 function showToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:9px 18px;border-radius:99px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.3);white-space:nowrap;transition:opacity .3s';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0';},2500);}
 function updateStreak(){
   var now=new Date();var utc=now.getTime()+(now.getTimezoneOffset()*60000);var np=new Date(utc+(5*3600+45*60)*1000);
