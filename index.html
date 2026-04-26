@@ -652,15 +652,17 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <div id="opanel-games" class="opanel" style="display:none;padding:12px 14px">
         <div id="game-menu">
           <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Choose a Game</div>
-          <!-- GK Quiz Card -->
-          <div onclick="startGKQuiz()" style="padding:16px;background:linear-gradient(135deg,#0a3d20,#22c55e);border-radius:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(26,107,60,.35)">
-            <div style="width:54px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-2.7A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.44-2.7A2.5 2.5 0 0 0 14.5 2z"/></svg></div>
+          <!-- Daily Challenge Game Card -->
+          <div onclick="startDailyChallenge()" style="padding:16px;background:linear-gradient(135deg,#0a3d20,#22c55e);border-radius:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(26,107,60,.35)">
+            <div style="width:54px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
             <div style="flex:1">
-              <div style="font-size:15px;font-weight:800;color:#fff">GK Quiz Challenge</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:3px">15 Questions &bull; +2 correct &bull; -0.4 wrong</div>
-              <div style="display:flex;gap:5px;margin-top:7px">
-                <span style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">LOK SEWA</span>
-                <span style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">EDUCATIONAL</span>
+              <div style="font-size:15px;font-weight:800;color:#fff">&#127381; Daily Challenge</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:3px">15 Questions &bull; 30 sec each &bull; +2 / -2</div>
+              <div style="display:flex;gap:5px;margin-top:7px;align-items:center">
+                <span id="dc-streak-badge" style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">🔥 Streak: 0</span>
+                <span id="dc-level-badge" style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">Beginner</span>
               </div>
             </div>
             <div style="color:#fff;font-size:22px">&rsaquo;</div>
@@ -676,7 +678,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           </div>
         </div>
         <!-- GK Quiz Game Area -->
-        <div id="gk-quiz-area" style="display:none"></div>
+        <div id="dc-game-area" style="display:none"></div>
       </div>
 
       <!-- PYQs panel -->
@@ -1022,7 +1024,8 @@ function switchOtherTab(tab,btn){
   document.getElementById('opanel-'+tab).style.display='block';
   if(tab==='games'){
     document.getElementById('game-menu').style.display='block';
-    document.getElementById('gk-quiz-area').style.display='none';
+    document.getElementById('dc-game-area').style.display='none';
+    updateDCBadges();
   }
 }
 /* CACHE */
@@ -1580,6 +1583,254 @@ function notifyMe(){
   document.getElementById('purchaseModal').classList.remove('open');
   showToast('You will be notified when this course launches!');
 }
+
+
+/* ============================================================
+   DAILY CHALLENGE GAME
+   ============================================================ */
+var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTDaokWtMXKvkqPLfpdsXjYF6G6Yc7GRmwI4Auy8XCxVTSDxi5kphxbfRK-ldPjcm9Mu9p5EGJaH6bi/pub?gid=0&single=true&output=csv';
+var DC_STORE_KEY='dn-dc-v1';
+var dcQuestions=[],dcSession={q:[],idx:0,score:0,answers:[]},dcTimer=null,dcTimeLeft=30;
+
+function getDCStore(){try{return JSON.parse(localStorage.getItem(DC_STORE_KEY)||'{}')||{};}catch(e){return{};}}
+function saveDCStore(obj){localStorage.setItem(DC_STORE_KEY,JSON.stringify(obj));}
+
+function getDCStreak(){
+  var s=getDCStore();
+  var now=new Date();var utc=now.getTime()+(now.getTimezoneOffset()*60000);var np=new Date(utc+(5*3600+45*60)*1000);
+  var today=np.toDateString();
+  var yesterday=new Date(np);yesterday.setDate(np.getDate()-1);
+  var streak=s.streak||0;
+  if(s.lastPlayed===today) return streak;
+  if(s.lastPlayed===yesterday.toDateString()) return streak; // Not reset yet, will increment on play
+  if(s.lastPlayed&&s.lastPlayed!==yesterday.toDateString()&&s.lastPlayed!==today) return 0; // Missed a day
+  return streak;
+}
+
+function getDCPoints(){return getDCStore().totalPoints||0;}
+function getDCLevel(pts){
+  if(pts>=100) return {name:'Expert',color:'#7c3aed',bg:'#f5f3ff'};
+  if(pts>=40)  return {name:'Learner',color:'#d97706',bg:'#fffbeb'};
+  return            {name:'Beginner',color:'#1a6b3c',bg:'#e8f5ee'};
+}
+
+function updateDCBadges(){
+  var streak=getDCStreak();var pts=getDCPoints();var lvl=getDCLevel(pts);
+  var sb=document.getElementById('dc-streak-badge');
+  var lb=document.getElementById('dc-level-badge');
+  if(sb) sb.textContent='🔥 Streak: '+streak;
+  if(lb) lb.textContent=lvl.name;
+}
+
+async function startDailyChallenge(){
+  document.getElementById('game-menu').style.display='none';
+  var area=document.getElementById('dc-game-area');
+  area.style.display='block';
+  area.innerHTML='<div style="padding:40px;text-align:center"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;font-weight:700;color:var(--text2)">Loading questions...</div></div>';
+  try{
+    var rows=await fetchDCSheet();
+    if(!rows||rows.length<5){area.innerHTML='<div class="empty-box" style="margin:20px 14px">Could not load questions. Check your Google Sheet link and make sure it is public.</div><button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';return;}
+    // Pick 15 random questions
+    var shuffled=rows.slice().sort(function(){return Math.random()-.5;});
+    dcQuestions=shuffled.slice(0,15);
+    dcSession={q:dcQuestions,idx:0,score:0,answers:[]};
+    renderDCQuestion();
+  }catch(e){
+    area.innerHTML='<div class="empty-box" style="margin:20px 14px">Error loading questions. Try again.</div><button onclick="document.getElementById(\'game-menu\').style.display=\'block\';document.getElementById(\'dc-game-area\').style.display=\'none\'" style="display:block;margin:0 auto;padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:99px;font-weight:700;cursor:pointer">← Back</button>';
+  }
+}
+
+function fetchDCSheet(){
+  return fetch(DC_SHEET_URL).then(function(r){return r.text();}).then(function(csv){
+    var lines=csv.trim().split('\n');
+    var rows=[];
+    for(var i=1;i<lines.length;i++){
+      var cols=parseCSVLine(lines[i]);
+      if(cols.length>=6&&cols[0].trim()){
+        rows.push({q:cols[0].trim(),o:[cols[1].trim(),cols[2].trim(),cols[3].trim(),cols[4].trim()],a:cols[5].trim()});
+      }
+    }
+    return rows;
+  });
+}
+
+function parseCSVLine(line){
+  var result=[],inQ=false,cur='';
+  for(var i=0;i<line.length;i++){
+    var c=line[i];
+    if(c==='"'){inQ=!inQ;}
+    else if(c===','&&!inQ){result.push(cur);cur='';}
+    else cur+=c;
+  }
+  result.push(cur);
+  return result;
+}
+
+function renderDCQuestion(){
+  clearInterval(dcTimer);
+  var area=document.getElementById('dc-game-area');
+  var q=dcSession.q[dcSession.idx];
+  var total=dcSession.q.length;
+  var num=dcSession.idx+1;
+  dcTimeLeft=30;
+
+  // Shuffle options
+  var opts=q.o.map(function(o,i){return{text:o,origIdx:i};}).sort(function(){return Math.random()-.5;});
+  // Find correct option after shuffle
+  var correctText=q.a;
+
+  var pct=Math.round((dcSession.idx/total)*100);
+  area.innerHTML=
+    '<div style="padding:14px 14px 0">'
+    // Header
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+    +'<button onclick="dcQuit()" style="background:var(--bg);border:none;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer">✕ Quit</button>'
+    +'<div style="font-size:12px;font-weight:700;color:var(--text2)">'+num+' / '+total+'</div>'
+    +'<div style="font-size:13px;font-weight:800;color:var(--primary)">Score: '+dcSession.score+'</div>'
+    +'</div>'
+    // Progress bar
+    +'<div style="height:4px;background:var(--border);border-radius:99px;margin-bottom:12px">'
+    +'<div style="height:100%;width:'+pct+'%;background:var(--primary);border-radius:99px;transition:width .4s"></div></div>'
+    // Timer
+    +'<div style="text-align:center;margin-bottom:10px">'
+    +'<div id="dc-timer-ring" style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;border:3px solid var(--primary);font-size:20px;font-weight:800;color:var(--primary);transition:border-color .5s,color .5s">'
+    +'<span id="dc-timer-num">30</span></div></div>'
+    // Question
+    +'<div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 14px;margin-bottom:12px;font-size:13px;font-weight:700;color:var(--text);line-height:1.6">'+q.q+'</div>'
+    // Options
+    +'<div id="dc-opts">'
+    +opts.map(function(o,i){
+      var letter=['A','B','C','D'][i];
+      return '<button onclick="dcAnswer(this,\''+escQ(o.text)+'\',\''+escQ(correctText)+'\')" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px 13px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .2s">'
+      +'<span style="width:24px;height:24px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+letter+'</span>'
+      +o.text+'</button>';
+    }).join('')
+    +'</div></div>';
+
+  // Start timer
+  dcTimer=setInterval(function(){
+    dcTimeLeft--;
+    var el=document.getElementById('dc-timer-num');
+    var ring=document.getElementById('dc-timer-ring');
+    if(el) el.textContent=dcTimeLeft;
+    if(ring){
+      if(dcTimeLeft<=10){ring.style.borderColor='var(--red)';ring.style.color='var(--red)';}
+      else if(dcTimeLeft<=20){ring.style.borderColor='var(--accent)';ring.style.color='var(--accent)';}
+    }
+    if(dcTimeLeft<=0){
+      clearInterval(dcTimer);
+      // Time out — mark as wrong, show correct
+      dcSession.score-=2;
+      dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:'(Time Out)',correct:correctText,ok:false});
+      dcTimeoutReveal(correctText);
+    }
+  },1000);
+}
+
+function escQ(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+
+function dcAnswer(btn,chosen,correct){
+  clearInterval(dcTimer);
+  var ok=(chosen.toLowerCase().trim()===correct.toLowerCase().trim());
+  if(ok) dcSession.score+=2; else dcSession.score-=2;
+  dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:chosen,correct:correct,ok:ok});
+
+  // Highlight all buttons
+  var opts=document.getElementById('dc-opts');
+  if(opts) opts.querySelectorAll('button').forEach(function(b){
+    var bText=b.textContent.trim().slice(1).trim(); // remove letter prefix span
+    // Actually get text another way:
+    var spans=b.querySelectorAll('span');
+    var bVal=b.textContent.replace(spans[0]?spans[0].textContent:'','').trim();
+    b.disabled=true;b.style.cursor='default';
+    if(bVal.toLowerCase().trim()===correct.toLowerCase().trim()){
+      b.style.background='var(--green-light)';b.style.borderColor='var(--green)';b.style.color='var(--green)';
+    } else if(b===btn&&!ok){
+      b.style.background='var(--red-light)';b.style.borderColor='var(--red)';b.style.color='var(--red)';
+    }
+  });
+
+  // Update score display
+  var scoreEl=document.querySelector('#dc-game-area [style*="Score:"]');
+  if(scoreEl) scoreEl.textContent='Score: '+dcSession.score;
+
+  setTimeout(function(){dcNext();},900);
+}
+
+function dcTimeoutReveal(correct){
+  var opts=document.getElementById('dc-opts');
+  if(opts) opts.querySelectorAll('button').forEach(function(b){
+    var spans=b.querySelectorAll('span');
+    var bVal=b.textContent.replace(spans[0]?spans[0].textContent:'','').trim();
+    b.disabled=true;b.style.cursor='default';
+    if(bVal.toLowerCase().trim()===correct.toLowerCase().trim()){
+      b.style.background='var(--green-light)';b.style.borderColor='var(--green)';b.style.color='var(--green)';
+    }
+  });
+  setTimeout(function(){dcNext();},900);
+}
+
+function dcNext(){
+  dcSession.idx++;
+  if(dcSession.idx>=dcSession.q.length){dcShowResult();}
+  else{renderDCQuestion();}
+}
+
+function dcQuit(){
+  clearInterval(dcTimer);
+  document.getElementById('dc-game-area').style.display='none';
+  document.getElementById('game-menu').style.display='block';
+}
+
+function dcShowResult(){
+  clearInterval(dcTimer);
+  // Update streak & points
+  var store=getDCStore();
+  var now=new Date();var utc=now.getTime()+(now.getTimezoneOffset()*60000);var np=new Date(utc+(5*3600+45*60)*1000);
+  var today=np.toDateString();
+  var yesterday=new Date(np);yesterday.setDate(np.getDate()-1);
+  var streak=store.streak||0;
+  if(store.lastPlayed===yesterday.toDateString()) streak+=1;
+  else if(store.lastPlayed===today) streak=streak; // already played today, no change
+  else streak=1;
+  var totalPoints=(store.totalPoints||0)+Math.max(0,dcSession.score);
+  saveDCStore({streak:streak,lastPlayed:today,totalPoints:totalPoints,bestScore:Math.max(store.bestScore||0,dcSession.score)});
+  updateDCBadges();
+  var lvl=getDCLevel(totalPoints);
+  var correct=dcSession.answers.filter(function(a){return a.ok;}).length;
+  var wrong=dcSession.answers.filter(function(a){return !a.ok;}).length;
+  var area=document.getElementById('dc-game-area');
+  var streakEmoji=streak>=7?'🔥🔥🔥':streak>=3?'🔥🔥':streak>=1?'🔥':'';
+  area.innerHTML=
+    '<div style="padding:16px">'
+    // Result card
+    +'<div style="background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:16px;padding:20px;text-align:center;margin-bottom:14px">'
+    +'<div style="font-size:36px;margin-bottom:6px">'+(dcSession.score>=20?'🏆':dcSession.score>=10?'⭐':'💪')+'</div>'
+    +'<div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:2px">'+dcSession.score+' pts</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,.7)">'+correct+' correct &bull; '+wrong+' wrong</div>'
+    +'<div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">'+streakEmoji+' '+streak+' Day Streak</span>'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">'+lvl.name+'</span>'
+    +'<span style="font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">Total: '+totalPoints+' pts</span>'
+    +'</div></div>'
+    // Review answers
+    +'<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px">Answer Review</div>'
+    +dcSession.answers.map(function(a,i){
+      return '<div style="margin-bottom:8px;padding:10px 12px;background:var(--white);border:1.5px solid '+(a.ok?'var(--green)':'var(--red)')+';border-radius:var(--radius-sm)">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4">'+(i+1)+'. '+a.q+'</div>'
+      +'<div style="font-size:11px;color:'+(a.ok?'var(--green)':'var(--red)')+'">'+( a.ok?'✓ '+a.chosen:'✗ You: '+a.chosen)+'</div>'
+      +(!a.ok?'<div style="font-size:10px;color:var(--text2);margin-top:2px">✓ Correct: '+a.correct+'</div>':'')
+      +'</div>';
+    }).join('')
+    // Buttons
+    +'<div style="display:flex;gap:8px;margin-top:12px">'
+    +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">Play Again</button>'
+    +'<button onclick="dcQuit()" style="flex:1;padding:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">← Back</button>'
+    +'</div></div>';
+}
+
+/* Update streak/level badges on init */
+updateDCBadges();
 
 /* RECORDING FILTER */
 var recFilter='yesterday';
