@@ -914,7 +914,20 @@ function setHeroDate(){
 /* QUOTES */
 var QUOTES=['सफलता एक दिनमा आउँदैन, तर मेहनतले दिन आउँछ।','आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस्।','पढ्नु भनेको भविष्यको ढोका खोल्नु हो।','लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन।','ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।','आज गरेको मेहनत भोलिको सफलताको जग हो।','धैर्य र परिश्रमले असम्भवलाई पनि सम्भव बनाउँछ।'];
 function setDailyQuote(){document.getElementById('daily-quote').textContent=QUOTES[new Date().getDate()%QUOTES.length];}
-
+function switchOtherTab(tab,btn){
+  document.querySelectorAll('.otab').forEach(function(b){
+    b.style.color='var(--text2)';
+    b.style.borderBottomColor='transparent';
+  });
+  btn.style.color='var(--primary)';
+  btn.style.borderBottomColor='var(--primary)';
+  document.querySelectorAll('.opanel').forEach(function(p){p.style.display='none';});
+  document.getElementById('opanel-'+tab).style.display='block';
+  if(tab==='games'){
+    document.getElementById('game-menu').style.display='block';
+    document.getElementById('gk-quiz-area').style.display='none';
+  }
+}
 /* CACHE */
 function saveCache(data){try{localStorage.setItem(CACHE_KEY,JSON.stringify(data));localStorage.setItem(CACHE_TS_KEY,Date.now().toString());}catch(e){}}
 function loadCache(){try{var r=localStorage.getItem(CACHE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
