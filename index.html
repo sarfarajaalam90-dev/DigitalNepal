@@ -418,25 +418,29 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .sub-panel{display:none;padding-top:6px}
 .sub-panel.active{display:block}
 
-/* PROFILE SLIDE PANEL */
+/* PROFILE SLIDE PANEL — slides from LEFT */
+#profile-slide-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:89;opacity:0;pointer-events:none;
+  transition:opacity .35s cubic-bezier(.4,0,.2,1);
+  backdrop-filter:blur(2px);
+}
+#profile-slide-overlay.open{opacity:1;pointer-events:all;}
 #profile-slide-panel{
-  position:fixed;top:0;left:0;right:0;bottom:0;
+  position:fixed;top:0;left:0;bottom:0;
+  width:min(82vw,320px);
   background:var(--white);
   z-index:90;
-  transform:translateY(-100%);
+  transform:translateX(-100%);
   transition:transform .35s cubic-bezier(.4,0,.2,1);
   overflow-y:auto;
-  padding-bottom:80px;
+  padding-bottom:30px;
+  box-shadow:4px 0 24px rgba(0,0,0,.18);
 }
-#profile-slide-panel.open{transform:translateY(0);}
-#profile-slide-panel.open ~ .page,
-#profile-slide-panel.open ~ nav{pointer-events:none;}
+#profile-slide-panel.open{transform:translateX(0);}
 .topbar-brand-clickable{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .topbar-brand-clickable:active{opacity:.8;}
-.profile-slide-indicator{
-  width:40px;height:4px;background:var(--border);
-  border-radius:99px;margin:10px auto 0;
-}
+.profile-slide-indicator{display:none;}
 </style>
 </head>
 <body>
@@ -501,6 +505,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
 <div class="app" id="app">
     <!-- PROFILE SLIDE PANEL -->
+    <div id="profile-slide-overlay" onclick="closeProfileSlide()"></div>
     <div id="profile-slide-panel">
       <div class="profile-slide-indicator"></div>
       <div id="profile-slide-content"></div>
@@ -564,7 +569,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <button class="ptab active" id="mtab-1" onclick="switchMatTab('1',this)">1st Paper</button>
           <button class="ptab" id="mtab-2" onclick="switchMatTab('2',this)">2nd Paper</button>
           <button class="ptab" id="mtab-3" onclick="switchMatTab('3',this)">3rd Paper</button>
-          <button class="ptab" id="mtab-rec" onclick="switchMatTab('rec',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Recording</button>
+          <button class="ptab" id="mtab-rec" onclick="switchMatTab('rec',this)">Recording</button>
         </div>
         <div class="search-bar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="mat-search" placeholder="Search..." oninput="searchMaterials()"></div>
         <!-- 1st Paper: GK + IQ -->
@@ -650,42 +655,44 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       </div>
 
       <!-- GAMES panel -->
-      <div id="opanel-games" class="opanel" style="display:none;padding:12px 14px">
+      <div id="opanel-games" class="opanel" style="display:none;padding:12px 14px;background:linear-gradient(160deg,#0a0a1a 0%,#0d1f12 40%,#0a1a2e 100%);min-height:100vh">
         <div id="game-menu">
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Choose a Game</div>
+          <div style="text-align:center;padding:10px 0 16px">
+            <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;text-shadow:0 0 20px rgba(34,197,94,.6)">🎮 GAME ZONE</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:2px;margin-top:2px">CHOOSE YOUR CHALLENGE</div>
+          </div>
           <!-- Daily Challenge Game Card -->
-          <div onclick="startDailyChallenge()" style="padding:16px;background:linear-gradient(135deg,#0a3d20,#22c55e);border-radius:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(26,107,60,.35)">
-            <div style="width:54px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:15px;font-weight:800;color:#fff">&#127381; Daily Challenge</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:3px">15 Questions &bull; 30 sec each &bull; +2 / -2</div>
-              <div style="display:flex;gap:5px;margin-top:7px;align-items:center">
-                <span id="dc-streak-badge" style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">🔥 Streak: 0</span>
-                <span id="dc-level-badge" style="font-size:9px;background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">Beginner</span>
+          <div onclick="startDailyChallenge()" style="padding:18px 16px;background:linear-gradient(135deg,#0f2027,#1a6b3c,#22c55e);border-radius:18px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 0 0 1px rgba(34,197,94,.3),0 8px 32px rgba(34,197,94,.25),0 0 60px rgba(34,197,94,.08);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+            <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,.015) 20px,rgba(255,255,255,.015) 40px);pointer-events:none"></div>
+            <div style="width:56px;height:56px;background:rgba(34,197,94,.2);border:1.5px solid rgba(34,197,94,.4);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px">🧠</div>
+            <div style="flex:1;position:relative">
+              <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:.3px;text-shadow:0 0 12px rgba(34,197,94,.5)"><i class="fa-solid fa-bolt" style="color:#f59e0b;font-size:13px"></i> Daily Challenge</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:3px;font-weight:600">15 Questions &bull; 30 sec each &bull; +2 / -2</div>
+              <div style="display:flex;gap:5px;margin-top:8px;align-items:center;flex-wrap:wrap">
+                <span id="dc-streak-badge" style="font-size:9px;background:rgba(245,158,11,.2);color:#f59e0b;padding:3px 9px;border-radius:99px;font-weight:800;border:1px solid rgba(245,158,11,.3)"><i class="fa-solid fa-fire"></i> Streak: 0</span>
+                <span id="dc-level-badge" style="font-size:9px;background:rgba(34,197,94,.2);color:#86efac;padding:3px 9px;border-radius:99px;font-weight:800;border:1px solid rgba(34,197,94,.3)">Beginner</span>
               </div>
             </div>
-            <div style="color:#fff;font-size:22px">&rsaquo;</div>
+            <div style="color:rgba(255,255,255,.5);font-size:22px"><i class="fa-solid fa-chevron-right"></i></div>
           </div>
           <!-- Leaderboard quick view button -->
-          <button onclick="showDCLeaderboard()" style="width:100%;padding:11px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px">
-            <i class="fa-solid fa-ranking-star" style="color:var(--primary)"></i> View Leaderboard
+          <button onclick="showDCLeaderboard()" style="width:100%;padding:12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:background .2s" onmouseover="this.style.background='rgba(34,197,94,.15)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">
+            <i class="fa-solid fa-ranking-star" style="color:#f59e0b"></i> View Leaderboard
           </button>
           <!-- Leaderboard inline panel -->
-          <div id="dc-lb-panel" style="display:none;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px">
+          <div id="dc-lb-panel" style="display:none;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:12px;margin-bottom:10px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div style="font-size:13px;font-weight:800;color:var(--text)"><i class="fa-solid fa-ranking-star" style="color:var(--primary)"></i> Leaderboard</div>
+              <div style="font-size:13px;font-weight:800;color:#fff"><i class="fa-solid fa-ranking-star" style="color:#f59e0b"></i> Leaderboard</div>
               <button onclick="document.getElementById('dc-lb-panel').style.display='none'" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3)"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="dc-lb-content"></div>
           </div>
           <!-- Coming soon games -->
-          <div style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.55">
+          <div style="padding:14px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;opacity:.5">
             <div style="font-size:28px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg></div>
             <div><div style="font-size:13px;font-weight:700;color:var(--text)">Word Scramble</div><div style="font-size:11px;color:var(--text2)">Coming soon...</div></div>
           </div>
-          <div style="padding:14px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:12px;opacity:.55">
+          <div style="padding:14px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;display:flex;align-items:center;gap:12px;opacity:.5">
             <div style="font-size:28px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div><div style="font-size:13px;font-weight:700;color:var(--text)">Fill in the Blanks</div><div style="font-size:11px;color:var(--text2)">Coming soon...</div></div>
           </div>
@@ -863,19 +870,19 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 <nav>
   <div class="nav-inner">
     <button class="nav-btn active" id="nav-home" onclick="switchNav('home')">
-      <div class="nav-icon-wrap"><i class="fa-solid fa-house" style="font-size:20px"></i></div>
+      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
       <span class="nl">Home</span>
     </button>
     <button class="nav-btn" id="nav-materials" onclick="switchNav('materials')">
-      <div class="nav-icon-wrap"><i class="fa-solid fa-book-open" style="font-size:20px"></i></div>
+      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
       <span class="nl">Materials</span>
     </button>
     <button class="nav-btn" id="nav-exam" onclick="switchNav('exam')">
-      <div class="nav-icon-wrap"><i class="fa-solid fa-pen-to-square" style="font-size:20px"></i></div>
+      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
       <span class="nl">Exam</span>
     </button>
     <button class="nav-btn" id="nav-other" onclick="switchNav('other')">
-      <div class="nav-icon-wrap"><i class="fa-solid fa-ellipsis" style="font-size:20px"></i></div>
+      <div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></div>
       <span class="nl">Other</span>
     </button>
  
@@ -942,7 +949,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
 const SESSION_KEY='dn-session-v3'; // Users stored in Firebase Auth
 const CACHE_KEY='dn-cache-v3',CACHE_TS_KEY='dn-cache-ts-v3';
-const CACHE_MAX=10*60*1000;
+const CACHE_MAX=2*60*1000; // 2 minutes so new content appears quickly
 let allRows=[],currentZoomLink='',matSearchTerm='';
 let darkMode=localStorage.getItem('dn-dark')=='true';
 let deferredPrompt=null;
@@ -1078,13 +1085,13 @@ async function fetchData(silent){
   if(cached&&cacheAge()<CACHE_MAX&&!silent)return;
   var fresh=null;
   try{
-    var res=await fetchWithTimeout(APPS_SCRIPT_URL,10000);
+    var res=await fetchWithTimeout(APPS_SCRIPT_URL+'&t='+Date.now(),10000);
     if(!res.ok)throw new Error('HTTP '+res.status);
     var json=await res.json();
     fresh=processRows(json);
   }catch(e1){
     try{
-      var json2=await fetchJSONP(APPS_SCRIPT_URL,12000);
+      var json2=await fetchJSONP(APPS_SCRIPT_URL+'&t='+Date.now(),12000);
       var arr=Array.isArray(json2)?json2:(json2.data||json2.rows||[]);
       fresh=processRows(arr);
     }catch(e2){}
@@ -1651,16 +1658,46 @@ function updateLB(name,score){
     lb.push({name:name,best:score,last:score,plays:1});
   }
   lb.sort(function(a,b){return b.best-a.best;});
-  lb=lb.slice(0,20); // keep top 20
+  lb=lb.slice(0,50);
   saveLB(lb);
+  // Push to server leaderboard (fire and forget)
+  pushLBToServer(name,score,lb[lb.findIndex(function(e){return e.name===name;})].best,lb[lb.findIndex(function(e){return e.name===name;})].plays);
   return lb;
+}
+function pushLBToServer(name,score,best,plays){
+  try{
+    var payload={action:'leaderboard',name:name,score:score,best:best,plays:plays};
+    fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
+  }catch(e){}
+}
+function fetchServerLB(){
+  return fetch(APPS_SCRIPT_URL+'?action=leaderboard')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data&&data.leaderboard&&data.leaderboard.length){
+        // Merge server LB with local LB
+        var local=getLB();
+        var merged=data.leaderboard.slice();
+        local.forEach(function(le){
+          var idx=merged.findIndex(function(e){return e.name===le.name;});
+          if(idx<0) merged.push(le);
+          else if(le.best>merged[idx].best) merged[idx]=le;
+        });
+        merged.sort(function(a,b){return b.best-a.best;});
+        merged=merged.slice(0,50);
+        saveLB(merged);
+        return merged;
+      }
+      return getLB();
+    })
+    .catch(function(){return getLB();});
 }
 function renderLBHTML(){
   var lb=getLB();
   if(!lb.length) return '<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)"><i class="fa-solid fa-ranking-star" style="font-size:24px;display:block;margin-bottom:8px"></i>No scores yet. Play to appear here!</div>';
   var medals=['<i class="fa-solid fa-trophy" style="color:#f59e0b"></i>','<i class="fa-solid fa-medal" style="color:#94a3b8"></i>','<i class="fa-solid fa-award" style="color:#b45309"></i>'];
-  var myName='';var s=null;try{s=JSON.parse(localStorage.getItem('dn-session-v3')||'null');}catch(e){}
-  if(s) myName=s.name||'';
+  var myName='';
+  try{var _s=JSON.parse(localStorage.getItem('dn-session-v3')||'null');if(_s)myName=_s.name||_s.email||'';}catch(e){}
   return lb.map(function(e,i){
     var isMe=myName&&e.name===myName;
     var rank=i<3?medals[i]:'<span style="font-size:11px;font-weight:800;color:var(--text3);width:20px;display:inline-block;text-align:center">'+(i+1)+'</span>';
@@ -1704,10 +1741,11 @@ function getDCLevel(pts){
 
 function showDCLeaderboard(){
   var panel=document.getElementById('dc-lb-panel');
-  var content=document.getElementById('dc-lb-content');
+  var cont=document.getElementById('dc-lb-content');
   if(panel.style.display==='none'||!panel.style.display){
-    content.innerHTML=renderLBHTML();
+    cont.innerHTML='<div style="text-align:center;padding:16px;color:rgba(255,255,255,.5);font-size:12px"><div class="spinner" style="border-top-color:#22c55e;border-color:rgba(255,255,255,.15);margin:0 auto 8px"></div>Loading...</div>';
     panel.style.display='block';
+    fetchServerLB().then(function(){cont.innerHTML=renderLBHTML();});
   } else {
     panel.style.display='none';
   }
@@ -1958,7 +1996,7 @@ function dcShowResult(){
     }).join('')
     +'</div>'
     // Leaderboard panel (hidden initially)
-    +'<div id="dc-panel-lb" style="display:none">'+renderLBHTML()+'</div>'
+    +'<div id="dc-panel-lb" style="display:none"><div id="dc-result-lb-inner">'+renderLBHTML()+'</div></div>'
     // Buttons
     +'<div style="display:flex;gap:8px;margin-top:14px">'
     +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer"><i class="fa-solid fa-rotate-right"></i> Play Again</button>'
@@ -1986,6 +2024,12 @@ function dcSwitchTab(tab){
     rev.style.display='none';lb.style.display='block';
     tbL.style.background='var(--white)';tbL.style.color='var(--primary)';tbL.style.boxShadow='0 1px 4px rgba(0,0,0,.08)';
     tbR.style.background='transparent';tbR.style.color='var(--text2)';tbR.style.boxShadow='none';
+    // Refresh leaderboard from server
+    var inner=document.getElementById('dc-result-lb-inner');
+    if(inner){
+      inner.innerHTML='<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)"><div class="spinner" style="margin:0 auto 8px"></div>Loading...</div>';
+      fetchServerLB().then(function(){if(inner)inner.innerHTML=renderLBHTML();});
+    }
   }
 }
 
@@ -2057,21 +2101,29 @@ function updateStreak(){
 
 /* PROFILE SLIDE PANEL */
 var profileSlideOpen = false;
-function toggleProfileSlide(){
-  profileSlideOpen = !profileSlideOpen;
+function openProfileSlide(){
   var panel = document.getElementById('profile-slide-panel');
+  var overlay = document.getElementById('profile-slide-overlay');
   var content = document.getElementById('profile-slide-content');
-  if(profileSlideOpen){
-    // Copy profile section content into slide panel
-    var profileSec = document.getElementById('pg-profile');
-    content.innerHTML = profileSec.innerHTML;
-    panel.classList.add('open');
-    // Re-run profile render if user is logged in
-    var s = getSession();
-    if(s){ renderProfileScreenInPanel(s); }
-  } else {
-    panel.classList.remove('open');
-  }
+  var profileSec = document.getElementById('pg-profile');
+  content.innerHTML = profileSec ? profileSec.innerHTML : '';
+  panel.classList.add('open');
+  overlay.classList.add('open');
+  profileSlideOpen = true;
+  document.body.style.overflow = 'hidden';
+  var s = getSession();
+  if(s){ renderProfileScreenInPanel(s); }
+}
+function closeProfileSlide(){
+  var panel = document.getElementById('profile-slide-panel');
+  var overlay = document.getElementById('profile-slide-overlay');
+  panel.classList.remove('open');
+  overlay.classList.remove('open');
+  profileSlideOpen = false;
+  document.body.style.overflow = '';
+}
+function toggleProfileSlide(){
+  if(profileSlideOpen){ closeProfileSlide(); } else { openProfileSlide(); }
 }
 function renderProfileScreenInPanel(user){
   var initials = user.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2)||'DN';
@@ -2088,15 +2140,9 @@ function renderProfileScreenInPanel(user){
   if(authScreen) authScreen.style.display = 'none';
   if(profScreen) profScreen.style.display = 'block';
 }
-// Close slide panel when clicking outside (on overlay)
-document.addEventListener('click', function(e){
-  if(profileSlideOpen){
-    var panel = document.getElementById('profile-slide-panel');
-    if(!panel.contains(e.target) && !document.querySelector('.topbar-brand-clickable').contains(e.target)){
-      profileSlideOpen = false;
-      panel.classList.remove('open');
-    }
-  }
+// Close slide panel on Escape key
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape' && profileSlideOpen){ closeProfileSlide(); }
 });
 
 /* INIT */
