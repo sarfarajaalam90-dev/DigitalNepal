@@ -971,6 +971,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </div>
 
 <script>
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vT32hr6I6ic59VQhyzmdT58qBgmgIP7zw9zTR2twaKsjl5GO_XTu7mMFnPkGxJID8EKfnFBo3eeBj3S/pub?gid=0&single=true&output=csv';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
 const SESSION_KEY='dn-session-v3'; // Users stored in Firebase Auth
@@ -1102,22 +1103,39 @@ function fetchWithTimeout(url,ms){
 
 /* FETCH */
 function processRows(json){
-  return json.map(function(r){return{Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim(),Pic:String(r.Pic||r.Image||r.Photo||'').trim()};;}).filter(function(r){return r.Title.length>0;});
+  return json.map(function(r){return{Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim(),Pic:String(r.Pic||r.Image||r.Photo||'').trim(),Date:String(r.Date||r.RecDate||'').trim()};}).filter(function(r){return r.Title.length>0;});
+}
+function parseCSV(csv){
+  var lines=csv.trim().split('\n');if(lines.length<2)return[];
+  var headers=lines[0].split(',').map(function(h){return h.replace(/"/g,'').trim();});
+  return lines.slice(1).map(function(line){
+    var cols=[];var cur='';var inQ=false;
+    for(var i=0;i<line.length;i++){
+      if(line[i]==='"'){inQ=!inQ;}else if(line[i]===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=line[i];}
+    }
+    cols.push(cur.trim());
+    var obj={};headers.forEach(function(h,i){obj[h]=cols[i]||'';});return obj;
+  });
+}
+async function fetchCSV(){
+  try{var r=await fetchWithTimeout(CSV_URL+'?t='+Date.now(),10000);if(!r.ok)throw new Error();var rows=parseCSV(await r.text());if(rows.length>0)return processRows(rows);}catch(e){}
+  try{var r2=await fetchWithTimeout('https://api.allorigins.win/raw?url='+encodeURIComponent(CSV_URL),8000);if(!r2.ok)throw new Error();var rows2=parseCSV(await r2.text());if(rows2.length>0)return processRows(rows2);}catch(e2){}
+  return null;
 }
 async function fetchData(silent){
   if(silent===undefined)silent=false;
   var cached=loadCache();
-  if(cached&&cached.length>0&&!silent){allRows=cached;renderAll();}
-  if(cached&&cacheAge()<CACHE_MAX&&!silent)return;
+  // Show cached data immediately while fetching
+  if(cached&&cached.length>0){allRows=cached;renderAll();}
   var fresh=null;
   try{
-    var res=await fetchWithTimeout(APPS_SCRIPT_URL+'&t='+Date.now(),10000);
+    var res=await fetchWithTimeout(APPS_SCRIPT_URL+'?t='+Date.now(),10000);
     if(!res.ok)throw new Error('HTTP '+res.status);
     var json=await res.json();
     fresh=processRows(json);
   }catch(e1){
     try{
-      var json2=await fetchJSONP(APPS_SCRIPT_URL+'&t='+Date.now(),12000);
+      var json2=await fetchJSONP(APPS_SCRIPT_URL+'?t='+Date.now(),12000);
       var arr=Array.isArray(json2)?json2:(json2.data||json2.rows||[]);
       fresh=processRows(arr);
     }catch(e2){}
@@ -1132,12 +1150,18 @@ async function fetchData(silent){
   }
 }
 function refreshAll(){
-  ['home-live-list','mat-list-1','mat-list-2','mat-list-3','exam-list-1','exam-list-2','exam-list-3','other-list'].forEach(function(id){
+  // Clear EVERYTHING — old data, timestamp, cached rows
+  localStorage.removeItem(CACHE_KEY);
+  localStorage.removeItem(CACHE_TS_KEY);
+  allRows = []; // wipe in-memory data too
+  // Show skeletons
+  ['home-live-list','mat-list-1','mat-list-2','mat-list-3',
+   'exam-list-1','exam-list-2','exam-list-3','other-list',
+   'rec-list','syllabus-list','pyq-list'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.innerHTML='<div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div>';
   });
-  showToast('Refreshing...');
-  localStorage.removeItem(CACHE_TS_KEY);
+  showToast('Clearing cache & refreshing...');
   fetchData(false);
 }
 
@@ -2305,7 +2329,8 @@ function renderContactFromSheet(){
 /* SYLLABUS from sheet */
 function renderSyllabusFromSheet(){
   var syls = allRows.filter(function(r){
-    return r.Type==='Other' && r.Info && r.Info.toLowerCase().indexOf('syllabus')>=0;
+    return r.Type==='Syllabus' ||
+          (r.Type==='Other' && r.Info && r.Info.toLowerCase().indexOf('syllabus')>=0);
   });
   var el = document.getElementById('syllabus-list');
   if(!el) return;
