@@ -418,6 +418,14 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .sub-panel{display:none;padding-top:6px}
 .sub-panel.active{display:block}
 
+/* DC GAME ANIMATIONS */
+@keyframes dcShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes dcFlash{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
+@keyframes dcPop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+.dc-shake{animation:dcShake .4s ease;}
+.dc-flash-green{animation:dcFlash .35s ease;}
+.dc-pop{animation:dcPop .25s ease;}
+
 /* PROFILE SLIDE PANEL — slides from LEFT */
 #profile-slide-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.45);
@@ -971,7 +979,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </div>
 
 <script>
-const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vT32hr6I6ic59VQhyzmdT58qBgmgIP7zw9zTR2twaKsjl5GO_XTu7mMFnPkGxJID8EKfnFBo3eeBj3S/pub?gid=0&single=true&output=csv';
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2PbV91yTYylihMk-oAzSABpdT_S7Ny0nKWrYb_kPFZwo9hFc8Ze/exec';
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
 const SESSION_KEY='dn-session-v3'; // Users stored in Firebase Auth
@@ -1105,6 +1112,8 @@ function fetchWithTimeout(url,ms){
 function processRows(json){
   return json.map(function(r){return{Title:String(r.Title||'').trim(),Link:String(r.Link||'').trim(),Type:String(r.Type||'').trim(),Info:String(r.Info||'').trim(),Pic:String(r.Pic||r.Image||r.Photo||'').trim(),Date:String(r.Date||r.RecDate||'').trim()};}).filter(function(r){return r.Title.length>0;});
 }
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vT32hr6I6ic59VQhyzmdT58qBgmgIP7zw9zTR2twaKsjl5GO_XTu7mMFnPkGxJID8EKfnFBo3eeBj3S/pub?output=csv';
+
 function parseCSV(csv){
   var lines=csv.trim().split('\n');if(lines.length<2)return[];
   var headers=lines[0].split(',').map(function(h){return h.replace(/"/g,'').trim();});
@@ -1114,18 +1123,28 @@ function parseCSV(csv){
       if(line[i]==='"'){inQ=!inQ;}else if(line[i]===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=line[i];}
     }
     cols.push(cur.trim());
-    var obj={};headers.forEach(function(h,i){obj[h]=cols[i]||'';});return obj;
+    var obj={};headers.forEach(function(h,i){obj[h]=(cols[i]||'').replace(/^"|"$/g,'').trim();});return obj;
   });
 }
 async function fetchCSV(){
-  try{var r=await fetchWithTimeout(CSV_URL+'?t='+Date.now(),10000);if(!r.ok)throw new Error();var rows=parseCSV(await r.text());if(rows.length>0)return processRows(rows);}catch(e){}
-  try{var r2=await fetchWithTimeout('https://api.allorigins.win/raw?url='+encodeURIComponent(CSV_URL),8000);if(!r2.ok)throw new Error();var rows2=parseCSV(await r2.text());if(rows2.length>0)return processRows(rows2);}catch(e2){}
+  try{
+    var r=await fetchWithTimeout(CSV_URL+'&t='+Date.now(),10000);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var rows=parseCSV(await r.text());
+    if(rows.length>0){console.log('CSV loaded:',rows.length,'rows');return processRows(rows);}
+  }catch(e){console.log('CSV direct failed:',e);}
+  try{
+    var r2=await fetchWithTimeout('https://api.allorigins.win/raw?url='+encodeURIComponent(CSV_URL),8000);
+    if(!r2.ok)throw new Error();
+    var rows2=parseCSV(await r2.text());
+    if(rows2.length>0){console.log('CSV proxy loaded:',rows2.length,'rows');return processRows(rows2);}
+  }catch(e2){console.log('CSV proxy failed:',e2);}
   return null;
 }
+
 async function fetchData(silent){
   if(silent===undefined)silent=false;
   var cached=loadCache();
-  // Show cached data immediately while fetching
   if(cached&&cached.length>0){allRows=cached;renderAll();}
   var fresh=null;
   try{
@@ -1140,24 +1159,26 @@ async function fetchData(silent){
       fresh=processRows(arr);
     }catch(e2){}
   }
+  // CSV fallback if Apps Script failed
+  if(!fresh||fresh.length===0){
+    console.log('Apps Script failed, trying CSV...');
+    fresh=await fetchCSV();
+  }
   if(fresh&&fresh.length>0){
-    var changed=JSON.stringify(fresh)!==JSON.stringify(allRows);
     allRows=fresh;saveCache(fresh);renderAll();
-    if(!silent&&changed)showToast('Content updated!');
+    if(!silent)showToast('Content updated!');
   }else if(!cached||cached.length===0){
     ['home-live-list','mat-list-1','exam-list-1','other-list'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='<div class="empty-box">Could not load. Tap Refresh in Profile.</div>';});
     updateStats(0,0,0);
   }
 }
 function refreshAll(){
-  // Clear EVERYTHING — old data, timestamp, cached rows
   localStorage.removeItem(CACHE_KEY);
   localStorage.removeItem(CACHE_TS_KEY);
-  allRows = []; // wipe in-memory data too
-  // Show skeletons
+  allRows=[];
   ['home-live-list','mat-list-1','mat-list-2','mat-list-3',
    'exam-list-1','exam-list-2','exam-list-3','other-list',
-   'rec-list','syllabus-list','pyq-list'].forEach(function(id){
+   'rec-list','syllabus-list'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.innerHTML='<div class="skeleton-wrap"><div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-lines"><div class="sk-line"></div><div class="sk-line"></div></div></div></div>';
   });
@@ -1210,17 +1231,20 @@ function switchNpTab(tab){
   document.getElementById('np-schedule-body').style.display=tab==='schedule'?'block':'none';
 }
 function renderNotices(){
-  var notices=allRows.filter(function(r){return r.Type==='Notice';});
+  var notices=allRows.filter(function(r){return r.Type&&r.Type.trim().toLowerCase()==='notice';});
   var dot=document.getElementById('notif-dot');if(dot)dot.classList.toggle('show',notices.length>0);
   var nb=document.getElementById('np-notice-body');
-  if(!notices.length){nb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No notices yet.</div>';}
-  else nb.innerHTML=notices.map(function(r){
-    var onclick=r.Link&&r.Link.startsWith('http')?'window.open(\''+esc(r.Link)+'\',"_blank")':'void(0)';
-    return '<div class="notice-item" onclick="'+onclick+'"><div class="notice-item-date">'+(r.Info||'Notice')+'</div><div class="notice-item-title">'+r.Title+'</div></div>';
-  }).join('');
-  var lives=allRows.filter(function(r){return r.Type==='Live';});
+  if(!notices.length){
+    nb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No notices yet.<br><small style="color:var(--text3)">Sheet: Type = Notice, Title = your text.</small></div>';
+  } else {
+    nb.innerHTML=notices.map(function(r){
+      var fn=r.Link&&r.Link.startsWith('http')?"window.open('"+esc(r.Link)+"','_blank')":'';
+      return '<div class="notice-item" onclick="'+fn+'"><div class="notice-item-date">'+(r.Info||'Notice')+'</div><div class="notice-item-title">'+(r.Title||'')+'</div></div>';
+    }).join('');
+  }
+  var lives=allRows.filter(function(r){return r.Type&&r.Type.trim().toLowerCase()==='live';});
   var sb=document.getElementById('np-schedule-body');
-  if(!lives.length)sb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No schedule yet.</div>';
+  if(!lives.length) sb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No schedule yet.</div>';
   else sb.innerHTML=lives.map(function(r){
     return '<div class="schedule-item"><span class="schedule-time">'+(r.Info||'TBD')+'</span><span class="schedule-title">'+r.Title+'</span></div>';
   }).join('');
@@ -1658,10 +1682,10 @@ function notifyMe(){
 /* ============================================================
    DAILY CHALLENGE GAME
    ============================================================ */
-var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvboPbqXSBqbMR5UilxgOyrLvrSsxHl45mTxw6DH8DDnK1sRw_X9qIcke2Wi6zSgX4bv0gyA1hmyE-/pub?gid=0&single=true&output=csv';
+var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vT32hr6I6ic59VQhyzmdT58qBgmgIP7zw9zTR2twaKsjl5GO_XTu7mMFnPkGxJID8EKfnFBo3eeBj3S/pub?output=csv';
 var DC_STORE_KEY='dn-dc-v1';
 var DC_LB_KEY='dn-dc-lb-v1';
-var dcQuestions=[],dcSession={q:[],idx:0,score:0,answers:[]},dcTimer=null,dcTimeLeft=30;
+var dcQuestions=[],dcSession={q:[],idx:0,score:0,xp:0,answers:[],startTime:0},dcTimer=null,dcTimeLeft=30;
 
 /* ── SOUND ENGINE ── */
 var dcAudioCtx=null;
@@ -1670,6 +1694,12 @@ function playDCSound(type){
   var ctx=getDCAudio();if(!ctx)return;
   var osc=ctx.createOscillator(),gain=ctx.createGain();
   osc.connect(gain);gain.connect(ctx.destination);
+  if(type==='click'){
+    osc.type='sine';osc.frequency.setValueAtTime(600,ctx.currentTime);
+    gain.gain.setValueAtTime(0.1,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+    return;
+  }
   if(type==='correct'){
     osc.type='sine';osc.frequency.setValueAtTime(520,ctx.currentTime);
     osc.frequency.linearRampToValueAtTime(780,ctx.currentTime+0.12);
@@ -1744,27 +1774,50 @@ function fetchServerLB(){
 }
 function renderLBHTML(){
   var lb=getLB();
-  if(!lb.length) return '<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)"><i class="fa-solid fa-ranking-star" style="font-size:24px;display:block;margin-bottom:8px"></i>No scores yet. Play to appear here!</div>';
-  var medals=['<i class="fa-solid fa-trophy" style="color:#f59e0b"></i>','<i class="fa-solid fa-medal" style="color:#94a3b8"></i>','<i class="fa-solid fa-award" style="color:#b45309"></i>'];
+  if(!lb.length) return '<div style="text-align:center;padding:24px 16px;font-size:12px;color:var(--text2)">'
+    +'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 8px;opacity:.4"><path d="M8 21h8M12 17v4M7 4h10l1 7a5 5 0 0 1-10 0z"/><path d="M5 4h2M17 4h2M5 4c0 2 1 3 2 4M19 4c0 2-1 3-2 4"/></svg>'
+    +'No scores yet — play to appear here!</div>';
   var myName='';
-  try{var _s=JSON.parse(localStorage.getItem('dn-session-v3')||'null');if(_s)myName=_s.name||_s.email||'';}catch(e){}
-  return lb.map(function(e,i){
-    var isMe=myName&&e.name===myName;
-    var rank=i<3?medals[i]:'<span style="font-size:11px;font-weight:800;color:var(--text3);width:20px;display:inline-block;text-align:center">'+(i+1)+'</span>';
-    var bg=i===0?'linear-gradient(135deg,#fffbeb,#fef3c7)':i===1?'linear-gradient(135deg,#f8fafc,#f1f5f9)':i===2?'linear-gradient(135deg,#fff7ed,#ffedd5)':'var(--white)';
-    var border=i===0?'#f59e0b':i===1?'#94a3b8':i===2?'#b45309':'var(--border)';
-    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:'+(isMe?'linear-gradient(135deg,#e8f5ee,#dcfce7)':bg)+';border:1.5px solid '+(isMe?'var(--green)':border)+';border-radius:var(--radius-sm);margin-bottom:7px;position:relative">'
-      +(isMe?'<div style="position:absolute;top:3px;right:7px;font-size:8px;font-weight:800;color:var(--green)"><i class="fa-solid fa-circle-user"></i> YOU</div>':'')
-      +'<div style="width:28px;text-align:center;flex-shrink:0">'+rank+'</div>'
-      +'<div style="flex:1;min-width:0">'
-      +'<div style="font-size:12px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.name+'</div>'
-      +'<div style="font-size:10px;color:var(--text2)"><i class="fa-solid fa-gamepad" style="font-size:9px"></i> '+e.plays+' play'+(e.plays>1?'s':'')+'</div>'
-      +'</div>'
-      +'<div style="text-align:right;flex-shrink:0">'
-      +'<div style="font-size:14px;font-weight:800;color:'+(i===0?'#d97706':i===1?'#64748b':i===2?'#92400e':'var(--primary)')+'">'+e.best+'</div>'
-      +'<div style="font-size:9px;color:var(--text3);font-weight:600">best pts</div>'
-      +'</div></div>';
-  }).join('');
+  try{var _s=JSON.parse(localStorage.getItem('dn-session-v3')||'null');if(_s)myName=(_s.name||_s.email||'').trim();}catch(e){}
+  var svgGold='<svg width="20" height="20" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  var svgSilver='<svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8" stroke="#64748b" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  var svgBronze='<svg width="18" height="18" viewBox="0 0 24 24" fill="#cd7c3a" stroke="#b45309" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  var svgYou='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  var svgCtrl='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 2H8M12 2v5M9 12h6M9 16h6"/></svg>';
+  var html='';
+  lb.forEach(function(e,i){
+    var isMe=myName&&e.name.toLowerCase()===myName.toLowerCase();
+    var isTop3=i<3;
+    // Medal SVG
+    var medal=i===0?svgGold:i===1?svgSilver:i===2?svgBronze
+      :'<span style="font-size:11px;font-weight:800;color:#6b7280;min-width:20px;text-align:center;display:inline-block">'+(i+1)+'</span>';
+    // Card background & border
+    var bg,border;
+    if(isMe){bg='linear-gradient(135deg,#052e16,#166534)';border='#22c55e';}
+    else if(i===0){bg='linear-gradient(135deg,#451a03,#92400e)';border='#f59e0b';}
+    else if(i===1){bg='linear-gradient(135deg,#1e293b,#334155)';border='#94a3b8';}
+    else if(i===2){bg='linear-gradient(135deg,#431407,#7c2d12)';border='#cd7c3a';}
+    else{bg='var(--white)';border='var(--border)';}
+    // Name color: top 3 = orange, rest = green, YOU = always white
+    var nameColor=isMe?'#fff':isTop3?'#fb923c':'#22c55e';
+    var scoreColor=i===0?'#fbbf24':i===1?'#cbd5e1':i===2?'#fb923c':isMe?'#86efac':'var(--primary)';
+    var subColor=isMe||isTop3?'rgba(255,255,255,.6)':'var(--text2)';
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:'+bg+';border:1.5px solid '+border+';border-radius:10px;margin-bottom:7px;position:relative">';
+    if(isMe) html+='<div style="position:absolute;top:3px;right:8px;font-size:8px;font-weight:800;color:#86efac;display:flex;align-items:center;gap:3px">'+svgYou+' YOU</div>';
+    if(i===0) html+='<div style="position:absolute;top:3px;left:40px;font-size:8px;font-weight:800;color:#fbbf24">1ST</div>';
+    if(i===1) html+='<div style="position:absolute;top:3px;left:40px;font-size:8px;font-weight:800;color:#cbd5e1">2ND</div>';
+    if(i===2) html+='<div style="position:absolute;top:3px;left:40px;font-size:8px;font-weight:800;color:#fb923c">3RD</div>';
+    html+='<div style="width:28px;text-align:center;flex-shrink:0">'+medal+'</div>';
+    html+='<div style="flex:1;min-width:0;padding-top:'+(isTop3?'8':'0')+'px">';
+    html+='<div style="font-size:12px;font-weight:800;color:'+nameColor+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>';
+    html+='<div style="font-size:10px;color:'+subColor+';margin-top:1px;display:flex;align-items:center;gap:3px">'+svgCtrl+' '+(e.plays||1)+' play'+((e.plays||1)>1?'s':'')+'</div>';
+    html+='</div>';
+    html+='<div style="text-align:right;flex-shrink:0">';
+    html+='<div style="font-size:15px;font-weight:800;color:'+scoreColor+'">'+e.best+'</div>';
+    html+='<div style="font-size:9px;color:'+subColor+';font-weight:600">best pts</div>';
+    html+='</div></div>';
+  });
+  return html;
 }
 
 function getDCStore(){try{return JSON.parse(localStorage.getItem(DC_STORE_KEY)||'{}')||{};}catch(e){return{};}}
@@ -1784,9 +1837,11 @@ function getDCStreak(){
 
 function getDCPoints(){return getDCStore().totalPoints||0;}
 function getDCLevel(pts){
-  if(pts>=100) return {name:'Expert',color:'#7c3aed',bg:'#f5f3ff'};
-  if(pts>=40)  return {name:'Learner',color:'#d97706',bg:'#fffbeb'};
-  return            {name:'Beginner',color:'#1a6b3c',bg:'#e8f5ee'};
+  if(pts>=1000) return {name:'Master',color:'#f59e0b'};
+  if(pts>=500)  return {name:'Expert',color:'#a855f7'};
+  if(pts>=200)  return {name:'Advanced',color:'#3b82f6'};
+  if(pts>=80)   return {name:'Learner',color:'#22c55e'};
+  return          {name:'Beginner',color:'rgba(255,255,255,.5)'};
 }
 
 function showDCLeaderboard(){
@@ -1812,7 +1867,7 @@ async function startDailyChallenge(){
   document.getElementById('game-menu').style.display='none';
   var area=document.getElementById('dc-game-area');
   area.style.display='block';
-  area.innerHTML='<div style="padding:40px;text-align:center"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;font-weight:700;color:var(--text2)">Loading questions...</div></div>';
+  area.innerHTML='<div style="padding:40px;text-align:center"><div class="spinner" style="border-top-color:#22c55e;border-color:rgba(255,255,255,.15);margin:0 auto 12px"></div><div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6)">Loading questions...</div></div>';
   try{
     var rows=await fetchDCSheet();
     if(!rows||rows.length<1){
@@ -1879,55 +1934,68 @@ function renderDCQuestion(){
   var total=dcSession.q.length;
   var num=dcSession.idx+1;
   dcTimeLeft=30;
+  dcSession.startTime=Date.now();
+  playDCSound('click');
 
-  // Shuffle options
   var opts=q.o.map(function(o,i){return{text:o,origIdx:i};}).sort(function(){return Math.random()-.5;});
-  // Find correct option after shuffle
   var correctText=q.a;
-
   var pct=Math.round((dcSession.idx/total)*100);
+  var xpLevel=getDCLevel(dcSession.xp);
+
+  // Progress label
+  var progLabel=num===total?'Final Question!'
+    :num>=total-2?'Almost done — '+( total-num)+' left!'
+    :'Question '+num+' of '+total;
+
+  // SVGs
+  var svgX='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var svgBolt='<svg width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg>';
+
   area.innerHTML=
-    '<div style="padding:14px 14px 0">'
-    // Header
-    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
-    +'<button onclick="dcQuit()" style="background:var(--bg);border:none;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer"><i class="fa-solid fa-xmark"></i> Quit</button>'
-    +'<div style="font-size:12px;font-weight:700;color:var(--text2)">'+num+' / '+total+'</div>'
-    +'<div style="font-size:13px;font-weight:800;color:var(--primary)">Score: '+dcSession.score+'</div>'
+    '<div style="padding:14px 14px 4px">'
+    // Header row
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+    +'<button onclick="dcQuit()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:6px 11px;border-radius:99px;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;display:flex;align-items:center;gap:5px">'+svgX+' Quit</button>'
+    +'<div style="text-align:center">'
+    +'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5)">'+progLabel+'</div>'
+    +'<div style="font-size:11px;font-weight:800;color:'+xpLevel.color+'">'+xpLevel.name+' &bull; '+dcSession.xp+' XP</div>'
+    +'</div>'
+    +'<div style="font-size:13px;font-weight:800;color:#22c55e">'+dcSession.score+' pts</div>'
     +'</div>'
     // Progress bar
-    +'<div style="height:4px;background:var(--border);border-radius:99px;margin-bottom:12px">'
-    +'<div style="height:100%;width:'+pct+'%;background:var(--primary);border-radius:99px;transition:width .4s"></div></div>'
-    // Timer
+    +'<div style="height:3px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:10px">'
+    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#22c55e,#86efac);border-radius:99px;transition:width .4s"></div></div>'
+    // Timer ring
     +'<div style="text-align:center;margin-bottom:10px">'
-    +'<div id="dc-timer-ring" style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;border:3px solid var(--primary);font-size:20px;font-weight:800;color:var(--primary);transition:border-color .5s,color .5s">'
+    +'<div id="dc-timer-ring" style="display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;border:3px solid #22c55e;font-size:20px;font-weight:800;color:#22c55e;transition:border-color .5s,color .5s;background:rgba(34,197,94,.08)">'
     +'<span id="dc-timer-num">30</span></div></div>'
-    // Question
-    +'<div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 14px;margin-bottom:12px;font-size:13px;font-weight:700;color:var(--text);line-height:1.6">'+q.q+'</div>'
+    // Question box
+    +'<div id="dc-question-box" style="background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:14px;margin-bottom:12px;font-size:13px;font-weight:700;color:#fff;line-height:1.6">'+q.q+'</div>'
     // Options
     +'<div id="dc-opts">'
     +opts.map(function(o,i){
       var letter=['A','B','C','D'][i];
-      return '<button data-val="'+escQ(o.text)+'" onclick="dcAnswer(this,\''+escQ(o.text)+'\',\''+escQ(correctText)+'\')" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .25s">'
-      +'<span class="dc-letter" style="width:26px;height:26px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s">'+letter+'</span>'
+      return '<button data-val="'+escQ(o.text)+'" onclick="dcAnswer(this,\''+escQ(o.text)+'\',\''+escQ(correctText)+'\')" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;margin-bottom:8px;font-family:inherit;font-size:12px;font-weight:600;color:#fff;cursor:pointer;text-align:left;transition:all .2s">'
+      +'<span class="dc-letter" style="width:26px;height:26px;border-radius:50%;background:rgba(34,197,94,.2);color:#86efac;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">'+letter+'</span>'
       +'<span>'+o.text+'</span></button>';
     }).join('')
     +'</div></div>';
 
-  // Start timer
+  // Timer tick
   dcTimer=setInterval(function(){
     dcTimeLeft--;
     var el=document.getElementById('dc-timer-num');
     var ring=document.getElementById('dc-timer-ring');
     if(el) el.textContent=dcTimeLeft;
     if(ring){
-      if(dcTimeLeft<=10){ring.style.borderColor='var(--red)';ring.style.color='var(--red)';}
-      else if(dcTimeLeft<=20){ring.style.borderColor='var(--accent)';ring.style.color='var(--accent)';}
+      if(dcTimeLeft<=10){ring.style.borderColor='#ef4444';ring.style.color='#ef4444';ring.style.background='rgba(239,68,68,.1)';}
+      else if(dcTimeLeft<=20){ring.style.borderColor='#f59e0b';ring.style.color='#f59e0b';ring.style.background='rgba(245,158,11,.08)';}
     }
     if(dcTimeLeft<=0){
       clearInterval(dcTimer);
-      // Time out — mark as wrong, show correct
+      playDCSound('wrong');
       dcSession.score-=2;
-      dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:'(Time Out)',correct:correctText,ok:false});
+      dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:'(Time Out)',correct:correctText,ok:false,bonus:0});
       dcTimeoutReveal(correctText);
     }
   },1000);
@@ -1938,32 +2006,58 @@ function escQ(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 function dcAnswer(btn,chosen,correct){
   clearInterval(dcTimer);
   var ok=(chosen.toLowerCase().trim()===correct.toLowerCase().trim());
-  if(ok){dcSession.score+=2;playDCSound('correct');}else{dcSession.score-=2;playDCSound('wrong');}
-  dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:chosen,correct:correct,ok:ok});
+  // Fast answer bonus: <5s = +4 pts, <10s = +2 pts, else standard
+  var elapsed=(Date.now()-dcSession.startTime)/1000;
+  var timeSpent=30-dcTimeLeft;
+  var bonus=0;
+  if(ok){
+    if(timeSpent<5) bonus=4;
+    else if(timeSpent<10) bonus=2;
+    dcSession.score+=2+bonus;
+    dcSession.xp+=10+(bonus>0?5:0);
+    playDCSound('correct');
+    // Green flash on question box
+    var qbox=document.getElementById('dc-question-box');
+    if(qbox) qbox.classList.add('dc-flash-green');
+  } else {
+    dcSession.score-=2;
+    playDCSound('wrong');
+    // Red shake on wrong button
+    btn.classList.add('dc-shake');
+  }
+  dcSession.answers.push({q:dcSession.q[dcSession.idx].q,chosen:chosen,correct:correct,ok:ok,bonus:bonus});
 
-  // Highlight all buttons - FULL background highlight
+  // Highlight buttons
   var opts=document.getElementById('dc-opts');
   if(opts) opts.querySelectorAll('button').forEach(function(b){
     var dataVal=b.getAttribute('data-val')||'';
-    b.disabled=true;b.style.cursor='default';b.style.transition='all .25s';
+    b.disabled=true;b.style.cursor='default';
     if(dataVal.toLowerCase().trim()===correct.toLowerCase().trim()){
-      // Correct answer - full green
-      b.style.background='var(--green)';b.style.borderColor='var(--green)';b.style.color='#fff';
+      b.style.background='#16a34a';b.style.borderColor='#22c55e';b.style.color='#fff';
       b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
       b.querySelector('.dc-letter').style.color='#fff';
     } else if(b===btn&&!ok){
-      // Wrong selected - full red
-      b.style.background='var(--red)';b.style.borderColor='var(--red)';b.style.color='#fff';
+      b.style.background='#dc2626';b.style.borderColor='#ef4444';b.style.color='#fff';
       b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
       b.querySelector('.dc-letter').style.color='#fff';
     }
   });
 
-  // Update score display
-  var scoreEl=document.querySelector('#dc-game-area [style*="Score:"]');
-  if(scoreEl) scoreEl.textContent='Score: '+dcSession.score;
+  // Show bonus toast
+  if(bonus>0){
+    var area=document.getElementById('dc-game-area');
+    var toast=document.createElement('div');
+    toast.textContent='+'+bonus+' Speed Bonus!';
+    toast.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#fff;font-size:12px;font-weight:800;padding:6px 16px;border-radius:99px;z-index:999;pointer-events:none';
+    document.body.appendChild(toast);
+    setTimeout(function(){toast.remove();},1200);
+  }
 
-  setTimeout(function(){dcNext();},900);
+  // Update score in UI
+  var scoreEl=document.querySelector('#dc-game-area [style*="pts"]');
+  if(scoreEl) scoreEl.textContent=dcSession.score+' pts';
+
+  setTimeout(function(){dcNext();},ok?750:1000);
 }
 
 function dcTimeoutReveal(correct){
@@ -1972,9 +2066,9 @@ function dcTimeoutReveal(correct){
     var dataVal=b.getAttribute('data-val')||'';
     b.disabled=true;b.style.cursor='default';
     if(dataVal.toLowerCase().trim()===correct.toLowerCase().trim()){
-      b.style.background='var(--green)';b.style.borderColor='var(--green)';b.style.color='#fff';
-      b.querySelector('.dc-letter').style.background='rgba(255,255,255,.25)';
-      b.querySelector('.dc-letter').style.color='#fff';
+      b.style.background='#16a34a';b.style.borderColor='#22c55e';b.style.color='#fff';
+      var dl=b.querySelector('.dc-letter');
+      if(dl){dl.style.background='rgba(255,255,255,.25)';dl.style.color='#fff';}
     }
   });
   setTimeout(function(){dcNext();},900);
@@ -1995,64 +2089,97 @@ function dcQuit(){
 function dcShowResult(){
   clearInterval(dcTimer);
   playDCSound('finish');
-  // Update streak & points
+
+  // ── Streak & store update ──
   var store=getDCStore();
   var now=new Date();var utc=now.getTime()+(now.getTimezoneOffset()*60000);var np=new Date(utc+(5*3600+45*60)*1000);
   var today=np.toDateString();
   var yesterday=new Date(np);yesterday.setDate(np.getDate()-1);
   var streak=store.streak||0;
   if(store.lastPlayed===yesterday.toDateString()) streak+=1;
-  else if(store.lastPlayed===today) streak=streak; // already played today, no change
+  else if(store.lastPlayed===today) streak=streak;
   else streak=1;
   var totalPoints=(store.totalPoints||0)+Math.max(0,dcSession.score);
-  saveDCStore({streak:streak,lastPlayed:today,totalPoints:totalPoints,bestScore:Math.max(store.bestScore||0,dcSession.score)});
-  // Save to leaderboard with user name
+  var totalXP=(store.totalXP||0)+dcSession.xp;
+  saveDCStore({streak:streak,lastPlayed:today,totalPoints:totalPoints,bestScore:Math.max(store.bestScore||0,dcSession.score),totalXP:totalXP});
+
+  // Save LB
   var lbSession=null;try{lbSession=JSON.parse(localStorage.getItem('dn-session-v3')||'null');}catch(e){}
   var lbName=lbSession&&lbSession.name?lbSession.name:'Guest';
   updateLB(lbName,dcSession.score);
   updateDCBadges();
-  var lvl=getDCLevel(totalPoints);
+
+  var lvl=getDCLevel(totalXP);
   var correct=dcSession.answers.filter(function(a){return a.ok;}).length;
   var wrong=dcSession.answers.filter(function(a){return !a.ok;}).length;
+  var bonusTotal=dcSession.answers.reduce(function(s,a){return s+(a.bonus||0);},0);
   var area=document.getElementById('dc-game-area');
-  var streakFire=streak>0?'<i class="fa-solid fa-fire" style="color:#f59e0b"></i> ':'';
-  var trophyIcon=dcSession.score>=20?'<i class="fa-solid fa-trophy" style="color:#f59e0b;font-size:38px"></i>':dcSession.score>=10?'<i class="fa-solid fa-star" style="color:#f59e0b;font-size:38px"></i>':'<i class="fa-solid fa-dumbbell" style="color:rgba(255,255,255,.8);font-size:38px"></i>';
+
+  // Trophy SVG based on score
+  var trophySVG=dcSession.score>=20
+    ?'<svg width="44" height="44" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="1"><path d="M8 21h8M12 17v4M7 4h10l1 7a5 5 0 0 1-10 0z"/><path d="M5 4h2M17 4h2M5 4c0 2 1 3 2 4M19 4c0 2-1 3-2 4"/></svg>'
+    :dcSession.score>=10
+    ?'<svg width="44" height="44" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'
+    :'<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.5" stroke-linecap="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>';
+
+  var svgCheck='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  var svgX2='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var svgFire='<svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M12 2c0 4-4 6-4 10a4 4 0 0 0 8 0c0-4-4-6-4-10z"/><path d="M12 14c0 1.5-1 2.5-1 4a1 1 0 0 0 2 0c0-1.5-1-2.5-1-4z" fill="#fff"/></svg>';
+  var svgStar='<svg width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  var svgBolt='<svg width="11" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg>';
+  var svgBack='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  var svgPlay='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+
+  // Come-back message
+  var comeBack=streak>0?'Return tomorrow to keep your '+streak+'-day streak alive!':'Play daily to build your streak!';
+
   area.innerHTML=
     '<div style="padding:14px">'
     // Result card
-    +'<div style="background:linear-gradient(135deg,#0a3d20,#1a6b3c);border-radius:16px;padding:18px;text-align:center;margin-bottom:12px">'
-    +'<div style="margin-bottom:8px">'+trophyIcon+'</div>'
-    +'<div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:2px">'+dcSession.score+' pts</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,.7)"><i class="fa-solid fa-circle-check" style="color:#86efac"></i> '+correct+' correct &nbsp; <i class="fa-solid fa-circle-xmark" style="color:#fca5a5"></i> '+wrong+' wrong</div>'
-    +'<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700">'+streakFire+streak+' Day Streak</span>'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700"><i class="fa-solid fa-layer-group"></i> '+lvl.name+'</span>'
-    +'<span style="font-size:11px;background:rgba(255,255,255,.18);color:#fff;padding:4px 11px;border-radius:99px;font-weight:700"><i class="fa-solid fa-star"></i> '+totalPoints+' total</span>'
-    +'</div></div>'
+    +'<div style="background:linear-gradient(135deg,#0a0a1a,#0d1f12);border:1px solid rgba(34,197,94,.25);border-radius:18px;padding:20px;text-align:center;margin-bottom:12px;box-shadow:0 0 40px rgba(34,197,94,.1)">'
+    +'<div style="margin-bottom:10px">'+trophySVG+'</div>'
+    +'<div style="font-size:28px;font-weight:900;color:#fff;margin-bottom:2px">'+dcSession.score+' pts</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;gap:10px">'
+    +'<span style="display:flex;align-items:center;gap:3px">'+svgCheck+' '+correct+' correct</span>'
+    +'<span style="display:flex;align-items:center;gap:3px">'+svgX2+' '+wrong+' wrong</span>'
+    +(bonusTotal>0?'<span style="display:flex;align-items:center;gap:3px">'+svgBolt+' +'+bonusTotal+' bonus</span>':'')
+    +'</div>'
+    +'<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px">'
+    +'<span style="font-size:10px;background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);padding:4px 10px;border-radius:99px;font-weight:700;display:flex;align-items:center;gap:4px">'+svgFire+' '+streak+' Day Streak</span>'
+    +'<span style="font-size:10px;background:rgba(255,255,255,.08);color:'+lvl.color+';border:1px solid rgba(255,255,255,.12);padding:4px 10px;border-radius:99px;font-weight:700">'+lvl.name+'</span>'
+    +'<span style="font-size:10px;background:rgba(255,255,255,.08);color:#86efac;border:1px solid rgba(255,255,255,.12);padding:4px 10px;border-radius:99px;font-weight:700;display:flex;align-items:center;gap:4px">'+svgStar+' '+totalXP+' XP</span>'
+    +'</div>'
+    +'<div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.4);font-style:italic">'+comeBack+'</div>'
+    +'</div>'
     // Tabs
-    +'<div style="display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:12px" id="dc-tabs-row">'
-    +'<button id="dc-tab-review" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.08)"><i class="fa-solid fa-list-check"></i> Review</button>'
-    +'<button id="dc-tab-lb" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text2)"><i class="fa-solid fa-ranking-star"></i> Leaderboard</button>'
+    +'<div style="display:flex;background:rgba(255,255,255,.06);border-radius:10px;padding:3px;margin-bottom:12px">'
+    +'<button id="dc-tab-review" data-tab="review" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.1);color:#fff">Review</button>'
+    +'<button id="dc-tab-lb" data-tab="lb" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,.5)">Leaderboard</button>'
     +'</div>'
     // Review panel
     +'<div id="dc-panel-review">'
     +dcSession.answers.map(function(a,i){
-      var okIcon=a.ok?'<i class="fa-solid fa-circle-check" style="color:var(--green)"></i>':'<i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i>';
-      return '<div style="margin-bottom:8px;padding:11px 12px;background:var(--white);border:1.5px solid '+(a.ok?'var(--green)':'var(--red)')+';border-radius:var(--radius-sm)">'
-      +'<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.5">'+okIcon+' '+(i+1)+'. '+a.q+'</div>'
-      +'<div style="font-size:11px;color:'+(a.ok?'var(--green)':'var(--red)')+';font-weight:600">'+(a.ok?'<i class="fa-solid fa-check"></i> '+a.chosen:'<i class="fa-solid fa-xmark"></i> You: '+a.chosen)+'</div>'
-      +(!a.ok?'<div style="font-size:11px;color:var(--green);margin-top:3px;font-weight:600"><i class="fa-solid fa-check"></i> Correct: '+a.correct+'</div>':'')
-      +'</div>';
+      var border=a.ok?'#22c55e':'#ef4444';
+      var svgOk=a.ok
+        ?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
+        :'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      return '<div style="margin-bottom:8px;padding:11px 12px;background:rgba(255,255,255,.04);border:1.5px solid '+border+';border-radius:10px">'
+        +'<div style="font-size:11px;font-weight:700;color:#fff;margin-bottom:5px;line-height:1.5;display:flex;align-items:flex-start;gap:6px">'+svgOk+'<span>'+(i+1)+'. '+a.q+'</span></div>'
+        +'<div style="font-size:11px;color:'+(a.ok?'#86efac':'#fca5a5')+';font-weight:600">'+(a.ok?'Correct: ':'Your answer: ')+a.chosen+'</div>'
+        +(!a.ok?'<div style="font-size:11px;color:#86efac;margin-top:3px;font-weight:600">Correct: '+a.correct+'</div>':'')
+        +(a.bonus>0?'<div style="font-size:10px;color:#fbbf24;margin-top:2px">+'+a.bonus+' speed bonus</div>':'')
+        +'</div>';
     }).join('')
     +'</div>'
-    // Leaderboard panel (hidden initially)
+    // LB panel
     +'<div id="dc-panel-lb" style="display:none"><div id="dc-result-lb-inner">'+renderLBHTML()+'</div></div>'
     // Buttons
     +'<div style="display:flex;gap:8px;margin-top:14px">'
-    +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer"><i class="fa-solid fa-rotate-right"></i> Play Again</button>'
-    +'<button onclick="dcQuit()" style="flex:1;padding:12px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer"><i class="fa-solid fa-arrow-left"></i> Back</button>'
+    +'<button onclick="startDailyChallenge()" style="flex:1;padding:12px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">'+svgPlay+' Play Again</button>'
+    +'<button onclick="dcQuit()" style="flex:1;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15);border-radius:12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">'+svgBack+' Back</button>'
     +'</div></div>';
-  // Attach tab listeners after DOM is set
+
+  // Attach tab listeners
   setTimeout(function(){
     var btnR=document.getElementById('dc-tab-review');
     var btnL=document.getElementById('dc-tab-lb');
@@ -2068,16 +2195,15 @@ function dcSwitchTab(tab){
   var tbL=document.getElementById('dc-tab-lb');
   if(tab==='review'){
     rev.style.display='block';lb.style.display='none';
-    tbR.style.background='var(--white)';tbR.style.color='var(--primary)';tbR.style.boxShadow='0 1px 4px rgba(0,0,0,.08)';
-    tbL.style.background='transparent';tbL.style.color='var(--text2)';tbL.style.boxShadow='none';
+    tbR.style.background='rgba(255,255,255,.1)';tbR.style.color='#fff';
+    tbL.style.background='transparent';tbL.style.color='rgba(255,255,255,.5)';
   } else {
     rev.style.display='none';lb.style.display='block';
-    tbL.style.background='var(--white)';tbL.style.color='var(--primary)';tbL.style.boxShadow='0 1px 4px rgba(0,0,0,.08)';
-    tbR.style.background='transparent';tbR.style.color='var(--text2)';tbR.style.boxShadow='none';
-    // Refresh leaderboard from server
+    tbL.style.background='rgba(255,255,255,.1)';tbL.style.color='#fff';
+    tbR.style.background='transparent';tbR.style.color='rgba(255,255,255,.5)';
     var inner=document.getElementById('dc-result-lb-inner');
     if(inner){
-      inner.innerHTML='<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)"><div class="spinner" style="margin:0 auto 8px"></div>Loading...</div>';
+      inner.innerHTML='<div style="text-align:center;padding:16px;font-size:12px;color:rgba(255,255,255,.5)">Loading...</div>';
       fetchServerLB().then(function(){if(inner)inner.innerHTML=renderLBHTML();});
     }
   }
