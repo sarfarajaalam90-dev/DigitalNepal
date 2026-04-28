@@ -699,9 +699,19 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <!-- GAMES panel -->
       <div id="opanel-games" class="opanel" style="display:none;padding:12px 14px;background:linear-gradient(160deg,#0a0a1a 0%,#0d1f12 40%,#0a1a2e 100%);min-height:100vh">
         <div id="game-menu">
-          <div style="text-align:center;padding:10px 0 16px">
-            <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;text-shadow:0 0 20px rgba(34,197,94,.6)">🎮 GAME ZONE</div>
-            <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:2px;margin-top:2px">CHOOSE YOUR CHALLENGE</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 16px">
+            <div style="width:40px"></div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;text-shadow:0 0 20px rgba(34,197,94,.6)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 2H8M12 2v5M9 12h2M13 12h2M9 16h2M13 16h2"/></svg>
+                GAME ZONE
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:2px;margin-top:2px">CHOOSE YOUR CHALLENGE</div>
+            </div>
+            <button id="dc-sound-btn" onclick="toggleDCSound()" title="Sound ON"
+              style="width:40px;height:40px;border-radius:50%;background:rgba(34,197,94,.1);border:1.5px solid rgba(34,197,94,.4);color:#22c55e;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
           </div>
           <!-- Daily Challenge Game Card -->
           <div onclick="startDailyChallenge()" style="padding:18px 16px;background:linear-gradient(135deg,#0f2027,#1a6b3c,#22c55e);border-radius:18px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 0 0 1px rgba(34,197,94,.3),0 8px 32px rgba(34,197,94,.25),0 0 60px rgba(34,197,94,.08);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
@@ -1682,45 +1692,125 @@ function notifyMe(){
 /* ============================================================
    DAILY CHALLENGE GAME
    ============================================================ */
-var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vT32hr6I6ic59VQhyzmdT58qBgmgIP7zw9zTR2twaKsjl5GO_XTu7mMFnPkGxJID8EKfnFBo3eeBj3S/pub?output=csv';
+var DC_SHEET_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvboPbqXSBqbMR5UilxgOyrLvrSsxHl45mTxw6DH8DDnK1sRw_X9qIcke2Wi6zSgX4bv0gyA1hmyE-/pub?gid=0&single=true&output=csv';
 var DC_STORE_KEY='dn-dc-v1';
 var DC_LB_KEY='dn-dc-lb-v1';
 var dcQuestions=[],dcSession={q:[],idx:0,score:0,xp:0,answers:[],startTime:0},dcTimer=null,dcTimeLeft=30;
 
 /* ── SOUND ENGINE ── */
 var dcAudioCtx=null;
-function getDCAudio(){if(!dcAudioCtx){try{dcAudioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return dcAudioCtx;}
+var dcSoundOn=true; // default ON
+
+function getDCAudio(){
+  if(!dcAudioCtx){
+    try{dcAudioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  }
+  if(dcAudioCtx&&dcAudioCtx.state==='suspended') dcAudioCtx.resume();
+  return dcAudioCtx;
+}
+
+function toggleDCSound(){
+  dcSoundOn=!dcSoundOn;
+  var btn=document.getElementById('dc-sound-btn');
+  if(!btn) return;
+  if(dcSoundOn){
+    btn.innerHTML=svgMicOn();
+    btn.title='Sound ON';
+    btn.style.color='#22c55e';
+    btn.style.borderColor='rgba(34,197,94,.4)';
+  } else {
+    btn.innerHTML=svgMicOff();
+    btn.title='Sound OFF';
+    btn.style.color='rgba(255,255,255,.3)';
+    btn.style.borderColor='rgba(255,255,255,.1)';
+  }
+  if(dcSoundOn) playDCSound('click');
+}
+
+function svgMicOn(){
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+}
+function svgMicOff(){
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+}
+
 function playDCSound(type){
+  if(!dcSoundOn) return;
   var ctx=getDCAudio();if(!ctx)return;
-  var osc=ctx.createOscillator(),gain=ctx.createGain();
-  osc.connect(gain);gain.connect(ctx.destination);
+  var t=ctx.currentTime;
+
+  function note(freq,startT,dur,vol,waveType,detune){
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    if(detune) o.detune.setValueAtTime(detune,startT);
+    o.type=waveType||'sine';
+    o.frequency.setValueAtTime(freq,startT);
+    g.gain.setValueAtTime(0,startT);
+    g.gain.linearRampToValueAtTime(vol,startT+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,startT+dur);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(startT);o.stop(startT+dur);
+  }
+
   if(type==='click'){
-    osc.type='sine';osc.frequency.setValueAtTime(600,ctx.currentTime);
-    gain.gain.setValueAtTime(0.1,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+    note(900,t,0.06,0.18,'sine');
     return;
   }
+
   if(type==='correct'){
-    osc.type='sine';osc.frequency.setValueAtTime(520,ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(780,ctx.currentTime+0.12);
-    osc.frequency.linearRampToValueAtTime(1040,ctx.currentTime+0.22);
-    gain.gain.setValueAtTime(0.25,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.35);
-  } else if(type==='wrong'){
-    osc.type='sawtooth';osc.frequency.setValueAtTime(280,ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(180,ctx.currentTime+0.25);
-    gain.gain.setValueAtTime(0.2,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.3);
-  } else if(type==='finish'){
-    var notes=[523,659,784,1047];
-    notes.forEach(function(freq,i){
-      var o2=ctx.createOscillator(),g2=ctx.createGain();
-      o2.connect(g2);g2.connect(ctx.destination);
-      o2.type='sine';o2.frequency.setValueAtTime(freq,ctx.currentTime+i*0.12);
-      g2.gain.setValueAtTime(0.2,ctx.currentTime+i*0.12);
-      g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.12+0.25);
-      o2.start(ctx.currentTime+i*0.12);o2.stop(ctx.currentTime+i*0.12+0.25);
+    /* Bright xylophone-style chord: root + fifth + octave, layered */
+    note(523,t,0.35,0.55,'triangle');       // C5
+    note(659,t+0.04,0.3,0.45,'triangle');   // E5
+    note(784,t+0.08,0.28,0.4,'triangle');   // G5
+    note(1047,t+0.14,0.35,0.5,'sine');      // C6 shine
+    /* Subtle sparkle harmonics */
+    note(1568,t+0.1,0.2,0.2,'sine');        // G6
+    note(2093,t+0.18,0.15,0.15,'sine');     // C7
+    return;
+  }
+
+  if(type==='wrong'){
+    /* Heavy buzzer: square wave dropping pitch + low thud */
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='square';
+    o.frequency.setValueAtTime(200,t);
+    o.frequency.linearRampToValueAtTime(80,t+0.35);
+    g.gain.setValueAtTime(0.55,t);
+    g.gain.linearRampToValueAtTime(0.4,t+0.1);
+    g.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(t);o.stop(t+0.5);
+    /* Low thud punch */
+    note(60,t,0.25,0.6,'sine');
+    note(110,t+0.05,0.2,0.35,'sawtooth');
+    return;
+  }
+
+  if(type==='finish'){
+    /* Victory fanfare: ascending 8-note arpeggio + final chord */
+    var fanfare=[392,440,523,659,523,659,784,1047];
+    fanfare.forEach(function(freq,i){
+      note(freq, t+i*0.1, 0.22, 0.5, 'triangle');
     });
+    /* Final chord hit */
+    [523,659,784,1047].forEach(function(freq){
+      note(freq, t+0.85, 0.6, 0.45, 'sine');
+    });
+    return;
+  }
+
+  if(type==='entry'){
+    /* Cool entry music: 12-step epic rising sequence with harmony */
+    var melody=[261,294,330,349,392,440,494,523,587,659,784,1047];
+    var harmony=[196,220,247,261,294,330,370,392,440,494,587,784];
+    melody.forEach(function(freq,i){
+      note(freq,  t+i*0.07, 0.18, 0.45, 'triangle');
+      note(harmony[i], t+i*0.07, 0.18, 0.25, 'sine');
+    });
+    /* Big finale chord */
+    [523,659,784,1047,1318].forEach(function(freq,i){
+      note(freq, t+0.88, 0.8, 0.4-i*0.04, 'sine');
+    });
+    return;
   }
 }
 
@@ -1864,6 +1954,7 @@ function updateDCBadges(){
 }
 
 async function startDailyChallenge(){
+  playDCSound('entry');
   document.getElementById('game-menu').style.display='none';
   var area=document.getElementById('dc-game-area');
   area.style.display='block';
@@ -1960,7 +2051,10 @@ function renderDCQuestion(){
     +'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5)">'+progLabel+'</div>'
     +'<div style="font-size:11px;font-weight:800;color:'+xpLevel.color+'">'+xpLevel.name+' &bull; '+dcSession.xp+' XP</div>'
     +'</div>'
+    +'<div style="display:flex;align-items:center;gap:6px">'
     +'<div style="font-size:13px;font-weight:800;color:#22c55e">'+dcSession.score+' pts</div>'
+    +'<button onclick="toggleDCSound()" id="dc-sound-btn" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:'+(dcSoundOn?'#22c55e':'rgba(255,255,255,.3)')+';cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">'+(dcSoundOn?'<svg width="14" height="14" viewBox="0 0 24 24" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z\"/><path d=\"M19 10v2a7 7 0 0 1-14 0v-2\"/><line x1=\"12\" y1=\"19\" x2=\"12\" y2=\"23\"/><line x1=\"8\" y1=\"23\" x2=\"16\" y2=\"23\"/></svg>':'<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"1\" y1=\"1\" x2=\"23\" y2=\"23\"/><path d=\"M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6\"/><path d=\"M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23\"/><line x1=\"12\" y1=\"19\" x2=\"12\" y2=\"23\"/><line x1=\"8\" y1=\"23\" x2=\"16\" y2=\"23\"/></svg>')+'</button>'
+    +'</div>'
     +'</div>'
     // Progress bar
     +'<div style="height:3px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:10px">'
