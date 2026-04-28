@@ -30,6 +30,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAaTyHTxmuktChm8AtJC15dfVejD66Gxvg",
@@ -42,6 +43,8 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const fbAuth = firebase.auth();
+const fbDB = firebase.database();
+const LB_REF = fbDB.ref('leaderboard');
 // Auto-login: if Firebase already has session, restore profile
 fbAuth.onAuthStateChanged(function(fbUser) {
   if (fbUser) {
@@ -734,7 +737,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
           <!-- Leaderboard inline panel -->
           <div id="dc-lb-panel" style="display:none;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:12px;margin-bottom:10px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div style="font-size:13px;font-weight:800;color:#fff"><i class="fa-solid fa-ranking-star" style="color:#f59e0b"></i> Leaderboard</div>
+              <div style="font-size:13px;font-weight:800;color:#fff"><i class="fa-solid fa-ranking-star" style="color:#f59e0b"></i> Leaderboard <span style="font-size:9px;background:#22c55e;color:#fff;padding:2px 7px;border-radius:99px;font-weight:700;vertical-align:middle">● LIVE</span></div>
               <button onclick="document.getElementById('dc-lb-panel').style.display='none'" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3)"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="dc-lb-content"></div>
@@ -1836,31 +1839,52 @@ function updateLB(name,score){
 }
 function pushLBToServer(name,score,best,plays){
   try{
-    var payload={action:'leaderboard',name:name,score:score,best:best,plays:plays};
-    fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
-  }catch(e){}
+    // Save to Firebase Realtime Database
+    var key = name.replace(/[.#$/\[\]]/g,'_'); // Firebase key safe
+    LB_REF.child(key).transaction(function(current){
+      if(!current){
+        return {name:name, best:best, score:score, plays:plays, updatedAt: Date.now()};
+      }
+      return {
+        name: name,
+        best: Math.max(current.best||0, best),
+        score: score,
+        plays: (current.plays||0) + 1,
+        updatedAt: Date.now()
+      };
+    });
+  }catch(e){ console.log('Firebase push error:', e); }
 }
 function fetchServerLB(){
-  return fetch(APPS_SCRIPT_URL+'?action=leaderboard')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data&&data.leaderboard&&data.leaderboard.length){
-        // Merge server LB with local LB
-        var local=getLB();
-        var merged=data.leaderboard.slice();
-        local.forEach(function(le){
-          var idx=merged.findIndex(function(e){return e.name===le.name;});
-          if(idx<0) merged.push(le);
-          else if(le.best>merged[idx].best) merged[idx]=le;
-        });
-        merged.sort(function(a,b){return b.best-a.best;});
-        merged=merged.slice(0,50);
-        saveLB(merged);
-        return merged;
-      }
-      return getLB();
-    })
-    .catch(function(){return getLB();});
+  return new Promise(function(resolve){
+    LB_REF.orderByChild('best').limitToLast(50).once('value')
+      .then(function(snapshot){
+        var data=snapshot.val();
+        if(!data){ resolve(getLB()); return; }
+        var arr=Object.values(data);
+        arr.sort(function(a,b){return b.best-a.best;});
+        saveLB(arr);
+        resolve(arr);
+      })
+      .catch(function(){ resolve(getLB()); });
+  });
+}
+
+// Realtime listener — auto refresh leaderboard when anyone plays
+function startLBRealtime(){
+  LB_REF.orderByChild('best').limitToLast(50).on('value', function(snapshot){
+    var data=snapshot.val();
+    if(!data) return;
+    var arr=Object.values(data);
+    arr.sort(function(a,b){return b.best-a.best;});
+    saveLB(arr);
+    // If leaderboard panel is open, refresh it live
+    var panel=document.getElementById('dc-lb-panel');
+    var cont=document.getElementById('dc-lb-content');
+    if(panel&&panel.style.display!=='none'&&cont){
+      cont.innerHTML=renderLBHTML();
+    }
+  });
 }
 function renderLBHTML(){
   var lb=getLB();
@@ -1938,9 +1962,9 @@ function showDCLeaderboard(){
   var panel=document.getElementById('dc-lb-panel');
   var cont=document.getElementById('dc-lb-content');
   if(panel.style.display==='none'||!panel.style.display){
-    cont.innerHTML='<div style="text-align:center;padding:16px;color:rgba(255,255,255,.5);font-size:12px"><div class="spinner" style="border-top-color:#22c55e;border-color:rgba(255,255,255,.15);margin:0 auto 8px"></div>Loading...</div>';
+    cont.innerHTML='<div style="text-align:center;padding:16px;color:rgba(255,255,255,.5);font-size:12px"><div class="spinner" style="border-top-color:#22c55e;border-color:rgba(255,255,255,.15);margin:0 auto 8px"></div>Loading realtime data...</div>';
     panel.style.display='block';
-    fetchServerLB().then(function(){cont.innerHTML=renderLBHTML();});
+    fetchServerLB().then(function(){ cont.innerHTML=renderLBHTML(); });
   } else {
     panel.style.display='none';
   }
@@ -2577,7 +2601,9 @@ function checkFirstTimePulse(){
 }
 
 /* INIT */
-setDailyQuote();setHeroDate();updateStreak();checkProfileOnLoad();checkFirstTimePulse();
+setDailyQuote();setHeroDate();updateStreak();checkProfileOnLoad();
+// Start Firebase realtime leaderboard listener
+try{ startLBRealtime(); }catch(e){}checkFirstTimePulse();
 setInterval(function(){fetchData(true);},5*60*1000);
 </script>
 
