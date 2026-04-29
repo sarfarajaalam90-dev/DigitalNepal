@@ -196,6 +196,24 @@ html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden
 .hero-stat-label{font-size:8px;color:rgba(255,255,255,.55);font-weight:600;margin-top:2px}
 .hero-stat-divider{width:1px;background:rgba(255,255,255,.2);align-self:stretch;margin:0 1px}
 
+/* ── HERO CAROUSEL ── */
+.hero-carousel{margin:12px 14px 0;border-radius:var(--radius);overflow:hidden;position:relative;animation:fadeInUp .4s ease both}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s cubic-bezier(.4,0,.2,1);pointer-events:none;border-radius:var(--radius);padding:18px 16px 14px;overflow:hidden}
+.hero-slide.active{opacity:1;pointer-events:all;position:relative}
+.hero-slide.green{background:linear-gradient(135deg,#0a3d20,#1a6b3c 55%,#22c55e)}
+.hero-slide.orange{background:linear-gradient(135deg,#7c2d12,#c2410c 55%,#f97316)}
+/* reuse hero children inside slides */
+.hero-carousel .hero-c1{position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06);top:-22px;right:-22px;animation:heroFloat 6s ease-in-out infinite}
+.hero-carousel .hero-c2{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-12px;right:32px;animation:heroFloat 8s ease-in-out infinite reverse}
+/* Ensure white text on all slides */
+.hero-slide h2{font-size:16px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px;position:relative}
+.hero-slide p{font-size:11px;color:rgba(255,255,255,.8);line-height:1.5;position:relative}
+.hero-slide .hero-stat-num{font-size:15px;font-weight:800;color:#fff;line-height:1}
+.hero-slide .hero-stat-label{font-size:8px;color:rgba(255,255,255,.6);font-weight:600;margin-top:2px}
+.hero-slide .hero-time{font-size:17px;font-weight:800;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.hero-slide .hero-date{font-size:9px;color:rgba(255,255,255,.75);font-weight:600;margin-top:3px}
+.hero-slide .hero-bs-date{font-size:8px;color:rgba(255,255,255,.5);font-weight:600;margin-top:1px}
+
 /* QUOTE */
 /* FLAG WAVE background animation */
 @keyframes flagWave{
@@ -525,15 +543,20 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   100%{transform:translateX(0) translateY(0) scaleY(1)}
 }
 .wave-container{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.wave-svg{position:absolute;bottom:0;left:-50%;width:200%;opacity:.18}
-.wave-svg.w1{animation:waveMove 14s ease-in-out infinite;opacity:.10}
-.wave-svg.w2{animation:waveMove2 18s ease-in-out infinite;opacity:.07;bottom:-8px}
-.wave-svg.w3{animation:waveMove3 22s ease-in-out infinite;opacity:.05;bottom:-16px}
+.wave-svg{position:absolute;bottom:40%;left:-50%;width:200%;opacity:.18}
+.wave-svg.w1{animation:waveMove 8s ease-in-out infinite;opacity:.10}
+.wave-svg.w2{animation:waveMove2 11s ease-in-out infinite;opacity:.07;bottom:38%}
+.wave-svg.w3{animation:waveMove3 14s ease-in-out infinite;opacity:.05;bottom:36%}
+@media(min-width:600px){
+  .wave-svg{bottom:50%}
+  .wave-svg.w2{bottom:48%}
+  .wave-svg.w3{bottom:46%}
+}
 /* Splash wave */
 .splash-wave-container{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .splash-wave{position:absolute;bottom:0;left:-50%;width:200%;opacity:.12}
-.splash-wave.sw1{animation:waveMove 14s ease-in-out infinite}
-.splash-wave.sw2{animation:waveMove2 18s ease-in-out infinite;opacity:.08;bottom:-10px}
+.splash-wave.sw1{animation:waveMove 8s ease-in-out infinite}
+.splash-wave.sw2{animation:waveMove2 11s ease-in-out infinite;opacity:.08;bottom:-10px}
 /* Game wave */
 .game-wave-bg{position:relative;overflow:hidden}
 .game-wave-bg .wave-container{z-index:0}
@@ -543,7 +566,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 <body>
 
 <!-- SPLASH -->
-<div id="splash" style="position:relative">
+<div id="splash">
   <div class="splash-wave-container">
   <svg class="splash-wave sw1" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
     <path d="M0,60 C180,100 360,20 540,60 C720,100 900,20 1080,60 C1260,100 1380,40 1440,60 L1440,120 L0,120 Z" fill="rgba(255,255,255,0.15)"/>
@@ -637,39 +660,73 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
       <!-- HOME -->
       <div class="section active" id="pg-home">
-        <div class="hero" style="position:relative">
-  <div class="wave-container">
-  <svg class="wave-svg w1" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path d="M0,60 C180,100 360,20 540,60 C720,100 900,20 1080,60 C1260,100 1380,40 1440,60 L1440,120 L0,120 Z" fill="#22c55e"/>
-  </svg>
-  <svg class="wave-svg w2" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path d="M0,80 C200,40 400,100 600,70 C800,40 1000,90 1200,60 C1320,40 1400,80 1440,70 L1440,120 L0,120 Z" fill="#16a34a"/>
-  </svg>
-  <svg class="wave-svg w3" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path d="M0,40 C240,90 480,20 720,50 C960,80 1200,30 1440,50 L1440,120 L0,120 Z" fill="#15803d"/>
-  </svg>
-</div>
-          <div class="hero-c1"></div><div class="hero-c2"></div>
-          <div class="hero-top">
-            <div class="hero-tag">Nepal FREE</div>
-            <div class="hero-date-block">
-              <div class="hero-time" id="hero-time">--:--:--</div>
-              <div class="hero-date" id="hero-date"></div>
-              <div class="hero-bs-date" id="hero-bs-date"></div>
+        <!-- HERO CAROUSEL -->
+        <div class="hero-carousel" id="hero-carousel">
+
+          <!-- SLIDE 1: Green — Main brand -->
+          <div class="hero-slide green active" id="hero-slide-0">
+            <div class="wave-container">
+              <svg class="wave-svg w1" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,60 C180,100 360,20 540,60 C720,100 900,20 1080,60 C1260,100 1380,40 1440,60 L1440,120 L0,120 Z" fill="#22c55e"/></svg>
+              <svg class="wave-svg w2" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,80 C200,40 400,100 600,70 C800,40 1000,90 1200,60 C1320,40 1400,80 1440,70 L1440,120 L0,120 Z" fill="#16a34a"/></svg>
+              <svg class="wave-svg w3" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,40 C240,90 480,20 720,50 C960,80 1200,30 1440,50 L1440,120 L0,120 Z" fill="#15803d"/></svg>
+            </div>
+            <div class="hero-c1"></div><div class="hero-c2"></div>
+            <div class="hero-top">
+              <div class="hero-tag">Nepal FREE</div>
+              <div class="hero-date-block">
+                <div class="hero-time" id="hero-time">--:--:--</div>
+                <div class="hero-date" id="hero-date"></div>
+                <div class="hero-bs-date" id="hero-bs-date"></div>
+              </div>
+            </div>
+            <h2>Live Class &middot; Materials<br>Model Test &middot; Lok Sewa Prep</h2>
+            <p>Digital Nepal &mdash; Your Digital Partner</p>
+            <div class="hero-bottom">
+              <button class="hero-btn" onclick="switchNav('materials')">Explore &rarr;</button>
+              <div class="hero-stats-row">
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-live">-</div><div class="hero-stat-label">Live</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-materials">-</div><div class="hero-stat-label">Notes</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-exams">-</div><div class="hero-stat-label">Exams</div></div>
+              </div>
             </div>
           </div>
-          <h2>Live Class &middot; Materials<br>Model Test &middot; Lok Sewa Prep</h2>
-          <p>Digital Nepal &mdash; Your Digital Partner</p>
-          <div class="hero-bottom">
-            <button class="hero-btn" onclick="switchNav('materials')">Explore &rarr;</button>
-            <div class="hero-stats-row">
-              <div class="hero-stat"><div class="hero-stat-num" id="stat-live">-</div><div class="hero-stat-label">Live</div></div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat"><div class="hero-stat-num" id="stat-materials">-</div><div class="hero-stat-label">Notes</div></div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat"><div class="hero-stat-num" id="stat-exams">-</div><div class="hero-stat-label">Exams</div></div>
+
+          <!-- SLIDE 2: Orange — Study motivation -->
+          <div class="hero-slide orange" id="hero-slide-1" style="position:absolute;top:0;left:0;width:100%">
+            <div class="wave-container">
+              <svg class="wave-svg w1" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,60 C180,100 360,20 540,60 C720,100 900,20 1080,60 C1260,100 1380,40 1440,60 L1440,120 L0,120 Z" fill="#f97316"/></svg>
+              <svg class="wave-svg w2" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,80 C200,40 400,100 600,70 C800,40 1000,90 1200,60 C1320,40 1400,80 1440,70 L1440,120 L0,120 Z" fill="#ea580c"/></svg>
+              <svg class="wave-svg w3" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,40 C240,90 480,20 720,50 C960,80 1200,30 1440,50 L1440,120 L0,120 Z" fill="#c2410c"/></svg>
+            </div>
+            <div class="hero-c1" style="background:rgba(255,255,255,.07)"></div>
+            <div class="hero-c2" style="background:rgba(255,255,255,.05)"></div>
+            <div class="hero-top">
+              <div class="hero-tag" style="background:rgba(255,255,255,.25);color:#fff">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="#fff" style="vertical-align:middle;margin-right:2px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                STUDY SMART
+              </div>
+              <div class="hero-date-block">
+                <div class="hero-time" id="hero-time-2">--:--:--</div>
+                <div class="hero-date" id="hero-date-2"></div>
+                <div class="hero-bs-date" id="hero-bs-date-2"></div>
+              </div>
+            </div>
+            <h2 style="margin-top:6px">Consistent Study<br>Beats Talent Always</h2>
+            <p>30 min daily &bull; Smart notes &bull; Practice tests &bull; Top the exam</p>
+            <div class="hero-bottom">
+              <button class="hero-btn" style="background:#fff;color:#c2410c" onclick="switchOtherTab('games',document.getElementById('otab-games'))">Play &amp; Learn &rarr;</button>
+              <div class="hero-stats-row">
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-live-2">-</div><div class="hero-stat-label">Live</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-materials-2">-</div><div class="hero-stat-label">Notes</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-num" id="stat-exams-2">-</div><div class="hero-stat-label">Exams</div></div>
+              </div>
             </div>
           </div>
+
         </div>
         <div class="quote-card">
           <!-- Flag wave fabric layers -->
@@ -1132,6 +1189,43 @@ window.addEventListener('load',function(){
   fetchData(false);
 });
 
+/* HERO CAROUSEL */
+(function(){
+  var slides=document.querySelectorAll('.hero-slide');
+  if(!slides.length) return;
+  var current=0;
+  var total=slides.length;
+  // Set carousel height to match active slide
+  function setHeight(){
+    var carousel=document.getElementById('hero-carousel');
+    if(!carousel) return;
+    var active=slides[current];
+    carousel.style.height=active.offsetHeight+'px';
+  }
+  function goTo(idx){
+    slides[current].classList.remove('active');
+    slides[current].style.position='absolute';
+    slides[current].style.top='0';
+    slides[current].style.left='0';
+    slides[current].style.width='100%';
+    current=idx;
+    slides[current].style.position='relative';
+    slides[current].style.top='';
+    slides[current].style.left='';
+    slides[current].style.width='';
+    slides[current].classList.add('active');
+    setTimeout(setHeight, 50);
+  }
+  // Init height
+  setTimeout(setHeight, 100);
+  window.addEventListener('resize', setHeight);
+  // Auto-rotate every 4.5 seconds
+  setInterval(function(){
+    var next=(current+1)%total;
+    goTo(next);
+  }, 4500);
+})();
+
 /* PWA */
 window.addEventListener('beforeinstallprompt',function(e){
   e.preventDefault();deferredPrompt=e;
@@ -1164,6 +1258,7 @@ function updateClock(){
   var np=new Date(utc+(5*3600+45*60)*1000);
   var h=String(np.getHours()).padStart(2,'0'),m=String(np.getMinutes()).padStart(2,'0'),s=String(np.getSeconds()).padStart(2,'0');
   var el=document.getElementById('hero-time');if(el)el.textContent=h+':'+m+':'+s;
+  var el2=document.getElementById('hero-time-2');if(el2)el2.textContent=h+':'+m+':'+s;
 }
 setInterval(updateClock,1000);updateClock();
 
@@ -1192,6 +1287,8 @@ function setHeroDate(){
   document.getElementById('hero-date').textContent=BS_DAYS[np.getDay()]+', '+D+' '+months[M-1]+' '+Y;
   var bs=adToBS(Y,M,D);
   document.getElementById('hero-bs-date').textContent='B.S. '+bs.y+' '+bs.monthName+' '+bs.d;
+  var d2=document.getElementById('hero-date-2');if(d2)d2.textContent=BS_DAYS[np.getDay()]+', '+D+' '+months[M-1]+' '+Y;
+  var b2=document.getElementById('hero-bs-date-2');if(b2)b2.textContent='B.S. '+bs.y+' '+bs.monthName+' '+bs.d;
 }
 
 /* QUOTES */
@@ -1393,6 +1490,10 @@ function updateStats(live,mat,exam){
   el=document.getElementById('stat-live');if(el)el.textContent=live;
   el=document.getElementById('stat-materials');if(el)el.textContent=mat;
   el=document.getElementById('stat-exams');if(el)el.textContent=exam;
+  // Sync to slide 2
+  el=document.getElementById('stat-live-2');if(el)el.textContent=live;
+  el=document.getElementById('stat-materials-2');if(el)el.textContent=mat;
+  el=document.getElementById('stat-exams-2');if(el)el.textContent=exam;
 }
 function renderAll(){
   updateStats(
