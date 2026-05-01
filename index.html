@@ -592,18 +592,23 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 }
 
 #mitra-sheet{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:0;left:0;right:0;
   width:100%;max-width:480px;
+  margin:0 auto;
   background:var(--white);
   border-radius:22px 22px 0 0;
   z-index:501;
   box-shadow:0 -4px 32px rgba(0,0,0,.18);
-  padding:16px 18px 32px;
+  padding:14px 16px 24px;
   display:none;
+  flex-direction:column;
   animation:mitraSlideUp .3s ease both;
   border-top:1px solid var(--border);
+  max-height:70vh;
+  overflow-y:auto;
+  box-sizing:border-box;
 }
-#mitra-sheet.open{display:block}
+#mitra-sheet.open{display:flex}
 .mitra-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 14px}
 .mitra-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .mitra-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1a6b3c,#22c55e);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff}
@@ -2968,10 +2973,58 @@ if('serviceWorker' in navigator) {
 (function(){
   var mitraRecog = null;
   var mitraListening = false;
+  var mitraGreeted = false;
+
+  // ── Always use the same female voice ───────────────────────────
+  var _mitraVoice = null;
+  function getMitraVoice(){
+    if(_mitraVoice) return _mitraVoice;
+    var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    // Female-voice preference list
+    var preferred = [
+      'Google UK English Female','Microsoft Zira - English (United States)',
+      'Microsoft Zira','Samantha','Karen','Moira','Tessa',
+      'Google US English','Microsoft Hazel - English (Great Britain)'
+    ];
+    for(var i=0;i<preferred.length;i++){
+      var v = voices.find(function(v){ return v.name===preferred[i]; });
+      if(v){ _mitraVoice = v; return v; }
+    }
+    // Fallback: any female-sounding or en-GB/en-US voice
+    var fallback = voices.find(function(v){
+      return /female|woman/i.test(v.name) || v.lang==='en-GB' || v.lang==='en-US';
+    });
+    _mitraVoice = fallback || null;
+    return _mitraVoice;
+  }
+
+  function mitraSpeak(text){
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    var voice = getMitraVoice();
+    if(voice){ u.voice = voice; u.lang = voice.lang; }
+    else { u.lang = 'en-US'; }
+    u.rate = 0.95; u.pitch = 1.1; u.volume = 1;
+    window.speechSynthesis.speak(u);
+  }
+
+  if(window.speechSynthesis){
+    // Reset cached voice whenever list updates
+    window.speechSynthesis.onvoiceschanged = function(){ _mitraVoice = null; };
+    window.speechSynthesis.getVoices();
+  }
 
   window.mitraOpen = function(){
     document.getElementById('mitra-sheet').classList.add('open');
     mitraSetStatus('कसरी सहयोग गर्ने? / How can I help?');
+    if(!mitraGreeted){
+      mitraGreeted = true;
+      setTimeout(function(){
+        mitraSpeak('Namaste! My name is Meetra AI. How can I help you?');
+        mitraSetStatus('नमस्ते! म Mitra AI हुँ। / Hello! I am Mitra AI.');
+      }, 400);
+    }
   };
   window.mitraClose = function(){
     mitraStopMic();
@@ -2982,6 +3035,45 @@ if('serviceWorker' in navigator) {
     if(mitraListening) mitraStopMic();
     else mitraStartMic();
   };
+
+  // ── Quick Tour ──────────────────────────────────────────────────
+  window.mitraTour = function(){
+    var msg = '🗺️ Quick Tour:\n\n🏠 Home — Dashboard & live classes\n📖 Materials — Notes & study content\n✏️ Exam — Practice & mock tests\n🎮 Other — Quiz, Syllabus & links\n\n💬 Commands: "open notes", "open exam", "what time is it"\n🎙️ Wake word: just say "Mitra" anytime!';
+    var speech = 'Welcome to Digital Nepal! Home shows your dashboard. Materials has notes. Exam lets you practice. Other section has Quiz, Syllabus and links. You can say open notes, open exam, what time is it. You can also just say my name Meetra to wake me up anytime!';
+    var r = document.getElementById('mitra-reply');
+    var rt = document.getElementById('mitra-reply-text');
+    rt.textContent = msg;
+    r.classList.add('show');
+    mitraSetStatus('Quick Tour 🗺️');
+    mitraSpeak(speech);
+  };
+
+  // ── Wake word listener ──────────────────────────────────────────
+  function startWakeListener(){
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR) return;
+    var wakeRecog = new SR();
+    wakeRecog.lang = 'ne-NP';
+    wakeRecog.continuous = true;
+    wakeRecog.interimResults = false;
+    wakeRecog.onresult = function(e){
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal){
+          var tw = e.results[i][0].transcript.toLowerCase().trim();
+          if(tw.match(/\bmitra\b|मित्र/)){
+            var sheet = document.getElementById('mitra-sheet');
+            if(sheet && !sheet.classList.contains('open')) mitraOpen();
+          }
+        }
+      }
+    };
+    wakeRecog.onend = function(){ if(!document.hidden) try{ wakeRecog.start(); }catch(e){} };
+    try{ wakeRecog.start(); }catch(e){}
+  }
+  document.addEventListener('click', function onFirst(){
+    document.removeEventListener('click', onFirst);
+    setTimeout(startWakeListener, 1200);
+  }, {once:true});
 
   function mitraStartMic(){
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -3102,6 +3194,10 @@ if('serviceWorker' in navigator) {
       switchNav('other');
       mitraRespond(isNe?'Other Links खोलियो! 🔗':'Other Links opened! 🔗', 'Other Links');
     }
+    // Tour / help
+    else if(t.match(/tour|guide|help|सहयोग|कसरी|कसरी प्रयोग/)){
+      mitraTour();
+    }
     // Time
     else if(t.match(/time|समय|बजे|घडी/)){
       var now = new Date();
@@ -3125,17 +3221,17 @@ if('serviceWorker' in navigator) {
       var replyDateEn = 'Today is '+engDays[np.getDay()]+', '+np.getDate()+' '+engMonths[np.getMonth()]+' '+np.getFullYear()+'.';
       mitraRespond(isNe?replyDateNe:replyDateEn,'📅 Today / आजको मिति');
     }
-    // App help
-    else if(t.match(/help|सहयोग|कसरी|guide|कसरी प्रयोग/)){
-      mitraRespond(isNe?'यो app मा Notes, Exam, Quiz, Syllabus sections छन्। मलाई भन्नुहोस् जस्तै "notes खोल" वा "open exam"।':'This app has Notes, Exam, Quiz and Syllabus sections. Say commands like "open notes" or "open exam" or "what time is it".', 'App Guide 📱');
+    // Identity — name / who are you
+    else if(t.match(/तिम्रो नाम|तेरो नाम|तपाइँको नाम|तपाईंको नाम|तिम्रो नाम के|नाम के हो|what is your name|what's your name|your name|who are you|तिमी को हौ|तपाई को हुनुहुन्छ|तपाइँ को|तिमी को|तुम कौन/)){
+      mitraRespond(isNe?'मेरो नाम Mitra AI हो। म Digital Nepal को voice assistant हुँ। तपाईंलाई notes, exam, quiz, syllabus र navigation मा सहयोग गर्छु! 🤖':'My name is Meetra AI. I am the voice assistant of Digital Nepal. I can help you with notes, exam, quiz, syllabus and navigation! 🤖', 'Mitra AI 🤖');
     }
-    // App name
-    else if(t.match(/app|digital nepal|तिमी को|mitra|मित्र/)){
-      mitraRespond(isNe?'म Mitra AI हुँ — Digital Nepal को voice assistant। navigation, time, date मा सहयोग गर्छु! 🤖':'I am Mitra AI — voice assistant of Digital Nepal app. I can help with navigation, time, date and app guide! 🤖', 'Mitra AI 🤖');
+    // App name / general mitra mention
+    else if(t.match(/app|digital nepal|mitra|मित्र/)){
+      mitraRespond(isNe?'म Mitra AI हुँ — Digital Nepal को voice assistant। navigation, time, date मा सहयोग गर्छु! 🤖':'I am Meetra AI — voice assistant of Digital Nepal app. I can help with navigation, time, date and app guide! 🤖', 'Mitra AI 🤖');
     }
     // Greeting
     else if(t.match(/hello|hi|नमस्ते|नमस्कार|हेलो/)){
-      mitraRespond(isNe?'नमस्ते! म Mitra AI हुँ। Notes, Exam वा Quiz खोल्न भन्नुहोस्! 😊':'Hello! I am Mitra AI. Say "open notes", "open exam" or "open quiz" to navigate! 😊', 'नमस्ते / Hello! 👋');
+      mitraRespond(isNe?'नमस्ते! म Mitra AI हुँ। Notes, Exam वा Quiz खोल्न भन्नुहोस्! 😊':'Hello! I am Meetra AI. Say "open notes", "open exam" or "open quiz" to navigate! 😊', 'नमस्ते / Hello! 👋');
     }
     // Thank you
     else if(t.match(/thank|धन्यवाद|thanks|सुक्रिया/)){
@@ -3153,43 +3249,23 @@ if('serviceWorker' in navigator) {
   };
 
   function mitraRespond(text, shortText){
-    // Show reply
     var r = document.getElementById('mitra-reply');
     var rt = document.getElementById('mitra-reply-text');
     rt.textContent = text;
     r.classList.add('show');
     mitraSetStatus(shortText || 'जवाफ दिइयो');
-    // Speak
     mitraSpeak(text);
   }
 
-  function mitraSpeak(text){
-    if(!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(text);
-    var voices = window.speechSynthesis.getVoices();
-    // Detect language from text
-    var hasNepali = /[ऀ-ॿ]/.test(text);
-    if(hasNepali){
-      u.lang = 'ne-NP';
-      u.rate = 0.95; u.pitch = 1.1; u.volume = 1;
-      var nepali = voices.find(function(v){ return v.lang==='ne-NP'||v.lang==='ne'; });
-      var hindi = voices.find(function(v){ return v.lang.indexOf('hi')===0; });
-      if(nepali) u.voice = nepali;
-      else if(hindi){ u.voice = hindi; u.lang = 'hi-IN'; }
-    } else {
-      u.lang = 'en-US';
-      u.rate = 1.0; u.pitch = 1.05; u.volume = 1;
-      var eng = voices.find(function(v){ return v.lang==='en-US'||v.lang==='en-GB'; });
-      if(eng) u.voice = eng;
+  // Single consistent voice for all languages
+  function getMitraVoice(){
+    var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    var preferred = ['Google UK English Female','Microsoft Zira','Samantha','Karen','Moira','Tessa'];
+    for(var i=0;i<preferred.length;i++){
+      var found = voices.find(function(v){ return v.name===preferred[i]; });
+      if(found) return found;
     }
-    window.speechSynthesis.speak(u);
-  }
-
-  // Load voices when available
-  if(window.speechSynthesis){
-    window.speechSynthesis.onvoiceschanged = function(){};
-    window.speechSynthesis.getVoices();
+    return voices.find(function(v){ return v.lang==='en-US'||v.lang==='en-GB'; }) || null;
   }
 
   // Close sheet when clicking outside
@@ -3222,6 +3298,7 @@ if('serviceWorker' in navigator) {
 
   <!-- Quick suggestions -->
   <div class="mitra-suggestions" id="mitra-suggestions">
+    <button class="mitra-suggest-btn" onclick="mitraTour()">🗺️ Tour</button>
     <button class="mitra-suggest-btn" onclick="mitraRun('notes खोल')">📖 Notes</button>
     <button class="mitra-suggest-btn" onclick="mitraRun('exam खोल')">✏️ Exam</button>
     <button class="mitra-suggest-btn" onclick="mitraRun('syllabus खोल')">📚 Syllabus</button>
