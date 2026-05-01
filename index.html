@@ -561,6 +561,105 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .game-wave-bg{position:relative;overflow:hidden}
 .game-wave-bg .wave-container{z-index:0}
 .game-wave-bg > *:not(.wave-container){position:relative;z-index:1}
+
+/* ═══════════════ MITRA AI ═══════════════ */
+#mitra-btn{
+  position:fixed;bottom:calc(var(--nav-h) + 14px);right:16px;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,#1a6b3c,#22c55e);
+  border:none;cursor:pointer;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(34,197,94,.45);
+  transition:transform .2s,box-shadow .2s;
+  color:#fff;font-size:20px;
+}
+#mitra-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(34,197,94,.6)}
+#mitra-btn:active{transform:scale(.94)}
+#mitra-btn.listening{
+  animation:mitraPulse 1.2s ease-in-out infinite;
+  background:linear-gradient(135deg,#dc2626,#ef4444);
+  box-shadow:0 4px 24px rgba(220,38,38,.55);
+}
+@keyframes mitraPulse{
+  0%,100%{box-shadow:0 4px 24px rgba(220,38,38,.5),0 0 0 0 rgba(220,38,38,.4)}
+  50%{box-shadow:0 4px 32px rgba(220,38,38,.7),0 0 0 12px rgba(220,38,38,.0)}
+}
+@keyframes mitraSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mitraFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes mitraWave{
+  0%,100%{transform:scaleY(1)}
+  50%{transform:scaleY(1.8)}
+}
+
+#mitra-sheet{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  background:var(--white);
+  border-radius:22px 22px 0 0;
+  z-index:501;
+  box-shadow:0 -4px 32px rgba(0,0,0,.18);
+  padding:16px 18px 32px;
+  display:none;
+  animation:mitraSlideUp .3s ease both;
+  border-top:1px solid var(--border);
+}
+#mitra-sheet.open{display:block}
+.mitra-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 14px}
+.mitra-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.mitra-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1a6b3c,#22c55e);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff}
+.mitra-name{font-size:15px;font-weight:800;color:var(--text)}
+.mitra-status{font-size:11px;color:var(--text3);font-weight:600;margin-top:1px}
+.mitra-close{margin-left:auto;background:var(--bg);border:1.5px solid var(--border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:13px}
+
+/* Sound wave bars */
+.mitra-waves{display:flex;align-items:center;justify-content:center;gap:4px;height:40px;margin:8px 0}
+.mitra-wave-bar{width:4px;border-radius:99px;background:var(--primary);opacity:.3}
+.mitra-wave-bar.active{opacity:1;animation:mitraWave .6s ease-in-out infinite}
+.mitra-wave-bar:nth-child(1){height:12px}.mitra-wave-bar.active:nth-child(1){animation-delay:0s}
+.mitra-wave-bar:nth-child(2){height:20px}.mitra-wave-bar.active:nth-child(2){animation-delay:.1s}
+.mitra-wave-bar:nth-child(3){height:32px}.mitra-wave-bar.active:nth-child(3){animation-delay:.2s}
+.mitra-wave-bar:nth-child(4){height:24px}.mitra-wave-bar.active:nth-child(4){animation-delay:.15s}
+.mitra-wave-bar:nth-child(5){height:38px}.mitra-wave-bar.active:nth-child(5){animation-delay:.05s}
+.mitra-wave-bar:nth-child(6){height:28px}.mitra-wave-bar.active:nth-child(6){animation-delay:.25s}
+.mitra-wave-bar:nth-child(7){height:18px}.mitra-wave-bar.active:nth-child(7){animation-delay:.1s}
+.mitra-wave-bar:nth-child(8){height:10px}.mitra-wave-bar.active:nth-child(8){animation-delay:.2s}
+
+.mitra-listening-label{text-align:center;font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px;display:none}
+.mitra-listening-label.show{display:block}
+
+.mitra-transcript{
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px 13px;
+  font-size:13px;color:var(--text2);font-style:italic;
+  min-height:36px;margin-bottom:10px;
+  display:none;line-height:1.5;
+}
+.mitra-transcript.show{display:block}
+
+.mitra-reply{
+  background:linear-gradient(135deg,var(--primary-light),#f0fdf4);
+  border:1.5px solid #a7f3d0;border-radius:var(--radius-sm);
+  padding:11px 13px;font-size:13px;color:var(--text);
+  line-height:1.6;display:none;margin-bottom:12px;
+  animation:mitraFadeIn .3s ease;
+}
+.mitra-reply.show{display:block}
+.mitra-reply-label{font-size:9px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+
+.mitra-mic-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,#1a6b3c,#22c55e);
+  color:#fff;border:none;border-radius:var(--radius-sm);
+  font-family:inherit;font-size:14px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .2s;
+}
+.mitra-mic-btn:hover{opacity:.92}
+.mitra-mic-btn.stop{background:linear-gradient(135deg,#dc2626,#ef4444)}
+.mitra-suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mitra-suggest-btn{font-size:10px;font-weight:700;padding:5px 11px;border-radius:99px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.mitra-suggest-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* ═══════════════════════════════════════ */
 </style>
 </head>
 <body>
@@ -2864,5 +2963,298 @@ if('serviceWorker' in navigator) {
     });
   }
 })();
+
+/* ═══════════════ MITRA AI JS ═══════════════ */
+(function(){
+  var mitraRecog = null;
+  var mitraListening = false;
+
+  window.mitraOpen = function(){
+    document.getElementById('mitra-sheet').classList.add('open');
+    mitraSetStatus('कसरी सहयोग गर्ने? / How can I help?');
+  };
+  window.mitraClose = function(){
+    mitraStopMic();
+    document.getElementById('mitra-sheet').classList.remove('open');
+  };
+
+  window.mitraToggleMic = function(){
+    if(mitraListening) mitraStopMic();
+    else mitraStartMic();
+  };
+
+  function mitraStartMic(){
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){
+      mitraRespond('Sorry! This browser does not support microphone / माफ गर्नुस्, यो browser ले microphone support गर्दैन।','Mic not supported');
+      return;
+    }
+    mitraRecog = new SR();
+    mitraRecog.lang = 'ne-NP'; // primary; browser will also pick up English
+    mitraRecog.continuous = false;
+    mitraRecog.interimResults = true;
+
+    mitraRecog.onstart = function(){
+      mitraListening = true;
+      mitraSetListening(true);
+    };
+    mitraRecog.onresult = function(e){
+      var interim = '';
+      var final = '';
+      for(var i = e.resultIndex; i < e.results.length; i++){
+        if(e.results[i].isFinal) final += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      var shown = final || interim;
+      if(shown){
+        var t = document.getElementById('mitra-transcript');
+        t.textContent = '"' + shown + '"';
+        t.classList.add('show');
+      }
+      if(final) mitraProcess(final.trim());
+    };
+    mitraRecog.onerror = function(e){
+      mitraStopMic();
+      if(e.error === 'not-allowed')
+        mitraRespond('Please allow microphone access / Microphone access दिनुहोस् र फेरि प्रयास गर्नुहोस्।','Permission needed');
+      else
+        mitraRespond('Could not hear clearly. Please try again / राम्ररी सुन्न सकिएन, फेरि प्रयास गर्नुहोस्।','Try again');
+    };
+    mitraRecog.onend = function(){
+      mitraStopMic();
+    };
+    try{ mitraRecog.start(); }catch(e){}
+  }
+
+  function mitraStopMic(){
+    mitraListening = false;
+    mitraSetListening(false);
+    if(mitraRecog){ try{ mitraRecog.stop(); }catch(e){} mitraRecog = null; }
+  }
+
+  function mitraSetListening(on){
+    var btn = document.getElementById('mitra-btn');
+    var micBtn = document.getElementById('mitra-mic-btn');
+    var label = document.getElementById('mitra-listen-label');
+    var bars = document.querySelectorAll('.mitra-wave-bar');
+    if(on){
+      btn && btn.classList.add('listening');
+      micBtn && (micBtn.innerHTML='<i class="fa-solid fa-stop"></i> रोक्नुहोस्', micBtn.classList.add('stop'));
+      label && label.classList.add('show');
+      bars.forEach(function(b){ b.classList.add('active'); });
+      mitraSetStatus('Mitra सुनिरहेको छ / Listening...');
+    } else {
+      btn && btn.classList.remove('listening');
+      micBtn && (micBtn.innerHTML='<i class="fa-solid fa-microphone"></i> बोल्न थिच्नुहोस्', micBtn.classList.remove('stop'));
+      label && label.classList.remove('show');
+      bars.forEach(function(b){ b.classList.remove('active'); });
+      mitraSetStatus('कसरी सहयोग गर्ने? / How can I help?');
+    }
+  }
+
+  function mitraSetStatus(txt){
+    var s = document.getElementById('mitra-status');
+    if(s) s.textContent = txt;
+  }
+
+  // Process command
+  function mitraProcess(text){
+    var t = text.toLowerCase().trim();
+    // Detect if text is mostly English or Nepali
+    var nepaliChars = (text.match(/[ऀ-ॿ]/g)||[]).length;
+    var englishChars = (text.match(/[a-zA-Z]/g)||[]).length;
+    window.mitraLang = nepaliChars > englishChars ? 'ne' : 'en';
+    window.mitraRun(t);
+  }
+
+  window.mitraRun = function(t){
+    var isNe = window.mitraLang !== 'en'; // default Nepali unless detected English
+
+    // Show transcript
+    var tr = document.getElementById('mitra-transcript');
+    tr.textContent = '"' + t + '"';
+    tr.classList.add('show');
+
+    t = t.toLowerCase();
+
+    // Navigation commands
+    if(t.match(/home|गृह|होम|go home|main page/)){
+      switchNav('home');
+      mitraRespond(isNe?'Home page खोलियो! 🏠':'Home page opened! 🏠', 'Home');
+    } else if(t.match(/notes|material|नोट्स|सामग्री|materials|किताब|open notes|open material/)){
+      switchNav('materials');
+      mitraRespond(isNe?'Materials section खोलियो! 📖':'Materials section opened! 📖', 'Materials');
+    } else if(t.match(/exam|परीक्षा|test|टेस्ट|open exam|start exam/)){
+      switchNav('exam');
+      mitraRespond(isNe?'Exam section खोलियो! ✏️':'Exam section opened! ✏️', 'Exam');
+    } else if(t.match(/quiz|game|खेल|challenge|daily|open quiz|open game|play/)){
+      switchNav('other');
+      setTimeout(function(){ if(typeof switchOtherTab==='function') switchOtherTab('games', document.getElementById('otab-games')); }, 200);
+      mitraRespond(isNe?'Quiz section खोलियो! 🎮':'Quiz section opened! 🎮', 'Quiz');
+    } else if(t.match(/syllabus|पाठ्यक्रम|open syllabus|show syllabus/)){
+      switchNav('other');
+      setTimeout(function(){ if(typeof switchOtherTab==='function') switchOtherTab('syllabus', document.getElementById('otab-syllabus')); }, 200);
+      mitraRespond(isNe?'Syllabus section खोलियो! 📚':'Syllabus section opened! 📚', 'Syllabus');
+    } else if(t.match(/profile|प्रोफाइल|account|login|open profile/)){
+      switchNav('profile');
+      mitraRespond(isNe?'Profile page खोलियो! 👤':'Profile page opened! 👤', 'Profile');
+    } else if(t.match(/other|link|more|अरू/)){
+      switchNav('other');
+      mitraRespond(isNe?'Other Links खोलियो! 🔗':'Other Links opened! 🔗', 'Other Links');
+    }
+    // Time
+    else if(t.match(/time|समय|बजे|घडी/)){
+      var now = new Date();
+      var utc = now.getTime() + now.getTimezoneOffset()*60000;
+      var np = new Date(utc + (5*3600+45*60)*1000);
+      var h = np.getHours(), m = String(np.getMinutes()).padStart(2,'0');
+      var ampm = h>=12?'बजे बेलुका':'बजे बिहान';
+      var h12 = h>12?h-12:h===0?12:h;
+      var replyNe = 'अहिले Nepal को समय ' + h12 + ':' + m + ' ' + ampm + ' हो।';
+      var replyEn = 'Current Nepal time is ' + h12 + ':' + m + (h>=12?' PM':' AM') + '.';
+      mitraRespond(isNe?replyNe:replyEn, '🕐 ' + h12+':'+m);
+    }
+    // Date
+    else if(t.match(/date|मिति|तारिख|आज/)){
+      var days=['आइतबार','सोमबार','मंगलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'];
+      var months=['जनवरी','फेब्रुअरी','मार्च','अप्रिल','मे','जुन','जुलाई','अगस्ट','सेप्टेम्बर','अक्टोबर','नोभेम्बर','डिसेम्बर'];
+      var n=new Date();var utc=n.getTime()+n.getTimezoneOffset()*60000;var np=new Date(utc+(5*3600+45*60)*1000);
+      var engMonths=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var engDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var replyDateNe = 'आज '+days[np.getDay()]+', '+np.getDate()+' '+months[np.getMonth()]+' '+np.getFullYear()+' हो।';
+      var replyDateEn = 'Today is '+engDays[np.getDay()]+', '+np.getDate()+' '+engMonths[np.getMonth()]+' '+np.getFullYear()+'.';
+      mitraRespond(isNe?replyDateNe:replyDateEn,'📅 Today / आजको मिति');
+    }
+    // App help
+    else if(t.match(/help|सहयोग|कसरी|guide|कसरी प्रयोग/)){
+      mitraRespond(isNe?'यो app मा Notes, Exam, Quiz, Syllabus sections छन्। मलाई भन्नुहोस् जस्तै "notes खोल" वा "open exam"।':'This app has Notes, Exam, Quiz and Syllabus sections. Say commands like "open notes" or "open exam" or "what time is it".', 'App Guide 📱');
+    }
+    // App name
+    else if(t.match(/app|digital nepal|तिमी को|mitra|मित्र/)){
+      mitraRespond(isNe?'म Mitra AI हुँ — Digital Nepal को voice assistant। navigation, time, date मा सहयोग गर्छु! 🤖':'I am Mitra AI — voice assistant of Digital Nepal app. I can help with navigation, time, date and app guide! 🤖', 'Mitra AI 🤖');
+    }
+    // Greeting
+    else if(t.match(/hello|hi|नमस्ते|नमस्कार|हेलो/)){
+      mitraRespond(isNe?'नमस्ते! म Mitra AI हुँ। Notes, Exam वा Quiz खोल्न भन्नुहोस्! 😊':'Hello! I am Mitra AI. Say "open notes", "open exam" or "open quiz" to navigate! 😊', 'नमस्ते / Hello! 👋');
+    }
+    // Thank you
+    else if(t.match(/thank|धन्यवाद|thanks|सुक्रिया/)){
+      mitraRespond(isNe?'धन्यवाद! कुनै काम छ भने भन्नुहोस्। 😊':'Thank you! Let me know if you need anything. 😊', 'धन्यवाद / Thanks! 🙏');
+    }
+    // Refresh
+    else if(t.match(/refresh|reload|update|अपडेट/)){
+      if(typeof refreshAll==='function') refreshAll();
+      mitraRespond(isNe?'Content refresh भयो! ✅':'Content refreshed! ✅', 'Refreshed ✅');
+    }
+    // Unknown
+    else {
+      mitraRespond(isNe?'माफ गर्नुस्, बुझिएन। "notes खोल", "exam खोल" जस्ता commands प्रयोग गर्नुहोस्।':'Sorry, I didn\'t understand. Try commands like "open notes", "open exam", "what time is it".', 'बुझिएन 🤔');
+    }
+  };
+
+  function mitraRespond(text, shortText){
+    // Show reply
+    var r = document.getElementById('mitra-reply');
+    var rt = document.getElementById('mitra-reply-text');
+    rt.textContent = text;
+    r.classList.add('show');
+    mitraSetStatus(shortText || 'जवाफ दिइयो');
+    // Speak
+    mitraSpeak(text);
+  }
+
+  function mitraSpeak(text){
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    var voices = window.speechSynthesis.getVoices();
+    // Detect language from text
+    var hasNepali = /[ऀ-ॿ]/.test(text);
+    if(hasNepali){
+      u.lang = 'ne-NP';
+      u.rate = 0.95; u.pitch = 1.1; u.volume = 1;
+      var nepali = voices.find(function(v){ return v.lang==='ne-NP'||v.lang==='ne'; });
+      var hindi = voices.find(function(v){ return v.lang.indexOf('hi')===0; });
+      if(nepali) u.voice = nepali;
+      else if(hindi){ u.voice = hindi; u.lang = 'hi-IN'; }
+    } else {
+      u.lang = 'en-US';
+      u.rate = 1.0; u.pitch = 1.05; u.volume = 1;
+      var eng = voices.find(function(v){ return v.lang==='en-US'||v.lang==='en-GB'; });
+      if(eng) u.voice = eng;
+    }
+    window.speechSynthesis.speak(u);
+  }
+
+  // Load voices when available
+  if(window.speechSynthesis){
+    window.speechSynthesis.onvoiceschanged = function(){};
+    window.speechSynthesis.getVoices();
+  }
+
+  // Close sheet when clicking outside
+  document.addEventListener('click', function(e){
+    var sheet = document.getElementById('mitra-sheet');
+    var btn = document.getElementById('mitra-btn');
+    if(sheet && sheet.classList.contains('open') && !sheet.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+      mitraClose();
+    }
+  });
+})();
+/* ═══════════════════════════════════════════ */
 </script>
+
+<!-- ═══ MITRA AI VOICE ASSISTANT ═══ -->
+<button id="mitra-btn" onclick="mitraOpen()" title="Mitra AI">
+  <i class="fa-solid fa-microphone"></i>
+</button>
+
+<div id="mitra-sheet">
+  <div class="mitra-handle"></div>
+  <div class="mitra-header">
+    <div class="mitra-avatar">🤖</div>
+    <div>
+      <div class="mitra-name">Mitra AI</div>
+      <div class="mitra-status" id="mitra-status">कसरी सहयोग गर्ने? / How can I help?</div>
+    </div>
+    <button class="mitra-close" onclick="mitraClose()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <!-- Quick suggestions -->
+  <div class="mitra-suggestions" id="mitra-suggestions">
+    <button class="mitra-suggest-btn" onclick="mitraRun('notes खोल')">📖 Notes</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('exam खोल')">✏️ Exam</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('syllabus खोल')">📚 Syllabus</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('quiz खोल')">🎮 Quiz</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('अहिले कति बजेको छ')">🕐 Time</button>
+  </div>
+
+  <!-- Wave animation bars -->
+  <div class="mitra-waves" id="mitra-waves">
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+    <div class="mitra-wave-bar"></div>
+  </div>
+  <div class="mitra-listening-label" id="mitra-listen-label">🎙️ Mitra सुनिरहेको छ... / Mitra is listening...</div>
+
+  <!-- Recognized text -->
+  <div class="mitra-transcript" id="mitra-transcript"></div>
+
+  <!-- Mitra reply -->
+  <div class="mitra-reply" id="mitra-reply">
+    <div class="mitra-reply-label"><i class="fa-solid fa-robot"></i> Mitra</div>
+    <div id="mitra-reply-text"></div>
+  </div>
+
+  <!-- Mic button -->
+  <button class="mitra-mic-btn" id="mitra-mic-btn" onclick="mitraToggleMic()">
+    <i class="fa-solid fa-microphone"></i> बोल्न थिच्नुहोस्
+  </button>
+</div>
+<!-- ════════════════════════════════════ -->
 </body>
