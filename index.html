@@ -386,15 +386,91 @@ html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden
 .cancel-btn{width:100%;padding:11px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer}
 
 /* BOTTOM NAV — SVG icons, works in all APKs */
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--white);border-top:1px solid var(--border);z-index:100;padding:0;padding-bottom:max(6px,env(safe-area-inset-bottom));transition:background .3s}
-.nav-inner{display:flex;align-items:stretch}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:8px 2px 5px;color:var(--text3);font-family:inherit;transition:color .2s;min-width:0}
-.nav-btn.active{color:var(--primary)}
-.nav-icon-wrap{width:42px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:14px;transition:all .25s;background:transparent}
-.nav-btn.active .nav-icon-wrap{background:var(--primary-light)}
-.nav-btn svg{transition:all .2s}
-.nav-btn.active svg{stroke:var(--primary)}
-.nav-btn .nl{font-size:9px;font-weight:700;letter-spacing:.1px;text-transform:uppercase;white-space:nowrap;line-height:1}
+/* ═══ FLOATING CIRCLE NAV ═══ */
+@keyframes floatUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  z-index:100;padding:0;
+  padding-bottom:max(6px,env(safe-area-inset-bottom));
+  transition:background .3s;
+  overflow:visible;
+}
+.nav-inner{
+  display:flex;align-items:flex-end;
+  height:62px;
+  position:relative;
+  overflow:visible;
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;
+  gap:3px;border:none;background:transparent;
+  cursor:pointer;padding:0 2px 8px;
+  color:var(--text3);
+  font-family:inherit;
+  transition:color .25s;
+  min-width:0;
+  position:relative;
+  overflow:visible;
+}
+.nav-btn.active{color:var(--primary);}
+
+/* Curved cutout under the floating circle */
+.nav-btn.active::before{
+  content:'';
+  position:absolute;
+  top:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:72px;height:36px;
+  background:var(--white);
+  border-radius:0 0 40px 40px;
+  box-shadow:0 8px 0 0 var(--white);
+  z-index:0;
+  transition:left .3s ease;
+}
+.dark .nav-btn.active::before{
+  background:var(--white);
+  box-shadow:0 8px 0 0 var(--white);
+}
+
+/* Floating green circle */
+.nav-icon-wrap{
+  width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:transparent;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  z-index:2;
+}
+.nav-btn.active .nav-icon-wrap{
+  background:linear-gradient(135deg,#1a6b3c,#22c55e);
+  box-shadow:0 6px 20px rgba(26,107,60,.45),0 2px 8px rgba(0,0,0,.2);
+  transform:translateY(-22px);
+  animation:floatUp .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+.nav-btn svg{
+  transition:all .25s;
+  stroke:currentColor;
+}
+.nav-btn.active svg{
+  stroke:#fff;
+  transform:scale(1.1);
+}
+.nav-btn .nl{
+  font-size:9px;font-weight:700;letter-spacing:.1px;
+  text-transform:uppercase;white-space:nowrap;line-height:1;
+  position:relative;z-index:1;
+}
+.nav-btn.active .nl{
+  color:var(--primary);font-weight:800;
+}
+/* ════════════════════════ */
 
 /* AUTH */
 .auth-page{padding:0 18px 30px}
