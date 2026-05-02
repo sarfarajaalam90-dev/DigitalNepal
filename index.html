@@ -97,6 +97,8 @@ fbAuth.onAuthStateChanged(function(fbUser) {
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;background:#0a3d20}
 
+@keyframes sectionSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes heroSlideIn{from{opacity:0;transform:translateX(-32px) scale(.97)}to{opacity:1;transform:translateX(0) scale(1)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -215,7 +217,7 @@ html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden
 .section.active{display:block}
 
 /* HERO */
-.hero{margin:12px 14px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20,#1a6b3c 55%,#22c55e);padding:18px 16px 14px;animation:fadeInUp .4s ease both}
+.hero{margin:12px 14px 0;border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(135deg,#0a3d20,#1a6b3c 55%,#22c55e);padding:18px 16px 14px;animation:heroSlideIn .45s cubic-bezier(.4,0,.2,1) both}
 .hero-c1{position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06);top:-22px;right:-22px;animation:heroFloat 6s ease-in-out infinite}
 .hero-c2{position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-12px;right:32px;animation:heroFloat 8s ease-in-out infinite reverse}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;position:relative}
@@ -1348,7 +1350,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx9RyO6KpgGVrtEx2
 const APP_URL='https://sarfarajaalam90-dev.github.io/DigitalNepal/';
 const SESSION_KEY='dn-session-v3'; // Users stored in Firebase Auth
 const CACHE_KEY='dn-cache-v3',CACHE_TS_KEY='dn-cache-ts-v3';
-const CACHE_MAX=2*60*1000; // 2 minutes so new content appears quickly
+const CACHE_MAX=0; // Always fetch fresh — deletions show immediately
 let allRows=[],currentZoomLink='',matSearchTerm='';
 let darkMode=localStorage.getItem('dn-dark')=='true';
 let deferredPrompt=null;
@@ -1446,6 +1448,12 @@ function updateGreeting(){
   var txt=document.getElementById('greeting-text');
   var wave=document.getElementById('greeting-wave');
   if(!bar||!txt) return;
+  // Only show on home page
+  var homeSection=document.getElementById('pg-home');
+  if(!homeSection||!homeSection.classList.contains('active')){
+    bar.style.display='none';
+    return;
+  }
   var session=JSON.parse(localStorage.getItem('dn-session-v3')||'null');
   var firstName='';
   if(session&&session.name){
@@ -1634,6 +1642,9 @@ function switchNav(id){
   document.querySelectorAll('.snav-btn').forEach(function(b){b.classList.remove('active');});
   var sb=document.getElementById('snav-'+id);if(sb)sb.classList.add('active');
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  // Hide greeting when not on home
+  var gBar=document.getElementById('greeting-bar');
+  if(gBar) gBar.style.display=(id==='home'?'':'none');
   // When switching to Other, always show Games tab first
   if(id==='other'){
     document.querySelectorAll('.opanel').forEach(function(p){p.style.display='none';});
@@ -1641,14 +1652,19 @@ function switchNav(id){
     document.querySelectorAll('.otab').forEach(function(b){b.classList.remove('active');b.style.color='var(--text2)';b.style.borderBottomColor='transparent';});
     var gt=document.getElementById('otab-games');if(gt)gt.classList.add('active');
   }
-  var pg=document.getElementById('pg-'+id);if(pg)pg.classList.add('active');
+  var pg=document.getElementById('pg-'+id);
+  if(pg){
+    pg.style.animation='none';
+    pg.classList.add('active');
+    pg.style.animation='sectionSlide .3s cubic-bezier(.4,0,.2,1) both';
+  }
   document.querySelector('.page').scrollTop=0;
   closeNoticePopup();
 }
 
 /* SWIPE NAV */
 (function(){
-  var NAV_ORDER=['home','materials','exam','other','profile'];
+  var NAV_ORDER=['home','materials','exam','other']; // profile removed from swipe
   var page=document.querySelector('.page');
   if(!page) return;
   var startX=0,startY=0,startTime=0,swiping=false;
