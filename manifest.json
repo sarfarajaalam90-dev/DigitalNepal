@@ -2,24 +2,24 @@
   "name": "Digital Nepal",
   "short_name": "Digital Nepal",
   "description": "Digital Partner for Lok Sewa Preparation",
-  "start_url": "index.html",
+  "start_url": "/DigitalNepal/index.html",
   "display": "standalone",
   "background_color": "#1a6b3c",
   "theme_color": "#1a6b3c",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "/DigitalNepal/",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
