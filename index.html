@@ -419,9 +419,23 @@ nav{
 }
 .nav-btn.active{color:var(--primary);}
 
-/* Curved cutout removed - no white box */
+/* Curved cutout under the floating circle */
 .nav-btn.active::before{
-  display:none;
+  content:'';
+  position:absolute;
+  top:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:72px;height:36px;
+  background:var(--white);
+  border-radius:0 0 40px 40px;
+  box-shadow:0 8px 0 0 var(--white);
+  z-index:0;
+  transition:left .3s ease;
+}
+.dark .nav-btn.active::before{
+  background:var(--white);
+  box-shadow:0 8px 0 0 var(--white);
 }
 
 /* Floating green circle */
@@ -3252,34 +3266,13 @@ if('serviceWorker' in navigator) {
   }
 
   function mitraRespondNoSpeak(text, title){
-    // Same as mitraRespond but no TTS - used when custom audio plays
-    try{
-      var replyEl = document.getElementById('mitra-reply');
-      var titleEl = document.getElementById('mitra-reply-title');
-      if(replyEl) replyEl.textContent = text;
-      if(titleEl && title) titleEl.textContent = title;
-      if(replyEl) replyEl.classList.add('show');
-      clearTimeout(window._mitraReplyTimer);
-      window._mitraReplyTimer = setTimeout(function(){ if(replyEl) replyEl.classList.remove('show'); }, 9000);
-    }catch(e){}
+    mitraRespond(text, title); // use same typing animation
   }
   function mitraSpeak(text){
-    if(!window.speechSynthesis) return;
-    if(_mitraNamePlaying) return; // Block TTS when name audio plays
-    window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(text);
-    var voice = getMitraVoice();
-    if(voice){ u.voice = voice; u.lang = voice.lang; }
-    else { u.lang = 'en-US'; }
-    u.rate = 0.95; u.pitch = 1.1; u.volume = 1;
-    window.speechSynthesis.speak(u);
+    // Voice output disabled — text-only chat mode
   }
 
-  if(window.speechSynthesis){
-    // Reset cached voice whenever list updates
-    window.speechSynthesis.onvoiceschanged = function(){ _mitraVoice = null; };
-    window.speechSynthesis.getVoices();
-  }
+  // Speech synthesis disabled — text-only mode
 
   window.mitraOpen = function(){
     document.getElementById('mitra-sheet').classList.add('open');
@@ -3287,7 +3280,7 @@ if('serviceWorker' in navigator) {
     if(!mitraGreeted){
       mitraGreeted = true;
       setTimeout(function(){
-        mitraSpeak('Namaste! My name is Meetra AI. How can I help you?');
+        // Voice disabled
         mitraSetStatus('नमस्ते! म Mitra AI हुँ। / Hello! I am Mitra AI.');
       }, 400);
     }
@@ -3311,7 +3304,7 @@ if('serviceWorker' in navigator) {
     rt.textContent = msg;
     r.classList.add('show');
     mitraSetStatus('Quick Tour 🗺️');
-    mitraSpeak(speech);
+    // Voice disabled
   };
 
   // ── Wake word listener ──────────────────────────────────────────
@@ -3402,12 +3395,17 @@ if('serviceWorker' in navigator) {
   }
 
   window.mitraRun = function(t){
-    var isNe = window.mitraLang !== 'en'; // default Nepali unless detected English
+    // Auto-detect language if not already set
+    if(!window.mitraLang){
+      var nepaliChars = (t.match(/[ऀ-ॿ]/g)||[]).length;
+      var englishChars = (t.match(/[a-zA-Z]/g)||[]).length;
+      window.mitraLang = nepaliChars > englishChars ? 'ne' : 'en';
+    }
+    var isNe = window.mitraLang === 'ne';
 
-    // Show transcript
+    // Store query for user bubble (transcript hidden in UI)
     var tr = document.getElementById('mitra-transcript');
-    tr.textContent = '"' + t + '"';
-    tr.classList.add('show');
+    if(tr){ tr.textContent = '"' + t + '"'; }
 
     t = t.toLowerCase();
 
@@ -3486,31 +3484,81 @@ if('serviceWorker' in navigator) {
       if(typeof refreshAll==='function') refreshAll();
       mitraRespond(isNe?'Content refresh भयो! ✅':'Content refreshed! ✅', 'Refreshed ✅');
     }
+    // Loksewa / Kharidar / NASU
+    else if(t.match(/loksewa|lok sewa|लोकसेवा|kharidar|खरिदार|nasu|नासु|course|कोर्स|preparation|तयारी/)){
+      mitraRespond(isNe?'हामी Digital Nepal मा Loksewa को Kharidar र NASU कोर्सको तयारी गराउँछौं। Sarfaraz Sir (Sheikh Sarfaraz) को नेतृत्वमा बनाइएको यो app मा Notes, Mock Test, र Live Classes छन्!':'We specialize in Loksewa preparation — specifically Kharidar and NASU courses. This app is created and led by Sarfaraz Sir (Sheikh Sarfaraz). Find PDFs in Materials, take mock tests in Exam, and see schedules in Live Classes!', 'Loksewa Prep');
+    }
+    // Who made / who created
+    else if(t.match(/who made|who created|who built|who is sarfaraz|sarfaraz|सरफराज|बनाएको|बनाएका|creator|team/)){
+      mitraRespond(isNe?'Digital Nepal Sarfaraz Sir (Sheikh Sarfaraz) द्वारा बनाइएको र नेतृत्व गरिएको app हो। यो Loksewa Kharidar र NASU को तयारीको लागि विशेष रूपमा बनाइएको छ।':'Digital Nepal is created and led by Sarfaraz Sir (Sheikh Sarfaraz). It is built specifically for Loksewa Kharidar and NASU exam preparation.', 'About Team');
+    }
+    // Locked / premium content
+    else if(t.match(/locked|lock|premium|paid|किन खुलेन|content locked|access|purchase|buy|किन्नुस्/)){
+      mitraRespond(isNe?'केही premium सामग्री (जस्तै Kharidar-only notes) course purchase पछि मात्र access हुन्छ। थप जानकारीको लागि Sarfaraz Sir सँग सम्पर्क गर्नुहोस्।':'Some premium materials — like Kharidar-only notes — require a course purchase to access. Please contact Sarfaraz Sir for enrollment details.', 'Premium Content');
+    }
+    // Where to find PDFs / notes
+    else if(t.match(/pdf|notes कहाँ|notes kaha|find notes|कहाँ छ|where.*notes|where.*pdf/)){
+      mitraRespond(isNe?'PDFs र Notes "Materials" tab मा पाइन्छ। तल्लो navigation बाट Materials खोल्नुहोस्।':'You can find all PDFs and Notes in the Materials tab. Tap "Materials" in the bottom navigation bar.', 'Notes Location');
+    }
+    // Mock test / exam
+    else if(t.match(/mock|mock test|practice|past question|old question|practice test/)){
+      mitraRespond(isNe?'Mock Tests र Past Questions "Exam" tab मा छन्। Exam section खोल्नुहोस् र आफ्नो तयारी जाँच्नुहोस्!':'Mock tests and past questions are in the Exam tab. Open the Exam section and test your preparation!', 'Mock Tests');
+    }
+    // Schedule / live class
+    else if(t.match(/schedule|live class|class time|कक्षा|कक्षा कहिले|when.*class|live/)){
+      mitraRespond(isNe?'Live Classes को schedule Home page मा "Live & Upcoming Classes" section मा देख्न सकिन्छ।':'You can see the Live Classes schedule in the "Live & Upcoming Classes" section on the Home page.', 'Live Schedule');
+    }
+    // Off-topic redirect
+    else if(t.match(/cricket|movie|film|song|music|weather|mausam|politics|news|football|game result|sports|खेल नतिजा/)){
+      mitraRespond(isNe?'माफ गर्नुस्, म Loksewa preparation र Digital Nepal app को लागि मात्र सहयोग गर्न सक्छु। आफ्नो अध्ययनमा ध्यान दिनुहोस्! 📚':'Sorry, I can only help with Loksewa preparation and the Digital Nepal app. Stay focused on your studies! 📚', 'Stay Focused 📚');
+    }
     // Unknown
     else {
-      mitraRespond(isNe?'माफ गर्नुस्, बुझिएन। "notes खोल", "exam खोल" जस्ता commands प्रयोग गर्नुहोस्।':'Sorry, I didn\'t understand. Try commands like "open notes", "open exam", "what time is it".', 'बुझिएन 🤔');
+      mitraRespond(isNe?'माफ गर्नुस्, बुझिएन। "notes खोल", "exam खोल", "loksewa के हो" जस्ता commands प्रयोग गर्नुहोस्।':'Sorry, I didn\'t understand. Try asking about Loksewa prep, notes, exam, or say "open notes" / "open exam".', 'बुझिएन 🤔');
     }
+    window.mitraLang = null; // reset for next query
   };
 
   function mitraRespond(text, shortText){
     var r = document.getElementById('mitra-reply');
     var rt = document.getElementById('mitra-reply-text');
-    rt.textContent = text;
-    r.classList.add('show');
-    mitraSetStatus(shortText || 'जवाफ दिइयो');
-    mitraSpeak(text);
+    // Show user query bubble first
+    var um = document.getElementById('mitra-user-bubble');
+    var lastQ = document.getElementById('mitra-transcript');
+    if(um && lastQ){ um.textContent = lastQ.textContent; um.classList.add('show'); }
+    // Typing cursor animation then reveal text
+    rt.textContent = '';
+    r.classList.remove('show','typing');
+    void r.offsetWidth; // reflow
+    r.classList.add('show','typing');
+    mitraSetStatus('Mitra AI is typing...');
+    var i=0, speed=18;
+    var timer = setInterval(function(){
+      if(i <= text.length){
+        rt.textContent = text.slice(0,i);
+        i++;
+      } else {
+        clearInterval(timer);
+        r.classList.remove('typing');
+        mitraSetStatus(shortText || 'जवाफ दिइयो');
+      }
+    }, speed);
   }
 
-  // Single consistent voice for all languages
-  function getMitraVoice(){
-    var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
-    var preferred = ['Google UK English Female','Microsoft Zira','Samantha','Karen','Moira','Tessa'];
-    for(var i=0;i<preferred.length;i++){
-      var found = voices.find(function(v){ return v.name===preferred[i]; });
-      if(found) return found;
-    }
-    return voices.find(function(v){ return v.lang==='en-US'||v.lang==='en-GB'; }) || null;
-  }
+  window.mitraSubmitText = function(){
+    var inp = document.getElementById('mitra-text-input');
+    if(!inp || !inp.value.trim()) return;
+    var txt = inp.value.trim();
+    inp.value = '';
+    // Detect language
+    var nepaliChars = (txt.match(/[ऀ-ॿ]/g)||[]).length;
+    var englishChars = (txt.match(/[a-zA-Z]/g)||[]).length;
+    window.mitraLang = nepaliChars > englishChars ? 'ne' : 'en';
+    // Store for user bubble
+    var tr = document.getElementById('mitra-transcript');
+    if(tr){ tr.textContent = '"' + txt + '"'; }
+    window.mitraRun(txt.toLowerCase().trim());
+  };
 
   // Close sheet when clicking outside
   document.addEventListener('click', function(e){
@@ -3526,13 +3574,13 @@ if('serviceWorker' in navigator) {
 
 <!-- ═══ MITRA AI VOICE ASSISTANT ═══ -->
 <button id="mitra-btn" onclick="mitraOpen()" title="Mitra AI">
-  <i class="fa-solid fa-microphone"></i>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10a9.96 9.96 0 0 1-5.09-1.4L2 22l1.4-4.91A9.96 9.96 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
 </button>
 
 <div id="mitra-sheet">
   <div class="mitra-handle"></div>
   <div class="mitra-header">
-    <div class="mitra-avatar">🤖</div>
+    <div class="mitra-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><circle cx="9" cy="13" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M9 17h6"/></svg></div>
     <div>
       <div class="mitra-name">Mitra AI</div>
       <div class="mitra-status" id="mitra-status">कसरी सहयोग गर्ने? / How can I help?</div>
@@ -3542,12 +3590,12 @@ if('serviceWorker' in navigator) {
 
   <!-- Quick suggestions -->
   <div class="mitra-suggestions" id="mitra-suggestions">
-    <button class="mitra-suggest-btn" onclick="mitraTour()">🗺️ Tour</button>
-    <button class="mitra-suggest-btn" onclick="mitraRun('notes खोल')">📖 Notes</button>
-    <button class="mitra-suggest-btn" onclick="mitraRun('exam खोल')">✏️ Exam</button>
-    <button class="mitra-suggest-btn" onclick="mitraRun('syllabus खोल')">📚 Syllabus</button>
-    <button class="mitra-suggest-btn" onclick="mitraRun('quiz खोल')">🎮 Quiz</button>
-    <button class="mitra-suggest-btn" onclick="mitraRun('अहिले कति बजेको छ')">🕐 Time</button>
+    <button class="mitra-suggest-btn" onclick="mitraTour()">App Tour</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('notes खोल')">Notes</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('exam खोल')">Exam</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('loksewa preparation')">Loksewa</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('who made this app')">About</button>
+    <button class="mitra-suggest-btn" onclick="mitraRun('अहिले कति बजेको छ')">Time</button>
   </div>
 
   <!-- Wave animation bars -->
@@ -3563,8 +3611,11 @@ if('serviceWorker' in navigator) {
   </div>
   <div class="mitra-listening-label" id="mitra-listen-label">🎙️ Mitra सुनिरहेको छ... / Mitra is listening...</div>
 
-  <!-- Recognized text -->
-  <div class="mitra-transcript" id="mitra-transcript"></div>
+  <!-- Recognized text (hidden, just stores last query) -->
+  <div class="mitra-transcript" id="mitra-transcript" style="display:none"></div>
+
+  <!-- User bubble -->
+  <div class="mitra-user-msg" id="mitra-user-bubble"></div>
 
   <!-- Mitra reply -->
   <div class="mitra-reply" id="mitra-reply">
@@ -3573,9 +3624,19 @@ if('serviceWorker' in navigator) {
   </div>
 
   <!-- Mic button -->
-  <button class="mitra-mic-btn" id="mitra-mic-btn" onclick="mitraToggleMic()">
-    <i class="fa-solid fa-microphone"></i> बोल्न थिच्नुहोस्
-  </button>
+  <!-- Text input bar -->
+  <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+    <input type="text" id="mitra-text-input" placeholder="Type or speak..." 
+      style="flex:1;border:1.5px solid var(--border);border-radius:99px;padding:9px 14px;font-size:13px;background:var(--bg);color:var(--text);outline:none;font-family:inherit"
+      onkeydown="if(event.key==='Enter'){mitraSubmitText()}"
+    />
+    <button onclick="mitraSubmitText()" style="background:var(--primary);color:#fff;border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+    <button class="mitra-mic-btn" id="mitra-mic-btn" onclick="mitraToggleMic()" style="width:38px;height:38px;padding:0;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+      <i class="fa-solid fa-microphone"></i>
+    </button>
+  </div>
 </div>
 <!-- ════════════════════════════════════ -->
 </body>
