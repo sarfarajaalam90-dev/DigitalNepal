@@ -419,24 +419,7 @@ nav{
 }
 .nav-btn.active{color:var(--primary);}
 
-/* Curved cutout under the floating circle */
-.nav-btn.active::before{
-  content:'';
-  position:absolute;
-  top:-18px;
-  left:50%;
-  transform:translateX(-50%);
-  width:72px;height:36px;
-  background:var(--white);
-  border-radius:0 0 40px 40px;
-  box-shadow:0 8px 0 0 var(--white);
-  z-index:0;
-  transition:left .3s ease;
-}
-.dark .nav-btn.active::before{
-  background:var(--white);
-  box-shadow:0 8px 0 0 var(--white);
-}
+
 
 /* Floating green circle */
 .nav-icon-wrap{
