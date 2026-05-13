@@ -1,7 +1,7 @@
 {
-  "name": "Digital Nepal",
-  "short_name": "Digital Nepal",
-  "description": "Digital Partner for Lok Sewa Preparation",
+  "name": "Sikshit Mitra",
+  "short_name": "Sikshit Mitra",
+  "description": "सफलताको साथी - सिक्षित मित्र",
   "start_url": "/DigitalNepal/index.html",
   "display": "standalone",
   "background_color": "#1a6b3c",
