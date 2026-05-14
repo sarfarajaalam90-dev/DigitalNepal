@@ -2,12 +2,12 @@
   "name": "Sikshit Mitra",
   "short_name": "Sikshit Mitra",
   "description": "सफलताको साथी - सिक्षित मित्र",
-  "start_url": "/Shikshit mitra/index.html",
+  "start_url": "/ShikshitMitra/index.html",
   "display": "standalone",
   "background_color": "#1a6b3c",
   "theme_color": "#1a6b3c",
   "orientation": "portrait",
-  "scope": "/DigitalNepal/",
+  "scope": "/ShikshitMitra/",
   "icons": [
     {
       "src": "icon-192.png",
