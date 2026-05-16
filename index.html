@@ -3579,11 +3579,7 @@ if('serviceWorker' in navigator) {
   function mitraRespondNoSpeak(text, title){
     mitraRespond(text, title); // use same typing animation
   }
-  function mitraSpeak(text){
-    // Voice output disabled — text-only chat mode
-  }
-
-  // Speech synthesis disabled — text-only mode
+  // Voice output fully removed
 
   window.mitraOpen = function(){
     document.getElementById('mitra-sheet').classList.add('open');
@@ -3705,130 +3701,67 @@ if('serviceWorker' in navigator) {
     window.mitraRun(t);
   }
 
-  window.mitraRun = function(t){
-    // Auto-detect language if not already set
-    if(!window.mitraLang){
-      var nepaliChars = (t.match(/[ऀ-ॿ]/g)||[]).length;
-      var englishChars = (t.match(/[a-zA-Z]/g)||[]).length;
-      window.mitraLang = nepaliChars > englishChars ? 'ne' : 'en';
-    }
-    var isNe = window.mitraLang === 'ne';
+  /* ── GEMINI AI ── */
+  var GEMINI_KEY = 'AIzaSyDfVLFvMBER6laPnupzqJb_y-FwzClSU2w';
+  var GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY;
+  var MITRA_SYSTEM = 'You are Mitra AI, the smart assistant of Shikshit Mitra educational app created by Sheikh Sarfaraz (Sarfaraz Sir). You help students with Loksewa preparation — Kharidar and NASU courses. App has: Materials tab (notes/PDFs), Exam tab (mock tests), Home (live classes), Other (quiz, syllabus, contact). Answer in same language as user (Nepali or English or mixed). Be friendly and encouraging. Keep answers short. Add emojis. If off-topic, politely redirect to studies.';
 
-    // Store query for user bubble (transcript hidden in UI)
+  async function mitraAskGemini(userText){
+    // Show user message in transcript area
     var tr = document.getElementById('mitra-transcript');
-    if(tr){ tr.textContent = '"' + t + '"'; }
+    if(tr){ tr.textContent = '"'+userText+'"'; }
+    // Show user bubble
+    var um = document.getElementById('mitra-user-bubble');
+    if(um){ um.textContent = userText; um.classList.add('show'); }
 
-    t = t.toLowerCase();
+    // Nav shortcuts still work
+    var t = userText.toLowerCase();
+    if(t.match(/open.*material|notes.*khol|material.*khol/)){ switchNav('materials'); }
+    else if(t.match(/open.*exam|exam.*khol/)){ switchNav('exam'); }
+    else if(t.match(/open.*home|home.*khol/)){ switchNav('home'); }
+    else if(t.match(/open.*profile/)){ switchNav('profile'); }
 
-    // Navigation commands
-    if(t.match(/home|गृह|होम|go home|main page/)){
-      switchNav('home');
-      mitraRespond(isNe?'Home page खोलियो! 🏠':'Home page opened! 🏠', 'Home');
-    } else if(t.match(/notes|material|नोट्स|सामग्री|materials|किताब|open notes|open material/)){
-      switchNav('materials');
-      mitraRespond(isNe?'Materials section खोलियो! 📖':'Materials section opened! 📖', 'Materials');
-    } else if(t.match(/exam|परीक्षा|test|टेस्ट|open exam|start exam/)){
-      switchNav('exam');
-      mitraRespond(isNe?'Exam section खोलियो! ✏️':'Exam section opened! ✏️', 'Exam');
-    } else if(t.match(/quiz|game|खेल|challenge|daily|open quiz|open game|play/)){
-      switchNav('other');
-      setTimeout(function(){ if(typeof switchOtherTab==='function') switchOtherTab('games', document.getElementById('otab-games')); }, 200);
-      mitraRespond(isNe?'Quiz section खोलियो! 🎮':'Quiz section opened! 🎮', 'Quiz');
-    } else if(t.match(/syllabus|पाठ्यक्रम|open syllabus|show syllabus/)){
-      switchNav('other');
-      setTimeout(function(){ if(typeof switchOtherTab==='function') switchOtherTab('syllabus', document.getElementById('otab-syllabus')); }, 200);
-      mitraRespond(isNe?'Syllabus section खोलियो! 📚':'Syllabus section opened! 📚', 'Syllabus');
-    } else if(t.match(/profile|प्रोफाइल|account|login|open profile/)){
-      switchNav('profile');
-      mitraRespond(isNe?'Profile page खोलियो! 👤':'Profile page opened! 👤', 'Profile');
-    } else if(t.match(/other|link|more|अरू/)){
-      switchNav('other');
-      mitraRespond(isNe?'Other Links खोलियो! 🔗':'Other Links opened! 🔗', 'Other Links');
+    // Show typing status
+    mitraSetStatus('Mitra AI is thinking...');
+    var r = document.getElementById('mitra-reply');
+    var rt = document.getElementById('mitra-reply-text');
+    rt.textContent = '...';
+    r.classList.add('show');
+
+    try {
+      var res = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          contents:[{role:'user', parts:[{text: MITRA_SYSTEM+'
+
+User: '+userText}]}],
+          generationConfig:{maxOutputTokens:300, temperature:0.7}
+        })
+      });
+      var data = await res.json();
+      var reply = data.candidates[0].content.parts[0].text.trim();
+      // Typewriter effect
+      rt.textContent = '';
+      var i = 0;
+      var timer = setInterval(function(){
+        if(i <= reply.length){
+          rt.textContent = reply.slice(0, i);
+          i++;
+        } else {
+          clearInterval(timer);
+          mitraSetStatus('Mitra AI');
+        }
+      }, 12);
+    } catch(err) {
+      rt.textContent = 'माफ गर्नुस्! Connection error. Please try again. 🙏';
+      mitraSetStatus('Error — try again');
+      console.error('Gemini error:', err);
     }
-    // Tour / help
-    else if(t.match(/tour|guide|help|सहयोग|कसरी|कसरी प्रयोग/)){
-      mitraTour();
-    }
-    // Time
-    else if(t.match(/time|समय|बजे|घडी/)){
-      var now = new Date();
-      var utc = now.getTime() + now.getTimezoneOffset()*60000;
-      var np = new Date(utc + (5*3600+45*60)*1000);
-      var h = np.getHours(), m = String(np.getMinutes()).padStart(2,'0');
-      var ampm = h>=12?'बजे बेलुका':'बजे बिहान';
-      var h12 = h>12?h-12:h===0?12:h;
-      var replyNe = 'अहिले Nepal को समय ' + h12 + ':' + m + ' ' + ampm + ' हो।';
-      var replyEn = 'Current Nepal time is ' + h12 + ':' + m + (h>=12?' PM':' AM') + '.';
-      mitraRespond(isNe?replyNe:replyEn, '🕐 ' + h12+':'+m);
-    }
-    // Date
-    else if(t.match(/date|मिति|तारिख|आज/)){
-      var days=['आइतबार','सोमबार','मंगलबार','बुधबार','बिहिबार','शुक्रबार','शनिबार'];
-      var months=['जनवरी','फेब्रुअरी','मार्च','अप्रिल','मे','जुन','जुलाई','अगस्ट','सेप्टेम्बर','अक्टोबर','नोभेम्बर','डिसेम्बर'];
-      var n=new Date();var utc=n.getTime()+n.getTimezoneOffset()*60000;var np=new Date(utc+(5*3600+45*60)*1000);
-      var engMonths=['January','February','March','April','May','June','July','August','September','October','November','December'];
-      var engDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      var replyDateNe = 'आज '+days[np.getDay()]+', '+np.getDate()+' '+months[np.getMonth()]+' '+np.getFullYear()+' हो।';
-      var replyDateEn = 'Today is '+engDays[np.getDay()]+', '+np.getDate()+' '+engMonths[np.getMonth()]+' '+np.getFullYear()+'.';
-      mitraRespond(isNe?replyDateNe:replyDateEn,'📅 Today / आजको मिति');
-    }
-    // Identity — name / who are you
-    else if(t.match(/तिम्रो नाम|तेरो नाम|तपाइँको नाम|तपाईंको नाम|तिम्रो नाम के|नाम के हो|what is your name|what's your name|your name|who are you|तिमी को हौ|तपाई को हुनुहुन्छ|तपाइँ को|तिमी को|तुम कौन/)){
-      playMitraNameAudio();
-      mitraRespondNoSpeak(isNe?'मेरो नाम Mitra AI हो। म Shikshit Mitra को voice assistant हुँ। तपाईंलाई notes, exam, quiz, syllabus र navigation मा सहयोग गर्छु! 🤖':'My name is Meetra AI. I am the voice assistant of Shikshit Mitra. I can help you with notes, exam, quiz, syllabus and navigation! 🤖', 'Mitra AI 🤖');
-    }
-    // App name / general mitra mention
-    else if(t.match(/app|shikshit mitra|mitra|मित्र/)){
-      playMitraNameAudio();
-      mitraRespondNoSpeak(isNe?'म Mitra AI हुँ — Shikshit Mitra को voice assistant। navigation, time, date मा सहयोग गर्छु! 🤖':'I am Meetra AI — voice assistant of Shikshit Mitra app. I can help with navigation, time, date and app guide! 🤖', 'Mitra AI 🤖');
-    }
-    // Greeting
-    else if(t.match(/hello|hi|नमस्ते|नमस्कार|हेलो/)){
-      mitraRespond(isNe?'नमस्ते! म Mitra AI हुँ। Notes, Exam वा Quiz खोल्न भन्नुहोस्! 😊':'Hello! I am Meetra AI. Say "open notes", "open exam" or "open quiz" to navigate! 😊', 'नमस्ते / Hello! 👋');
-    }
-    // Thank you
-    else if(t.match(/thank|धन्यवाद|thanks|सुक्रिया/)){
-      mitraRespond(isNe?'धन्यवाद! कुनै काम छ भने भन्नुहोस्। 😊':'Thank you! Let me know if you need anything. 😊', 'धन्यवाद / Thanks! 🙏');
-    }
-    // Refresh
-    else if(t.match(/refresh|reload|update|अपडेट/)){
-      if(typeof refreshAll==='function') refreshAll();
-      mitraRespond(isNe?'Content refresh भयो! ✅':'Content refreshed! ✅', 'Refreshed ✅');
-    }
-    // Loksewa / Kharidar / NASU
-    else if(t.match(/loksewa|lok sewa|लोकसेवा|kharidar|खरिदार|nasu|नासु|course|कोर्स|preparation|तयारी/)){
-      mitraRespond(isNe?'हामी Shikshit Mitra मा Loksewa को Kharidar र NASU कोर्सको तयारी गराउँछौं। Sarfaraz Sir (Sheikh Sarfaraz) को नेतृत्वमा बनाइएको यो app मा Notes, Mock Test, र Live Classes छन्!':'We specialize in Loksewa preparation — specifically Kharidar and NASU courses. Shikshit Mitra is created and led by Sarfaraz Sir (Sheikh Sarfaraz). Find PDFs in Materials, take mock tests in Exam, and see schedules in Live Classes!', 'Loksewa Prep');
-    }
-    // Who made / who created
-    else if(t.match(/who made|who created|who built|who is sarfaraz|sarfaraz|सरफराज|बनाएको|बनाएका|creator|team/)){
-      mitraRespond(isNe?'Shikshit Mitra Sarfaraz Sir (Sheikh Sarfaraz) द्वारा बनाइएको र नेतृत्व गरिएको app हो। यो Loksewa Kharidar र NASU को तयारीको लागि विशेष रूपमा बनाइएको छ।':'Shikshit Mitra is created and led by Sarfaraz Sir (Sheikh Sarfaraz). It is built specifically for Loksewa Kharidar and NASU exam preparation.', 'About Team');
-    }
-    // Locked / premium content
-    else if(t.match(/locked|lock|premium|paid|किन खुलेन|content locked|access|purchase|buy|किन्नुस्/)){
-      mitraRespond(isNe?'केही premium सामग्री (जस्तै Kharidar-only notes) course purchase पछि मात्र access हुन्छ। थप जानकारीको लागि Sarfaraz Sir सँग सम्पर्क गर्नुहोस्।':'Some premium materials — like Kharidar-only notes — require a course purchase to access. Please contact Sarfaraz Sir for enrollment details.', 'Premium Content');
-    }
-    // Where to find PDFs / notes
-    else if(t.match(/pdf|notes कहाँ|notes kaha|find notes|कहाँ छ|where.*notes|where.*pdf/)){
-      mitraRespond(isNe?'PDFs र Notes "Materials" tab मा पाइन्छ। तल्लो navigation बाट Materials खोल्नुहोस्।':'You can find all PDFs and Notes in the Materials tab. Tap "Materials" in the bottom navigation bar.', 'Notes Location');
-    }
-    // Mock test / exam
-    else if(t.match(/mock|mock test|practice|past question|old question|practice test/)){
-      mitraRespond(isNe?'Mock Tests र Past Questions "Exam" tab मा छन्। Exam section खोल्नुहोस् र आफ्नो तयारी जाँच्नुहोस्!':'Mock tests and past questions are in the Exam tab. Open the Exam section and test your preparation!', 'Mock Tests');
-    }
-    // Schedule / live class
-    else if(t.match(/schedule|live class|class time|कक्षा|कक्षा कहिले|when.*class|live/)){
-      mitraRespond(isNe?'Live Classes को schedule Home page मा "Live & Upcoming Classes" section मा देख्न सकिन्छ।':'You can see the Live Classes schedule in the "Live & Upcoming Classes" section on the Home page.', 'Live Schedule');
-    }
-    // Off-topic redirect
-    else if(t.match(/cricket|movie|film|song|music|weather|mausam|politics|news|football|game result|sports|खेल नतिजा/)){
-      mitraRespond(isNe?'माफ गर्नुस्, म Loksewa preparation र Shikshit Mitra app को लागि मात्र सहयोग गर्न सक्छु। आफ्नो अध्ययनमा ध्यान दिनुहोस्! 📚':'Sorry, I can only help with Loksewa preparation and the Shikshit Mitra app. Stay focused on your studies! 📚', 'Stay Focused 📚');
-    }
-    // Unknown
-    else {
-      mitraRespond(isNe?'माफ गर्नुस्, बुझिएन। "notes खोल", "exam खोल", "loksewa के हो" जस्ता commands प्रयोग गर्नुहोस्।':'Sorry, I didn\'t understand. Try asking about Loksewa prep, notes, exam, or say "open notes" / "open exam".', 'बुझिएन 🤔');
-    }
-    window.mitraLang = null; // reset for next query
-  };
+  }
+
+  // Keep mitraRun for suggestion chips compatibility
+  window.mitraRun = function(t){ mitraAskGemini(t); };
 
   function mitraRespond(text, shortText){
     var r = document.getElementById('mitra-reply');
@@ -3861,14 +3794,7 @@ if('serviceWorker' in navigator) {
     if(!inp || !inp.value.trim()) return;
     var txt = inp.value.trim();
     inp.value = '';
-    // Detect language
-    var nepaliChars = (txt.match(/[ऀ-ॿ]/g)||[]).length;
-    var englishChars = (txt.match(/[a-zA-Z]/g)||[]).length;
-    window.mitraLang = nepaliChars > englishChars ? 'ne' : 'en';
-    // Store for user bubble
-    var tr = document.getElementById('mitra-transcript');
-    if(tr){ tr.textContent = '"' + txt + '"'; }
-    window.mitraRun(txt.toLowerCase().trim());
+    mitraAskGemini(txt);
   };
 
   // Close sheet when clicking outside
