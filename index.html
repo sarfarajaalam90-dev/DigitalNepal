@@ -1176,6 +1176,12 @@ nav{
             <span style="font-size:9px;font-weight:700;color:var(--text2);text-align:center;line-height:1.2">About Us</span>
           </button>
 
+          <!-- Clock -->
+          <button class="ogrid-btn" onclick="showOtherPanel('clock')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 6px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s;font-family:inherit">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span style="font-size:9px;font-weight:700;color:var(--text2);text-align:center;line-height:1.2">Clock</span>
+          </button>
+
         </div>
       </div>
 
@@ -1221,46 +1227,6 @@ nav{
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
           </div>
-          <!-- EXAM COUNTDOWN / STOPWATCH -->
-          <div style="background:linear-gradient(160deg,#0a0c18,#111424);border-radius:16px;overflow:hidden;border:1.5px solid rgba(232,160,32,.25);margin-bottom:12px">
-            <div style="display:flex;border-bottom:1px solid rgba(255,255,255,.07)">
-              <button id="cd-tab-timer" onclick="switchCountdownMode('timer')" style="flex:1;padding:9px;background:rgba(232,160,32,.12);border:none;color:#e8a020;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-right:1px solid rgba(255,255,255,.07)">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Exam Countdown</button>
-              <button id="cd-tab-stopwatch" onclick="switchCountdownMode('stopwatch')" style="flex:1;padding:9px;background:transparent;border:none;color:rgba(255,255,255,.35);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 14 15"/><polyline points="9 1 15 1"/><line x1="12" y1="1" x2="12" y2="5"/></svg> Stopwatch</button>
-            </div>
-            <!-- Countdown -->
-            <div id="cd-panel-timer" style="padding:14px;text-align:center">
-              <div style="font-size:9px;letter-spacing:.4em;color:#e8a020;text-transform:uppercase;margin-bottom:6px;font-weight:700">Exam Countdown</div>
-              <div style="display:flex;align-items:flex-end;justify-content:center;gap:5px;margin-bottom:10px">
-                <div style="text-align:center"><div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px"><div id="cd-days" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1">00</div></div><div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Days</div></div>
-                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
-                <div style="text-align:center"><div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px"><div id="cd-hours" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1">00</div></div><div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Hrs</div></div>
-                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
-                <div style="text-align:center"><div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px"><div id="cd-mins" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1">00</div></div><div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Min</div></div>
-                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
-                <div style="text-align:center"><div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px"><div id="cd-secs" style="font-size:24px;font-weight:700;color:#e8a020;font-variant-numeric:tabular-nums;line-height:1">00</div></div><div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Sec</div></div>
-              </div>
-              <div style="display:flex;align-items:center;gap:7px;justify-content:center">
-                <input type="datetime-local" id="cd-target-date" style="background:#1a1d2e;border:1px solid rgba(232,160,32,.3);border-radius:8px;padding:6px 9px;color:#f0e6c8;font-size:11px;font-family:inherit;outline:none;flex:1;max-width:200px" onchange="updateCountdownTarget()">
-                <button onclick="updateCountdownTarget()" style="background:#e8a020;color:#000;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Set</button>
-              </div>
-              <div id="cd-date-label" style="font-size:9px;color:rgba(240,230,200,.3);margin-top:6px;letter-spacing:.1em">Set your exam date above</div>
-            </div>
-            <!-- Stopwatch -->
-            <div id="cd-panel-stopwatch" style="display:none;padding:14px;text-align:center">
-              <div style="font-size:9px;letter-spacing:.4em;color:#86efac;text-transform:uppercase;margin-bottom:6px;font-weight:700">Stopwatch</div>
-              <div style="background:#1a1d2e;border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,.07);margin-bottom:10px">
-                <div id="sw-display" style="font-size:34px;font-weight:700;color:#86efac;font-variant-numeric:tabular-nums;letter-spacing:.05em">00:00.0</div>
-              </div>
-              <div style="display:flex;gap:7px;justify-content:center">
-                <button id="sw-start" onclick="swStart()" style="flex:1;padding:9px;background:linear-gradient(135deg,#1a6b3c,#22c55e);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">&#9654; Start</button>
-                <button id="sw-pause" onclick="swPause()" style="flex:1;padding:9px;background:rgba(255,255,255,.07);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" disabled>&#9646;&#9646; Pause</button>
-                <button onclick="swReset()" style="padding:9px 14px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">&#8635;</button>
-              </div>
-            </div>
-          </div>
-
           <div onclick="startDailyChallenge()" style="padding:18px 16px;background:linear-gradient(120deg,#0a2a14,#1a6b3c,#22c55e,#1a6b3c,#0a2a14);background-size:300% 300%;border-radius:18px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 0 0 1px rgba(34,197,94,.4),0 8px 32px rgba(34,197,94,.3),0 0 60px rgba(34,197,94,.1);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;animation:flagWave 4s ease infinite" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
             <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0">
               <svg style="position:absolute;top:0;left:-30%;width:160%;height:100%;opacity:.12;animation:flagWave2 3.5s ease-in-out infinite" viewBox="0 0 400 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 Q50,15 100,50 Q150,85 200,50 Q250,15 300,50 Q350,85 400,50 L400,100 L0,100 Z" fill="#fff"/></svg>
@@ -1376,7 +1342,84 @@ nav{
           </div>
         </div>
 
-      </div><!-- end other-panel-view -->
+        <!-- CLOCK PANEL -->
+        <div id="opanel-clock" class="opanel" style="display:none;padding:12px 14px">
+
+          <!-- landscape toggle -->
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+            <button onclick="toggleClockLandscape()" title="Toggle landscape" style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:99px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);font-family:inherit;transition:all .2s">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="2"/><line x1="8" y1="5" x2="8" y2="19"/><line x1="16" y1="5" x2="16" y2="19"/></svg>
+              Landscape
+            </button>
+          </div>
+
+          <!-- card -->
+          <div id="clock-card" style="background:linear-gradient(160deg,#0a0c18,#111424);border-radius:16px;overflow:hidden;border:1.5px solid rgba(232,160,32,.25)">
+
+            <!-- tabs -->
+            <div style="display:flex;border-bottom:1px solid rgba(255,255,255,.07)">
+              <button id="cd-tab-timer" onclick="switchCountdownMode('timer')" style="flex:1;padding:9px;background:rgba(232,160,32,.12);border:none;color:#e8a020;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-right:1px solid rgba(255,255,255,.07)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Countdown</button>
+              <button id="cd-tab-stopwatch" onclick="switchCountdownMode('stopwatch')" style="flex:1;padding:9px;background:transparent;border:none;color:rgba(255,255,255,.35);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 14 15"/><polyline points="9 1 15 1"/><line x1="12" y1="1" x2="12" y2="5"/></svg> Stopwatch</button>
+            </div>
+
+            <!-- Countdown -->
+            <div id="cd-panel-timer" style="padding:14px;text-align:center">
+              <div style="font-size:9px;letter-spacing:.4em;color:#e8a020;text-transform:uppercase;margin-bottom:4px;font-weight:700">Exam Countdown</div>
+              <div style="font-size:9px;color:rgba(240,230,200,.4);margin-bottom:10px">Double-tap any number to edit directly</div>
+              <div style="display:flex;align-items:flex-end;justify-content:center;gap:5px;margin-bottom:10px">
+                <div style="text-align:center">
+                  <div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px">
+                    <div id="cd-days" ondblclick="editCountdownUnit('days')" title="Double-click to edit" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1;cursor:pointer;outline:none">00</div>
+                  </div>
+                  <div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Days</div>
+                </div>
+                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
+                <div style="text-align:center">
+                  <div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px">
+                    <div id="cd-hours" ondblclick="editCountdownUnit('hours')" title="Double-click to edit" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1;cursor:pointer;outline:none">00</div>
+                  </div>
+                  <div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Hrs</div>
+                </div>
+                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
+                <div style="text-align:center">
+                  <div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px">
+                    <div id="cd-mins" ondblclick="editCountdownUnit('mins')" title="Double-click to edit" style="font-size:24px;font-weight:700;color:#f0e6c8;font-variant-numeric:tabular-nums;line-height:1;cursor:pointer;outline:none">00</div>
+                  </div>
+                  <div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Min</div>
+                </div>
+                <div style="font-size:20px;font-weight:300;color:#e8a020;padding-bottom:13px">:</div>
+                <div style="text-align:center">
+                  <div style="background:#1a1d2e;border-radius:8px;padding:6px 10px;border:1px solid rgba(255,255,255,.07);min-width:46px">
+                    <div id="cd-secs" ondblclick="editCountdownUnit('secs')" title="Double-click to edit" style="font-size:24px;font-weight:700;color:#e8a020;font-variant-numeric:tabular-nums;line-height:1;cursor:pointer;outline:none">00</div>
+                  </div>
+                  <div style="font-size:8px;letter-spacing:.2em;color:rgba(240,230,200,.35);text-transform:uppercase;margin-top:3px">Sec</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;justify-content:center">
+                <input type="datetime-local" id="cd-target-date" style="background:#1a1d2e;border:1px solid rgba(232,160,32,.3);border-radius:8px;padding:6px 9px;color:#f0e6c8;font-size:11px;font-family:inherit;outline:none;flex:1;max-width:200px" onchange="updateCountdownTarget()">
+                <button onclick="updateCountdownTarget()" style="background:#e8a020;color:#000;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Set</button>
+              </div>
+              <div id="cd-date-label" style="font-size:9px;color:rgba(240,230,200,.3);margin-top:6px;letter-spacing:.1em">Set your exam date above</div>
+            </div>
+
+            <!-- Stopwatch -->
+            <div id="cd-panel-stopwatch" style="display:none;padding:14px;text-align:center">
+              <div style="font-size:9px;letter-spacing:.4em;color:#86efac;text-transform:uppercase;margin-bottom:4px;font-weight:700">Stopwatch</div>
+              <div style="font-size:9px;color:rgba(134,239,172,.4);margin-bottom:8px">Double-tap the time to set manually</div>
+              <div style="background:#1a1d2e;border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,.07);margin-bottom:10px">
+                <div id="sw-display" ondblclick="editStopwatch()" title="Double-click to set time" style="font-size:34px;font-weight:700;color:#86efac;font-variant-numeric:tabular-nums;letter-spacing:.05em;cursor:pointer">00:00.0</div>
+              </div>
+              <div style="display:flex;gap:7px;justify-content:center">
+                <button id="sw-start" onclick="swStart()" style="flex:1;padding:9px;background:linear-gradient(135deg,#1a6b3c,#22c55e);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">&#9654; Start</button>
+                <button id="sw-pause" onclick="swPause()" style="flex:1;padding:9px;background:rgba(255,255,255,.07);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" disabled>&#9646;&#9646; Pause</button>
+                <button onclick="swReset()" style="padding:9px 14px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">&#8635;</button>
+              </div>
+            </div>
+
+          </div><!-- end clock-card -->
+        </div><!-- end opanel-clock -->
       </div>
 
     </div><!-- /other -->
@@ -1742,7 +1785,7 @@ function setHeroDate(){
 var QUOTES=['सफलता एक दिनमा आउँदैन, तर मेहनतले दिन आउँछ।','आफ्नो सपनालाई साकार पार्न आज नै सुरु गर्नुहोस्।','पढ्नु भनेको भविष्यको ढोका खोल्नु हो।','लोक सेवाको तयारी गाह्रो छ, तर असम्भव छैन।','ज्ञान नै शक्ति हो — जति पढ्नुहुन्छ, उति अगाडि बढ्नुहुन्छ।','आज गरेको मेहनत भोलिको सफलताको जग हो।','धैर्य र परिश्रमले असम्भवलाई पनि सम्भव बनाउँछ।'];
 function setDailyQuote(){document.getElementById('daily-quote').textContent=QUOTES[new Date().getDate()%QUOTES.length];}
 function showOtherPanel(tab){
-  var titles={games:'Games',pyq:'Past Questions',syllabus:'Syllabus',contact:'Contact',links:'Links',notice:'Notice',schedule:'Schedule',about:'About Us'};
+  var titles={games:'Games',pyq:'Past Questions',syllabus:'Syllabus',contact:'Contact',links:'Links',notice:'Notice',schedule:'Schedule',about:'About Us',clock:'Clock'};
   if(panel==='pyq') renderPYQFromSheet();
   if(panel==='syllabus') renderSyllabusFromSheet();
   document.getElementById('other-grid-menu').style.display='none';
@@ -1765,8 +1808,109 @@ function closeOtherPanel(){
 }
 function switchOtherTab(tab,btn){showOtherPanel(tab);}
 
-/* CACHE */
-function saveCache(data){try{localStorage.setItem(CACHE_KEY,JSON.stringify(data));localStorage.setItem(CACHE_TS_KEY,Date.now().toString());}catch(e){}}
+/* ── CLOCK LANDSCAPE + EDITABLE ── */
+function toggleClockLandscape(){
+  var card = document.getElementById('clock-card');
+  if(!card) return;
+  var isLandscape = card.getAttribute('data-landscape') === '1';
+  if(!isLandscape){
+    if(screen.orientation && screen.orientation.lock){
+      screen.orientation.lock('landscape').catch(function(){});
+    }
+    card.setAttribute('data-landscape','1');
+    card.style.position='fixed';
+    card.style.top='0';card.style.left='0';
+    card.style.width='100vh';card.style.height='100vw';
+    card.style.transform='rotate(90deg) translateY(-100%)';
+    card.style.transformOrigin='top left';
+    card.style.zIndex='9999';
+    card.style.borderRadius='0';
+    card.style.overflow='auto';
+    // Inject exit button
+    var exitBtn = document.createElement('button');
+    exitBtn.id = 'ls-exit-btn';
+    exitBtn.onclick = toggleClockLandscape;
+    exitBtn.title = 'Exit landscape';
+    exitBtn.style.cssText = 'position:fixed;top:12px;right:12px;z-index:10000;display:flex;align-items:center;gap:6px;padding:7px 13px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.2);border-radius:99px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit';
+    exitBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Exit';
+    document.body.appendChild(exitBtn);
+  } else {
+    if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+    card.setAttribute('data-landscape','0');
+    card.style.position='';card.style.top='';card.style.left='';
+    card.style.width='';card.style.height='';
+    card.style.transform='';card.style.transformOrigin='';
+    card.style.zIndex='';card.style.borderRadius='';card.style.overflow='';
+    // Remove exit button
+    var old = document.getElementById('ls-exit-btn');
+    if(old) old.remove();
+  }
+}
+
+function editCountdownUnit(unit){
+  // Pause countdown while editing
+  clearInterval(cdInterval);
+  var el = document.getElementById('cd-'+unit);
+  if(!el) return;
+  var cur = parseInt(el.textContent)||0;
+  var max = unit==='days'?9999:unit==='hours'?23:59;
+  var label = unit==='days'?'Days':unit==='hours'?'Hours':unit==='mins'?'Minutes':'Seconds';
+  // Inline input replace
+  var inp = document.createElement('input');
+  inp.type='number';inp.min='0';inp.max=max;inp.value=cur;
+  inp.style.cssText='width:50px;font-size:22px;font-weight:700;background:#0d1020;color:#e8a020;border:1.5px solid #e8a020;border-radius:6px;text-align:center;outline:none;font-family:inherit;padding:2px';
+  el.style.display='none';
+  el.parentNode.insertBefore(inp,el);
+  inp.focus();inp.select();
+  function commit(){
+    var val = Math.min(max, Math.max(0, parseInt(inp.value)||0));
+    el.textContent = String(val).padStart(2,'0');
+    inp.remove();
+    el.style.display='';
+    // Rebuild cdTarget from displayed values
+    rebuildCdTarget();
+  }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e){ if(e.key==='Enter') commit(); if(e.key==='Escape'){ inp.remove(); el.style.display=''; } });
+}
+
+function rebuildCdTarget(){
+  var days  = parseInt(document.getElementById('cd-days').textContent)||0;
+  var hours = parseInt(document.getElementById('cd-hours').textContent)||0;
+  var mins  = parseInt(document.getElementById('cd-mins').textContent)||0;
+  var secs  = parseInt(document.getElementById('cd-secs').textContent)||0;
+  var ms = ((days*24+hours)*3600+mins*60+secs)*1000;
+  cdTarget = Date.now() + ms;
+  // Restart countdown
+  clearInterval(cdInterval);
+  cdInterval = setInterval(tickCountdown,500);
+}
+
+function editStopwatch(){
+  if(swRunning) return; // only allow edit when paused/stopped
+  var disp = document.getElementById('sw-display');
+  if(!disp) return;
+  var cur = disp.textContent; // e.g. "01:23.4"
+  var inp = document.createElement('input');
+  inp.type='text';inp.value=cur;inp.placeholder='MM:SS.t';
+  inp.style.cssText='width:130px;font-size:28px;font-weight:700;background:#0d1020;color:#86efac;border:1.5px solid #86efac;border-radius:8px;text-align:center;outline:none;font-family:inherit;padding:4px';
+  disp.style.display='none';
+  disp.parentNode.insertBefore(inp,disp);
+  inp.focus();inp.select();
+  function commit(){
+    // Parse MM:SS.t format
+    var m=inp.value.match(/^(\d+):(\d+)\.(\d)$/);
+    if(m){
+      swElapsed=(parseInt(m[1])*60+parseInt(m[2]))*1000+parseInt(m[3])*100;
+    }
+    disp.textContent=inp.value.match(/^(\d+):(\d+)\.(\d)$/) ? inp.value : cur;
+    inp.remove(); disp.style.display='';
+  }
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter') commit(); if(e.key==='Escape'){inp.remove();disp.style.display='';} });
+}
+/* ── END CLOCK ── */
+function saveCache(d){try{localStorage.setItem(CACHE_KEY,JSON.stringify(d));localStorage.setItem(CACHE_TS_KEY,Date.now().toString());}catch(e){}}
 function loadCache(){try{var r=localStorage.getItem(CACHE_KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
 function cacheAge(){return Date.now()-parseInt(localStorage.getItem(CACHE_TS_KEY)||'0');}
 
@@ -1977,20 +2121,31 @@ function renderNotices(){
   var notices=allRows.filter(function(r){return r.Type&&r.Type.trim().toLowerCase()==='notice';});
   var dot=document.getElementById('notif-dot');if(dot)dot.classList.toggle('show',notices.length>0);
   var nb=document.getElementById('np-notice-body');
+  var noticeHTML;
   if(!notices.length){
-    nb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No notices yet.<br><small style="color:var(--text3)">Sheet: Type = Notice, Title = your text.</small></div>';
+    noticeHTML='<div class="empty-box" style="padding:14px;font-size:12px">No notices yet.<br><small style="color:var(--text3)">Sheet: Type = Notice, Title = your text.</small></div>';
   } else {
-    nb.innerHTML=notices.map(function(r){
+    noticeHTML=notices.map(function(r){
       var fn=r.Link&&r.Link.startsWith('http')?"window.open('"+esc(r.Link)+"','_blank')":'';
       return '<div class="notice-item" onclick="'+fn+'"><div class="notice-item-date">'+(r.Info||'Notice')+'</div><div class="notice-item-title">'+(r.Title||'')+'</div></div>';
     }).join('');
   }
+  nb.innerHTML=noticeHTML;
+  // Sync to Other section notice panel
+  var oNotice=document.getElementById('notice-list');
+  if(oNotice) oNotice.innerHTML=noticeHTML;
+
   var lives=allRows.filter(function(r){return r.Type&&r.Type.trim().toLowerCase()==='live';});
   var sb=document.getElementById('np-schedule-body');
-  if(!lives.length) sb.innerHTML='<div class="empty-box" style="padding:14px;font-size:12px">No schedule yet.</div>';
-  else sb.innerHTML=lives.map(function(r){
+  var scheduleHTML;
+  if(!lives.length) scheduleHTML='<div class="empty-box" style="padding:14px;font-size:12px">No schedule yet.</div>';
+  else scheduleHTML=lives.map(function(r){
     return '<div class="schedule-item"><span class="schedule-time">'+(r.Info||'TBD')+'</span><span class="schedule-title">'+r.Title+'</span></div>';
   }).join('');
+  sb.innerHTML=scheduleHTML;
+  // Sync to Other section schedule panel
+  var oSchedule=document.getElementById('schedule-list');
+  if(oSchedule) oSchedule.innerHTML=scheduleHTML;
 }
 
 /* RENDER */
